@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "478004093341",
+    "project_id": "stv2-84ad0",
+    "storage_bucket": "stv2-84ad0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:478004093341:android:320142126bf155599ecf74",
+        "android_client_info": {
+          "package_name": "com.example.stv2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnxO9Ck-qZ23IboNB1WiampBQfjfgslXE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
