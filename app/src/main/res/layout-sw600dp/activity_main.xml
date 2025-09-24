@@ -13,26 +13,23 @@
         android:id="@+id/loginemail"
         android:layout_width="215dp"
         android:layout_height="49dp"
-        android:layout_marginTop="266dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/lightbordo"
+        android:layout_marginBottom="11dp"
 
+        android:backgroundTint="@color/lightbordo"
         android:hint="Email cím"
         android:inputType="text"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/loginpassword"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.882"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/welcome"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintHorizontal_bias="0.873"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/loginpassword"
         android:layout_width="211dp"
         android:layout_height="48dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="@color/lightbordo"
         android:hint="Jelszó"
         android:inputType="textPassword"
@@ -40,7 +37,7 @@
         android:textColorHint="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/loginbutton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.865"
+        app:layout_constraintHorizontal_bias="0.869"
         app:layout_constraintStart_toStartOf="parent"
         tools:ignore="MissingConstraints" />
 
@@ -48,16 +45,16 @@
         android:id="@+id/loginbutton"
         android:layout_width="166dp"
         android:layout_height="52dp"
-        android:layout_marginBottom="220dp"
+        android:layout_marginBottom="216dp"
         android:background="@drawable/rounded_button"
         android:radius="40dp"
-        android:text="Belépés"
+        android:text="BelépésN"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.832"
+        app:layout_constraintHorizontal_bias="0.837"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -71,31 +68,31 @@
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.784"
+        app:layout_constraintHorizontal_bias="0.822"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/loginbutton"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.0" />
+
 
     <ImageView
         android:id="@+id/giraffestart"
-        android:layout_width="714dp"
-        android:layout_height="929dp"
-        android:layout_marginTop="48dp"
-        android:layout_marginEnd="56dp"
-        android:clickable="false"
-        android:focusable="false"
-        android:scaleType="fitXY"
+        android:layout_width="483dp"
+        android:layout_height="670dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/biggiraffe"
-        tools:ignore="MissingConstraints" />
+        app:layout_constraintVertical_bias="0.829"
+        app:srcCompat="@drawable/biggiraffe" />
 
     <TextView
         android:id="@+id/welcome"
         android:layout_width="match_parent"
         android:layout_height="60dp"
 
-        android:layout_marginTop="48dp"
         android:fontFamily="cursive"
         android:gravity="center"
         android:shadowColor="#66033B"
@@ -106,8 +103,8 @@
         android:textColor="#FDFDFE"
         android:textSize="34sp"
         android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.085"
+        tools:layout_editor_absoluteX="0dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
