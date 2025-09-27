@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_club"
+        android:title="Klub"
+        android:icon="@drawable/ic_clubs_emoji" />
+    <item
+        android:id="@+id/nav_book"
+        android:title="Könyv"
+        android:icon="@drawable/ic_book_emoji" />
+</menu>
