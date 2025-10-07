@@ -57,12 +57,12 @@ public class OpenAppActivity extends AppCompatActivity {
                 if (id == R.id.nav_club) {
                     Intent intent = new Intent(OpenAppActivity.this, NewClubAcvitity.class);
                     startActivity(intent);
-                    Toast.makeText(this, "Klub kiválasztva", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Klub kiválasztva", Toast.LENGTH_SHORT).show();
                     return true;
                 } else if (id == R.id.nav_book) {
                     Intent intent = new Intent(OpenAppActivity.this, NewBookActivity.class);
                     startActivity(intent);
-                    Toast.makeText(this, "Könyv kiválasztva", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(this, "Könyv kiválasztva", Toast.LENGTH_SHORT).show();
                     return true;
                 } else {
                     return false;
