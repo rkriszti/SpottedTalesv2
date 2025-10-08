@@ -15,7 +15,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.stv2.model.Book;
@@ -30,9 +29,8 @@ import com.google.firebase.storage.StorageReference;
 import java.util.UUID;
 
 public class NewBookActivity extends AppCompatActivity {
-
-    private String downloadUrlString; // Firebase Storage download URL
-    private Uri selectedImageUri;
+    private String picurl; //= downloadUri.toString(); majd launcherben
+    private Uri selectedImageUri; //ActivityResultLauncher-ben használva (egyből visszakapott uri)
     private Book currentBook;
 
     @Override
@@ -40,33 +38,48 @@ public class NewBookActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new);
 
-        Switch switchForm = findViewById(R.id.switchForm);
+        Switch kapcsolo = findViewById(R.id.switchForm);
         LinearLayout form_book = findViewById(R.id.form_book);
         LinearLayout form_club = findViewById(R.id.form_club);
+
+        //book elemek--------------------------------------
         ImageView form_book_borito = findViewById(R.id.form_book_borito);
         Button form_book_button = findViewById(R.id.form_book_button);
+        //club elemek--------------------------------------
+        /// club elemek
 
-        // 1️⃣ Kép kiválasztás launcher
+        //űrlapok közötti nagiválás switchel
+        kapcsolo.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                form_book.setVisibility(LinearLayout.GONE);
+                form_club.setVisibility(LinearLayout.VISIBLE);
+            } else {
+                form_book.setVisibility(LinearLayout.VISIBLE);
+                form_club.setVisibility(LinearLayout.GONE);
+            }
+        });
+
+        //launcher
         ActivityResultLauncher<PickVisualMediaRequest> pickMedia = registerForActivityResult(
                 new ActivityResultContracts.PickVisualMedia(),
                 uri -> {
                     if (uri != null) {
                         selectedImageUri = uri;
-                        form_book_borito.setImageURI(uri);
+                        form_book_borito.setImageURI(uri); //imagieviewba meg is jelenítjük egyből
 
-                        // Firebase Storage-be feltöltés
-                        FirebaseStorage storage = FirebaseStorage.getInstance("gs://stv2-84ad0.firebasestorage.app");
-
+                        //bucket-be feltöltés
+                        FirebaseStorage storage = FirebaseStorage.getInstance("gs://stv2-84ad0.firebasestorage.app"); //csatlakozás
                         StorageReference imageRef = storage.getReference()
-                                .child("books/" + UUID.randomUUID() + ".jpg");
+                                .child("books/" + UUID.randomUUID() + ".jpg"); //egyedi fájlnév generálás
 
+                        //mentés
                         imageRef.putFile(uri)
                                 .addOnSuccessListener(taskSnapshot ->
                                         imageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                                            downloadUrlString = downloadUri.toString();
-                                            Log.d("FirebaseUpload", "Kép 1: " + downloadUrlString);
-                                            if (currentBook != null) {
-                                                currentBook.setCoverpic(downloadUrlString);
+                                            picurl = downloadUri.toString();
+                                            Log.d("FirebaseUpload", "Kép 1: " + picurl);
+                                            if (currentBook != null) { //ha van könyv
+                                                currentBook.setCoverpic(picurl);
                                             }
                                         })
                                 )
@@ -77,32 +90,34 @@ public class NewBookActivity extends AppCompatActivity {
                 }
         );
 
-        // 2️⃣ Switch a formok váltására
-        switchForm.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                form_book.setVisibility(LinearLayout.GONE);
-                form_club.setVisibility(LinearLayout.VISIBLE);
-            } else {
-                form_book.setVisibility(LinearLayout.VISIBLE);
-                form_club.setVisibility(LinearLayout.GONE);
-            }
-        });
-
-        // 3️⃣ Kép választás
+        //kép választás felugrik
         form_book_borito.setOnClickListener(v -> pickMedia.launch(
                 new PickVisualMediaRequest.Builder()
                         .setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo.INSTANCE)
                         .build()
         ));
 
-        // 4️⃣ Mentés gomb
+        //feltöltés gomb
         form_book_button.setOnClickListener(v -> {
+            //beérkezett adatok
             EditText cim = findViewById(R.id.form_book_cim);
             EditText szerzo = findViewById(R.id.form_book_szerzo);
 
             String cimm = cim.getText().toString().trim();
             String szerzoo = szerzo.getText().toString().trim();
 
+            if (cimm.isEmpty()) {
+                cim.setError("Adj meg egy címet!");
+                cim.requestFocus();
+                return;
+            }
+            if (szerzoo.isEmpty()) {
+                szerzo.setError("Adj meg egy szerzőt!");
+                szerzo.requestFocus();
+                return;
+            }
+
+            //be van jelentkezve?
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
                 Toast.makeText(this, "Be kell jelentkezned a könyv feltöltéséhez!", Toast.LENGTH_SHORT).show();
@@ -110,15 +125,16 @@ public class NewBookActivity extends AppCompatActivity {
             }
 
             String email = user.getEmail();
+
+            //könyv
             currentBook = new Book(cimm, szerzoo, email);
 
-            Log.d("FirebaseUpload", "Kép download URL: " + downloadUrlString);
-            // Ha van feltöltött kép, állítsuk be
-            if (downloadUrlString != null) {
-                currentBook.setCoverpic(downloadUrlString);
+            // van kép (nem kötelező)
+            if (picurl != null) {
+                currentBook.setCoverpic(picurl);
             }
-            Log.d("FirebaseUpload", "Kép download URL: " + downloadUrlString);
 
+            //könyv feltöltése kollekcióba
             FirebaseFirestore.getInstance().collection("books")
                     .add(currentBook)
                     .addOnSuccessListener(docRef ->
@@ -129,7 +145,7 @@ public class NewBookActivity extends AppCompatActivity {
 
         });
 
-        // 5️⃣ Navigációs menü
+        //navigációs menü
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -141,7 +157,7 @@ public class NewBookActivity extends AppCompatActivity {
             return true;
         });
 
-        // 6️⃣ Plusz gomb menü
+        //plusz gomb
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(this, v);
@@ -154,5 +170,6 @@ public class NewBookActivity extends AppCompatActivity {
             });
             popup.show();
         });
-    }
-}
+
+    }//oncreate vége
+} //activity vége
