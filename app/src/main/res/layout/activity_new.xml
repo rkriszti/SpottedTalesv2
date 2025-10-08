@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Kapcsoló az űrlapok között -->
+
+    <!-- Űrlap 1 -->
+    <Switch
+        android:id="@+id/switchForm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textOff="Űrlap 1"
+        android:textOn="Űrlap 2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.043"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/form_book"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/switchForm"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:id="@+id/form_book_cim"
+            android:hint="Cím"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/form_book_szerzo"
+            android:hint="Szerző"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/form_book_borito"
+            android:layout_width="123dp"
+            android:layout_height="140dp"
+            app:srcCompat="@android:drawable/ic_menu_gallery"
+            tools:layout_editor_absoluteX="144dp"
+            tools:layout_editor_absoluteY="272dp" />
+
+        <Button
+            android:id="@+id/form_book_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Feltöltés"
+            tools:layout_editor_absoluteX="53dp"
+            tools:layout_editor_absoluteY="188dp" />
+
+
+    </LinearLayout>
+
+    <!-- Űrlap 2 -->
+    <LinearLayout
+        android:id="@+id/form_club"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/switchForm"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:hint="Felhasználónév"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:hint="Jelszó"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"/>
+
+    </LinearLayout>
+
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/background_nav"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+
+    <!-- Középen lebegő gomb -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-28dp"
+        android:contentDescription="Új"
+        android:src="@drawable/ic_add_emoji"
+        app:backgroundTint="#3c0c3e"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@android:color/white" />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

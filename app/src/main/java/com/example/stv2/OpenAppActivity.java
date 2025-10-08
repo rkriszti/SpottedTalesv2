@@ -49,26 +49,8 @@ public class OpenAppActivity extends AppCompatActivity {
         //plusz gomb
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(this, v); //felugró menü
-            popup.getMenuInflater().inflate(R.menu.menu_new_items, popup.getMenu()); //hozzátársít xml
-
-            popup.setOnMenuItemClickListener(item -> {
-                int id = item.getItemId();
-                if (id == R.id.nav_club) {
-                    Intent intent = new Intent(OpenAppActivity.this, NewClubAcvitity.class);
+                  Intent intent = new Intent(OpenAppActivity.this, NewBookActivity.class);
                     startActivity(intent);
-                    //Toast.makeText(this, "Klub kiválasztva", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else if (id == R.id.nav_book) {
-                    Intent intent = new Intent(OpenAppActivity.this, NewBookActivity.class);
-                    startActivity(intent);
-                    //Toast.makeText(this, "Könyv kiválasztva", Toast.LENGTH_SHORT).show();
-                    return true;
-                } else {
-                    return false;
-                }
-            });
-            popup.show(); //megjelenít
         });
 
 

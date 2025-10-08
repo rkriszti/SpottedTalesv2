@@ -39,8 +39,8 @@ dependencies {
     implementation ("com.google.firebase:firebase-firestore")
     implementation ("com.google.firebase:firebase-auth") // ha auth-ot is használsz
 
-
-
+    implementation ("com.google.firebase:firebase-storage:21.3.0")
+    implementation ("com.google.firebase:firebase-storage")
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
