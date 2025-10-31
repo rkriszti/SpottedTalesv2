@@ -1,5 +1,4 @@
 package com.example.stv2.model;
-import android.net.Uri;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -10,13 +9,12 @@ import java.util.Map;
 public class Club {
     private String name;
     private String admin;
-    private Book book; //kezdetben nincs, később hozzáadhatja
+    private Book book;
     private Map<String, List<String>> chapters;
     private Map<String, List<String>> customs;
     private Boolean ispublic;
-    private List<String> members; //kezdetben 1
+    private List<String> members;
 
-    // Üres konstruktor szükséges Firestore-hoz
     public Club() {}
 
     public Club(String name, String useremail, Integer chapterdbb, Boolean publice, ArrayList<String> egyedi){
@@ -91,11 +89,6 @@ public class Club {
     //bonyolultabb setter
     /// chapters módosítás
     //chapter törlés
-
-
-    //egyedi fejezetek
-    //public void addChapter(String n){
-    //} ha ezt szeretnénk kéne külön attributum hozzá hogy ne keveredjenek a chapterek
 
     /// members módosítás, hozzáad/elvesz
 }
