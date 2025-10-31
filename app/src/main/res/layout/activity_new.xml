@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent">
+    android:background="@color/darkpurple">
 
     <!-- 2 űrlap: Linear(edittext), Linear(edittext) -->
 
@@ -67,7 +67,7 @@
         android:layout_height="0dp"
         android:layout_margin="16dp"
         android:background="#FFF"
-        android:elevation="4dp"
+        android:elevation="0dp"
         android:padding="20dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/fab"
@@ -214,7 +214,7 @@
         android:orientation="vertical"
         android:background="#FFF"
         android:padding="20dp"
-        android:elevation="4dp"
+        android:elevation="0dp"
         android:layout_margin="16dp"
         android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@id/headerLayout"

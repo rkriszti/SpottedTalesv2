@@ -278,6 +278,46 @@ public class NewBookActivity extends AppCompatActivity {
 
         });
 
+        //menu bar
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_home) {
+                Intent intent = new Intent(NewBookActivity.this, OpenAppActivity.class);
+                startActivity(intent);
+                // Toast.makeText(this, "🏠 Kezdőlap", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (id == R.id.nav_search) {
+                Intent intent = new Intent(NewBookActivity.this, SearchActivity.class);
+                startActivity(intent);
+                // Toast.makeText(this, "🔍 Keresés", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (id == R.id.nav_clubs) {
+                Intent intent = new Intent(NewBookActivity.this, ClubsActivity.class);
+                startActivity(intent);
+                // Toast.makeText(this, "👥 Klubok", Toast.LENGTH_SHORT).show();
+                return true;
+            } else if (id == R.id.nav_profile) {
+                Intent intent = new Intent(NewBookActivity.this, ProfileActivity.class);
+                startActivity(intent);
+                //  Toast.makeText(this, "👤 Profil", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+            Toast.makeText(this, "OpenAct hiba", Toast.LENGTH_SHORT).show();
+            return false;
+        });
+
+        //plusz gomb
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(v -> {
+            Intent intent = new Intent(NewBookActivity.this, NewBookActivity.class);
+            startActivity(intent);
+        });
+
+
+
     }//oncreate vége
     private void addCustomChip(String label) {
         // ne duplikáljunk
