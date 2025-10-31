@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class Club {
+    private String id;
     private String name;
     private String admin;
     private Book book;
@@ -22,6 +24,7 @@ public class Club {
        this.admin = useremail;
        this.book = null;
        this.ispublic = publice;
+        this.id = UUID.randomUUID().toString();
 
         this.members = new ArrayList<>();
        this.members.add(useremail);

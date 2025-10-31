@@ -6,13 +6,13 @@ import java.util.UUID;
 public class Message {
     private String id;
     private String message;
-    private User user;
+    private String useremail;
     private Timestamp time;
 
     public Message(){};
     /// mivan ha belikeolnak üzenetet?? vagy valamire válasz???
 
-    public Message(String message, Timestamp time, User user) {
+    public Message(String message, Timestamp time, String user) {
 
         /// message nem lehet üres, user sem
         if (message == null || message.isEmpty())
@@ -21,7 +21,7 @@ public class Message {
             throw new IllegalArgumentException("User nem lehet null");
         this.id = UUID.randomUUID().toString();
         this.time = time;
-        this.user = user;
+        this.useremail = user;
     }
 
     //alap setter, getter
@@ -44,10 +44,10 @@ public class Message {
     public void setTime(Timestamp time) {
         this.time = time;
     }
-    public User getUser() {
-        return user;
+    public String getUser() {
+        return useremail;
     }
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(String user) {
+        this.useremail = user;
     }
 }

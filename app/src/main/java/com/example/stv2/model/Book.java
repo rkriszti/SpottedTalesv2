@@ -2,7 +2,10 @@ package com.example.stv2.model;
 
 import android.net.Uri;
 
+import java.util.UUID;
+
 public class Book {
+    private String id;
     private String title;
     private String author;
     private String email; //ki készítette
@@ -15,6 +18,7 @@ public class Book {
         this.title = title;
         this.author = author;
         this.email = user;
+        this.id = UUID.randomUUID().toString();
        /// this.coverpic =  def kép
     }
     public Book(String title, String author, String user, String uri){

@@ -13,7 +13,7 @@ public class User {
     String email;
     String profilepicurl;
     Boolean admin;
-    List<String> favorites;
+    List<String> favorites; //könyvid??
 
     public User() {
         this.favorites = new ArrayList<>();
