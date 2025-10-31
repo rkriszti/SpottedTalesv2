@@ -1,14 +1,20 @@
 package com.example.stv2;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import com.google.firebase.firestore.FirebaseFirestore;
+import android.graphics.Color;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
+import android.widget.RadioButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -16,9 +22,14 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.TooltipCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.stv2.model.Book;
+import com.example.stv2.model.Club;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,12 +37,19 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class NewBookActivity extends AppCompatActivity {
     private String picurl; //= downloadUri.toString(); majd launcherben
     private Uri selectedImageUri; //ActivityResultLauncher-ben használva (egyből visszakapott uri)
     private Book currentBook;
+
+    private EditText customsInput;
+    private Button addButton;
+    private ChipGroup chipGroup;
+    private ArrayList<String> customsList = new ArrayList<>(); // itt tároljuk az értékeket
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +58,25 @@ public class NewBookActivity extends AppCompatActivity {
 
         Switch kapcsolo = findViewById(R.id.switchForm);
         LinearLayout form_book = findViewById(R.id.form_book);
-        LinearLayout form_club = findViewById(R.id.form_club);
+        ConstraintLayout form_club = findViewById(R.id.form_club);
+
+        kapcsolo.getThumbDrawable().setTint(Color.parseColor("#EC407A")); // rózsaszín
+        kapcsolo.getTrackDrawable().setTint(Color.parseColor("#741c60")); // lila
+
 
         //book elemek--------------------------------------
         ImageView form_book_borito = findViewById(R.id.form_book_borito);
         Button form_book_button = findViewById(R.id.form_book_button);
         //club elemek--------------------------------------
         /// club elemek
+        Button form_club_button = findViewById(R.id.form_club_button);
+        TooltipCompat.setTooltipText(findViewById(R.id.club_tooltip), "Publikus klubba bárki csatlakozhat, privátba csak meghívásból.");
+        EditText chapters = findViewById(R.id.club_chapters);
+        //fejezetekhez
+         customsInput = findViewById(R.id.club_customs);
+         addButton = findViewById(R.id.button_customs);
+         chipGroup = findViewById(R.id.club_customs_container);
+         customsList = new ArrayList<>(); // itt tároljuk az értékeket
 
         //űrlapok közötti nagiválás switchel
         kapcsolo.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -56,6 +86,18 @@ public class NewBookActivity extends AppCompatActivity {
             } else {
                 form_book.setVisibility(LinearLayout.VISIBLE);
                 form_club.setVisibility(LinearLayout.GONE);
+            }
+        });
+
+        //fejezetek
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String text = customsInput.getText().toString().trim();
+                if (!text.isEmpty()) {
+                    addCustomChip(text);
+                    customsInput.setText("");
+                }
             }
         });
 
@@ -97,7 +139,67 @@ public class NewBookActivity extends AppCompatActivity {
                         .build()
         ));
 
-        //feltöltés gomb
+        //Klub feltöltés gomb
+        form_club_button.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Log.d("CATTT", "GOMB megnyomva");
+                EditText nev = findViewById(R.id.club_name);
+                RadioButton publikus = findViewById(R.id.form_club_public);
+               // RadioButton privat = findViewById(R.id.form_club_private); kell?
+
+                String nevv = nev.getText().toString().trim();
+                Boolean publikuss = publikus.isChecked();
+
+                if (nevv.isEmpty()) {
+                    nev.setError("Adj meg egy címet!"); //edittextbe írjuk az errort de a sztringet vizsgáljuk
+                    nev.requestFocus();
+                    return;
+                }
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user == null) {
+                    Toast.makeText(NewBookActivity.this, "Be kell jelentkezned a könyv feltöltéséhez!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Log.d("CATTT", "User belépve");
+
+
+                String email = user.getEmail();
+
+                Integer chapterint = 0;
+                if (chapters != null){
+                    String ch = chapters.getText().toString().trim();
+                    chapterint = ch.isEmpty() ? 0 : Integer.parseInt(ch);
+                }
+                Log.d("CATTT", "Chapter ok");
+
+                Club currentClub = new Club(nevv, email, chapterint, publikuss, customsList);
+                Log.d("CATTT", "currentClub: " + currentClub.toString());
+                Log.d("CATTT", "customsList mérete: " + customsList.size());
+
+
+                //klub kollekció létrehozása
+                FirebaseFirestore.getInstance().collection("club")
+                        .add(currentClub)
+                        .addOnSuccessListener(docRef -> {
+                            Log.d("CATTT", "Dokumentum létrehozva ID: " + docRef.getId());
+                            Toast.makeText(NewBookActivity.this, "Klub sikeresen feltöltve!", Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(NewBookActivity.this, OpenAppActivity.class);
+                            startActivity(intent);
+                            finish();
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e("CATTT", e.getMessage(), e);
+                            Toast.makeText(NewBookActivity.this, "Hiba a feltöltés során: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        });
+
+
+            }
+        });
+
+        //Könyv feltöltés gomb
         form_book_button.setOnClickListener(v -> {
             //beérkezett adatok
             EditText cim = findViewById(R.id.form_book_cim);
@@ -137,15 +239,17 @@ public class NewBookActivity extends AppCompatActivity {
             //könyv feltöltése kollekcióba
             FirebaseFirestore.getInstance().collection("books")
                     .add(currentBook)
-                    .addOnSuccessListener(docRef ->
-                            Toast.makeText(this, "Könyv sikeresen feltöltve!", Toast.LENGTH_SHORT).show())
+                    .addOnSuccessListener(docRef -> {
+                        Toast.makeText(this, "Könyv sikeresen feltöltve!", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(this, OpenAppActivity.class);
+                        startActivity(intent);
+                        finish();
+                    })
                     .addOnFailureListener(e ->
                             Toast.makeText(this, "Hiba a feltöltés során: " + e.getMessage(), Toast.LENGTH_SHORT).show());
 
-
-        });
-
-        //navigációs menü
+            //navigációs menü
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -159,17 +263,47 @@ public class NewBookActivity extends AppCompatActivity {
 
         //plusz gomb
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(this, v);
+        fab.setOnClickListener(vEW -> {
+            PopupMenu popup = new PopupMenu(this, vEW);
             popup.getMenuInflater().inflate(R.menu.menu_new_items, popup.getMenu());
             popup.setOnMenuItemClickListener(item -> {
                 int id = item.getItemId();
-                if (id == R.id.nav_club) startActivity(new Intent(this, NewClubAcvitity.class));
+                if (id == R.id.nav_club) startActivity(new Intent(this, NewBookActivity.class));
                 else if (id == R.id.nav_book) startActivity(new Intent(this, NewBookActivity.class));
                 return true;
             });
             popup.show();
         });
 
+
+        });
+
     }//oncreate vége
-} //activity vége
+    private void addCustomChip(String label) {
+        // ne duplikáljunk
+        if (customsList.contains(label)) return;
+
+        customsList.add(label);
+
+        Chip chip = new Chip(this);
+        chip.setText(label);
+        chip.setCloseIconVisible(true);
+        chip.setChipBackgroundColorResource(R.color.purple);
+        chip.setTextColor(Color.WHITE);
+        chip.setCloseIconTint(ColorStateList.valueOf(Color.WHITE));
+
+        chip.setOnCloseIconClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chipGroup.removeView(chip);
+                customsList.remove(label);
+            }
+        });
+
+        chipGroup.addView(chip);
+    }
+
+}//activity vége
+
+
+

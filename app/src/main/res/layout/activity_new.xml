@@ -1,94 +1,281 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
 
-    <!-- Kapcsoló az űrlapok között -->
+    <!-- 2 űrlap: Linear(edittext), Linear(edittext) -->
 
-    <!-- Űrlap 1 -->
-    <Switch
-        android:id="@+id/switchForm"
-        android:layout_width="wrap_content"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alpha="1"
+        android:rotation="0"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="-32dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textOff="Űrlap 1"
-        android:textOn="Űrlap 2"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="0dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="Könyv"
+            android:textColor="#6A1B9A"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Switch
+            android:id="@+id/switchForm"
+            android:layout_width="wrap_content"
+            android:layout_height="60dp"
+            android:padding="8dp"
+            android:textColor="@android:color/black"
+            android:textOff="Űrlap 1"
+            android:textOn="Űrlap 2"
+            app:thumbTint="#8C236E"
+            app:trackTint="#C868A5" />
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="Klub"
+            android:textColor="#6A1B9A"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <!-- Könyv űrlap -->
+
+    <!-- Könyv űrlap -->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/form_club"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        android:background="#FFF"
+        android:elevation="4dp"
+        android:padding="20dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/fab"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.043"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:layout_constraintVertical_bias="0.0">
+
+        <ImageView
+            android:id="@+id/club_tooltip"
+            android:layout_width="47dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:tooltipText="Publikus klubba bárki csatlakozhat, privátba csak meghívásból."
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/radioGroup"
+            app:layout_constraintTop_toBottomOf="@+id/club_name"
+            app:srcCompat="@android:drawable/ic_menu_help" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="300dp"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/club_name"
+            tools:ignore="MissingConstraints">
+
+            <RadioButton
+                android:id="@+id/form_club_private"
+                android:layout_width="128dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="60dp"
+                android:text="Privát"
+                android:tooltipText="@string/form_club_private_help"
+                tools:ignore="MissingConstraints" />
+
+            <RadioButton
+                android:id="@+id/form_club_public"
+                android:layout_width="119dp"
+                android:layout_height="51dp"
+                android:layout_marginTop="28dp"
+                android:checked="true"
+                android:text="Publikus"
+                android:tooltipText="@string/form_club_public_help"
+                app:layout_constraintEnd_toStartOf="@+id/form_club_private"
+                app:layout_constraintHorizontal_bias="0.593" />
+        </RadioGroup>
+
+
+        <EditText
+            android:id="@+id/club_chapters"
+            android:layout_width="320dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#BA68C8"
+            android:hint="Fejezetek száma (chatszobák száma)"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+        <EditText
+            android:id="@+id/club_customs"
+            android:layout_width="233dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#BA68C8"
+            android:hint="Egyedi chatszobák (nem kötelező)"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.094"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/club_chapters" />
+
+        <Button
+            android:id="@+id/button_customs"
+            android:layout_width="89dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="36dp"
+            android:backgroundTint="#741C60"
+            android:text="Hozzáad"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toTopOf="@+id/form_club_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/club_customs"
+            app:layout_constraintTop_toBottomOf="@+id/club_chapters"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="MissingConstraints" />
+
+        <EditText
+            android:id="@+id/club_name"
+            android:layout_width="342dp"
+            android:layout_height="58dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:backgroundTint="#BA68C8"
+            android:hint="Klub név"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/club_customs_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:chipSpacingHorizontal="8dp"
+            app:chipSpacingVertical="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/form_club_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/button_customs"
+            app:singleLine="false" />
+
+        <Button
+            android:id="@+id/form_club_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="31dp"
+            android:backgroundTint="#741C60"
+            android:text="Létrehozás"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/club_customs"
+            app:layout_constraintVertical_bias="0.937" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/form_book"
-        android:orientation="vertical"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@id/switchForm"
+        android:orientation="vertical"
+        android:background="#FFF"
+        android:padding="20dp"
+        android:elevation="4dp"
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📖 Könyv létrehozása"
+            android:textColor="#6A1B9A"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginBottom="8dp" />
 
         <EditText
             android:id="@+id/form_book_cim"
-            android:hint="Cím"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:hint="Cím"
+            android:backgroundTint="#BA68C8" />
 
         <EditText
             android:id="@+id/form_book_szerzo"
-            android:hint="Szerző"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:hint="Szerző"
+            android:backgroundTint="#BA68C8"
+            android:layout_marginTop="8dp" />
 
         <ImageView
             android:id="@+id/form_book_borito"
-            android:layout_width="123dp"
+            android:layout_width="120dp"
             android:layout_height="140dp"
-            app:srcCompat="@android:drawable/ic_menu_gallery"
-            tools:layout_editor_absoluteX="144dp"
-            tools:layout_editor_absoluteY="272dp" />
+            android:layout_gravity="center"
+            android:src="@android:drawable/ic_menu_gallery"
+            android:background="#F3E5F5"
+            android:padding="8dp"
+            android:layout_marginTop="12dp"
+            android:contentDescription="Borító" />
 
         <Button
             android:id="@+id/form_book_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Feltöltés"
-            tools:layout_editor_absoluteX="53dp"
-            tools:layout_editor_absoluteY="188dp" />
+            android:textAllCaps="false"
+            android:backgroundTint="#741C60"
+            android:textColor="@android:color/white"
+            android:layout_marginTop="12dp" />
+
+
 
 
     </LinearLayout>
 
-    <!-- Űrlap 2 -->
-    <LinearLayout
-        android:id="@+id/form_club"
-        android:orientation="vertical"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/switchForm"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
 
-        <EditText
-            android:hint="Felhasználónév"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
-        <EditText
-            android:hint="Jelszó"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"/>
 
-    </LinearLayout>
-
-    <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
@@ -98,11 +285,10 @@
         app:itemTextColor="@color/white"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_nav_menu" />
 
-    <!-- Középen lebegő gomb -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
@@ -115,8 +301,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:tint="@android:color/white" />
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

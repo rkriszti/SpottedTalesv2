@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Spotted Tales</string>
+    <string name="form_club_public_help">Bárki csatlakozhat a klubhoz. Később módosítható.</string>
+    <string name="form_club_private_help">Csak meghívással csatlakozhatnak a klubba. Később módosítható.</string>
+
 </resources>
