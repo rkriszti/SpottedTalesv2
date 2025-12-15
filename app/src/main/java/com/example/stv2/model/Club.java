@@ -88,6 +88,13 @@ public class Club {
         return customs;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     //bonyolultabb setter
     /// chapters módosítás

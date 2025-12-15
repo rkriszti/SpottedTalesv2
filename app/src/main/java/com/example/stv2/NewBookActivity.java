@@ -148,8 +148,12 @@ public class NewBookActivity extends AppCompatActivity {
                 EditText nev = findViewById(R.id.club_name);
                 RadioButton publikus = findViewById(R.id.form_club_public);
                // RadioButton privat = findViewById(R.id.form_club_private); kell?
+                Log.d("CATTT", "Klub név: " + nev.toString());
+
 
                 String nevv = nev.getText().toString().trim();
+                Log.d("CATTT", "Klub név: " + nevv);
+
                 Boolean publikuss = publikus.isChecked();
 
                 if (nevv.isEmpty()) {
