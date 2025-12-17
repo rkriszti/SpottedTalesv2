@@ -21,7 +21,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth auth;
 
     @Override
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Nincs még fiókom gomb
         skipToRegist.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, RegistActivity.class);
+            Intent intent = new Intent(LoginActivity.this, RegistActivity.class);
             startActivity(intent);
         });
 
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             String password = passwordEditText.getText().toString().trim();
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Kérlek, töltsd ki az e-mailt és jelszót!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "Kérlek, töltsd ki az e-mailt és jelszót!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             //siker
                             FirebaseUser user = auth.getCurrentUser();
-                            Toast.makeText(MainActivity.this, "Sikeres belépés: " + user.getEmail(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, "Sikeres belépés: " + user.getEmail(), Toast.LENGTH_SHORT).show();
 
                             ImageView giraffe = findViewById(R.id.giraffestart);
                             Animation anim = AnimationUtils.loadAnimation(this, R.anim.giraffe_move);
@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                             giraffe.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Intent intent = new Intent(MainActivity.this, OpenAppActivity.class);
+                                    Intent intent = new Intent(LoginActivity.this, OpenAppActivity.class);
                                     startActivity(intent);
                                     finish(); // MainActivity bezárása
                                 }
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
 
                         } else {
                             //hiba
-                            Toast.makeText(MainActivity.this, "Belépés sikertelen: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, "Belépés sikertelen: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             Log.e("FirebaseAuth", "Login failed", task.getException());
                         }
                     });

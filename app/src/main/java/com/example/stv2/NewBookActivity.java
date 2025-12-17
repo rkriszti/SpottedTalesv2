@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import com.google.firebase.firestore.FirebaseFirestore;
 import android.graphics.Color;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,14 +32,13 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class NewBookActivity extends AppCompatActivity {
+public class NewBookActivity extends MenuActivity {
     private String picurl; //= downloadUri.toString(); majd launcherben
     private Uri selectedImageUri; //ActivityResultLauncher-ben használva (egyből visszakapott uri)
     private Book currentBook;
@@ -55,6 +53,8 @@ public class NewBookActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new);
+
+        setupBottomMenu(R.id.nav_search);
 
         Switch kapcsolo = findViewById(R.id.switchForm);
         LinearLayout form_book = findViewById(R.id.form_book);
@@ -259,7 +259,7 @@ public class NewBookActivity extends AppCompatActivity {
             int id = item.getItemId();
             if (id == R.id.nav_home) startActivity(new Intent(this, OpenAppActivity.class));
             else if (id == R.id.nav_search) startActivity(new Intent(this, SearchActivity.class));
-            else if (id == R.id.nav_clubs) startActivity(new Intent(this, ClubsActivity.class));
+            else if (id == R.id.nav_clubs) startActivity(new Intent(this, ClubPageActivity.class));
             else if (id == R.id.nav_profile) startActivity(new Intent(this, ProfileActivity.class));
             else Toast.makeText(this, "OpenAct hiba", Toast.LENGTH_SHORT).show();
             return true;
@@ -280,44 +280,6 @@ public class NewBookActivity extends AppCompatActivity {
         });
 
 
-        });
-
-        //menu bar
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-
-            if (id == R.id.nav_home) {
-                Intent intent = new Intent(NewBookActivity.this, OpenAppActivity.class);
-                startActivity(intent);
-                // Toast.makeText(this, "🏠 Kezdőlap", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (id == R.id.nav_search) {
-                Intent intent = new Intent(NewBookActivity.this, SearchActivity.class);
-                startActivity(intent);
-                // Toast.makeText(this, "🔍 Keresés", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (id == R.id.nav_clubs) {
-                Intent intent = new Intent(NewBookActivity.this, ClubsActivity.class);
-                startActivity(intent);
-                // Toast.makeText(this, "👥 Klubok", Toast.LENGTH_SHORT).show();
-                return true;
-            } else if (id == R.id.nav_profile) {
-                Intent intent = new Intent(NewBookActivity.this, ProfileActivity.class);
-                startActivity(intent);
-                //  Toast.makeText(this, "👤 Profil", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-            Toast.makeText(this, "OpenAct hiba", Toast.LENGTH_SHORT).show();
-            return false;
-        });
-
-        //plusz gomb
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(v -> {
-            Intent intent = new Intent(NewBookActivity.this, NewBookActivity.class);
-            startActivity(intent);
         });
 
 
