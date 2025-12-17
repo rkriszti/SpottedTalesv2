@@ -6,7 +6,7 @@
     android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
-    tools:context=".OpenAppActivity">
+    tools:context=".HomeActivity">
 
     <TextView
         android:id="@+id/textView"

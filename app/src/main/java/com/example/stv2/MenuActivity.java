@@ -20,7 +20,7 @@ public abstract class MenuActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_home) {
-                Intent intent = new Intent(MenuActivity.this, OpenAppActivity.class);
+                Intent intent = new Intent(MenuActivity.this, HomeActivity.class);
                 startActivity(intent);
                 // Toast.makeText(this, "🏠 Kezdőlap", Toast.LENGTH_SHORT).show();
                 return true;
@@ -49,4 +49,30 @@ public abstract class MenuActivity extends AppCompatActivity {
                 startActivity(new Intent(this, NewBookActivity.class))
         );
     }
+
+    protected void setupBottomMenu() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            Intent intent = null;
+            if (id == R.id.nav_home) intent = new Intent(this, HomeActivity.class);
+            else if (id == R.id.nav_search) intent = new Intent(this, SearchActivity.class);
+            else if (id == R.id.nav_clubs) intent = new Intent(this, ClubsActivity.class);
+            else if (id == R.id.nav_profile) intent = new Intent(this, ProfileActivity.class);
+
+            if (intent != null) {
+                startActivity(intent);
+                finish();
+            }
+            return true;
+        });
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(v ->
+                startActivity(new Intent(this, NewBookActivity.class))
+        );
+    }
+
 }

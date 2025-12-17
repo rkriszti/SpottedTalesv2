@@ -20,7 +20,6 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.TooltipCompat;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -190,7 +189,7 @@ public class NewBookActivity extends MenuActivity {
                             Log.d("CATTT", "Dokumentum létrehozva ID: " + docRef.getId());
                             Toast.makeText(NewBookActivity.this, "Klub sikeresen feltöltve!", Toast.LENGTH_SHORT).show();
 
-                            Intent intent = new Intent(NewBookActivity.this, OpenAppActivity.class);
+                            Intent intent = new Intent(NewBookActivity.this, HomeActivity.class);
                             startActivity(intent);
                             finish();
                         })
@@ -246,7 +245,7 @@ public class NewBookActivity extends MenuActivity {
                     .addOnSuccessListener(docRef -> {
                         Toast.makeText(this, "Könyv sikeresen feltöltve!", Toast.LENGTH_SHORT).show();
 
-                        Intent intent = new Intent(this, OpenAppActivity.class);
+                        Intent intent = new Intent(this, HomeActivity.class);
                         startActivity(intent);
                         finish();
                     })
@@ -257,7 +256,7 @@ public class NewBookActivity extends MenuActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.nav_home) startActivity(new Intent(this, OpenAppActivity.class));
+            if (id == R.id.nav_home) startActivity(new Intent(this, HomeActivity.class));
             else if (id == R.id.nav_search) startActivity(new Intent(this, SearchActivity.class));
             else if (id == R.id.nav_clubs) startActivity(new Intent(this, ClubPageActivity.class));
             else if (id == R.id.nav_profile) startActivity(new Intent(this, ProfileActivity.class));

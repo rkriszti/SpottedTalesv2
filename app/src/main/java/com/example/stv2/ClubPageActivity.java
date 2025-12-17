@@ -19,7 +19,7 @@ public class ClubPageActivity extends MenuActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clubpage); // ide az XML neve jön
 
-        setupBottomMenu(R.id.nav_search);
+        setupBottomMenu();
 
         // XML elemek lekötése
         clubName = findViewById(R.id.club_name);

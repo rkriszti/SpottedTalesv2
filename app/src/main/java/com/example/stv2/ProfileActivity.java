@@ -12,6 +12,6 @@ public class ProfileActivity extends MenuActivity {
         super.onCreate(savedInstanceState, persistentState);
         setContentView(R.layout.activity_profile);
 
-        setupBottomMenu(R.id.nav_search);
+        setupBottomMenu(R.id.nav_profile);
     }
 }

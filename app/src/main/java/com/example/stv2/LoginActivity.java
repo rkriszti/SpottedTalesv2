@@ -29,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this); //teljes képrenyős nézet
         FirebaseApp.initializeApp(this); //firebase sdk, elég app elején elindítani
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
 
 
@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
                             giraffe.postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Intent intent = new Intent(LoginActivity.this, OpenAppActivity.class);
+                                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                     startActivity(intent);
                                     finish(); // MainActivity bezárása
                                 }

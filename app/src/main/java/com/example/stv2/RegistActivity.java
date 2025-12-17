@@ -119,7 +119,7 @@ public class RegistActivity extends AppCompatActivity {
                                         () -> { // onSuccess
                                             Toast.makeText(RegistActivity.this, "Sikeres regisztráció!", Toast.LENGTH_SHORT).show();
 
-                                                  Intent intent = new Intent(RegistActivity.this, OpenAppActivity.class);
+                                                  Intent intent = new Intent(RegistActivity.this, HomeActivity.class);
                                                     startActivity(intent);
 
 
