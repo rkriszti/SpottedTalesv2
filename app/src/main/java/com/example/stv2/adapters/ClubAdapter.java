@@ -3,6 +3,7 @@ package com.example.stv2.adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,7 +21,7 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
 
     //frissítés
     public void setClubs(List<Club> list) {
-        aktualis_clubs = list;
+        aktualis_clubs = list; //mindig hozzáad egyet az activity
         notifyDataSetChanged(); //frissíti az oldalon
     }
 
@@ -41,6 +42,7 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         Club c = aktualis_clubs.get(position);
         holder.name.setText(c.getName());
         holder.admin.setText("Admin: " + c.getAdmin());
+        holder.pic.setImageResource(R.drawable.background2);
     }
 
     @Override
@@ -49,12 +51,17 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
     }
 
     static class ClubViewHolder extends RecyclerView.ViewHolder {
-        TextView name, admin;
+        TextView name, members, admin;
+        ImageView pic;
+
         ClubViewHolder(View v) {
             super(v);
             name = v.findViewById(R.id.menu_clubname);
-           // admin = v.findViewById(R.id.tvClubAdmin);
+            members = v.findViewById(R.id.menu_clubtags); // tagok TextView
+            pic = v.findViewById(R.id.menu_clubpic);      // club kép
+            // admin = v.findViewById(R.id.tvClubAdmin);  // ha van admin mező
         }
     }
+
 }
 

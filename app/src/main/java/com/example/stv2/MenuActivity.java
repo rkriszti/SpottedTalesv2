@@ -30,7 +30,7 @@ public abstract class MenuActivity extends AppCompatActivity {
                 // Toast.makeText(this, "🔍 Keresés", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (id == R.id.nav_clubs) {
-                Intent intent = new Intent(MenuActivity.this, ClubPageActivity.class);
+                Intent intent = new Intent(MenuActivity.this, ClubsActivity.class);
                 startActivity(intent);
                 // Toast.makeText(this, "👥 Klubok", Toast.LENGTH_SHORT).show();
                 return true;

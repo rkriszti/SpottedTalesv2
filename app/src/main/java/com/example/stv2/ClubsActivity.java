@@ -12,11 +12,14 @@ import com.example.stv2.adapters.ClubAdapter;
 import com.example.stv2.model.Club;
 import com.example.stv2.adapters.ClubAdapter;
 import com.example.stv2.model.Club;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,21 +50,53 @@ public class ClubsActivity extends MenuActivity{
     }
 
     private void loadClubsFromFirebase() {
-        /// connection rész kell
-        DatabaseReference ref = FirebaseDatabase.getInstance()
-                .getReference("clubs");
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        // connection rész kellett
+        DatabaseReference ref = FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
+                .getReference("connections") //connection kollekcióból
+                .child(userId) //a userhez tartozó
+                .child("clubs"); //klubok
 
-        ref.addValueEventListener(new ValueEventListener() {
+        //connection nem tárol konrét objektumot!!!
+        ref.addListenerForSingleValueEvent(new ValueEventListener() { //addListenerForSingleValueEvent egyszeri lekérdezés
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                clubs.clear();
+                clubs.clear(); //ne legyen duplikáció
 
+                List<String> clubIds = new ArrayList<>();
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    Club c = ds.getValue(Club.class);
-                    clubs.add(c);
+                    clubIds.add(ds.getKey());
                 }
 
-                clubAdapter.setClubs(clubs);
+                if (clubIds.isEmpty()) {
+                    clubAdapter.setClubs(clubs); // üres lista
+                    return;
+                }
+
+                // Firestore lekérések számlálása
+                final int[] count = {0};
+                for (String clubId : clubIds) {
+                    FirebaseFirestore.getInstance().collection("club")
+                            .document(clubId)
+                            .get()
+                            .addOnSuccessListener(doc -> {
+                                if (doc.exists()) {
+                                    Club c = doc.toObject(Club.class);
+                                    clubs.add(c);
+                                }
+                                count[0]++;
+                                if (count[0] == clubIds.size()) {
+                                    // csak amikor minden lekérés kész
+                                    clubAdapter.setClubs(clubs);
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                count[0]++;
+                                if (count[0] == clubIds.size()) {
+                                    clubAdapter.setClubs(clubs);
+                                }
+                            });
+                }
             }
 
             @Override
