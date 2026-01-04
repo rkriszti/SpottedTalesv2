@@ -30,6 +30,7 @@ public class Book {
 
     // Getterek Firestore-hoz
     public String getTitle() { return title; }
+    public String getId(){ return id; }
     public String getAuthor() { return author; }
     public String getEmail() { return email;}
     public String getCoverpic() { return coverpic;}

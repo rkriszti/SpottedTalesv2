@@ -2,6 +2,9 @@ package com.example.stv2;
 
 import android.content.Intent;
 import android.content.res.ColorStateList;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import android.graphics.Color;
 import android.net.Uri;
@@ -177,7 +180,8 @@ public class NewBookActivity extends MenuActivity {
                 }
                 Log.d("CATTT", "Chapter ok");
 
-                Club currentClub = new Club(nevv, email, chapterint, publikuss, customsList);
+                Club currentClub = new Club(nevv, email, chapterint, publikuss, customsList); //itt már megkapja id-t
+                String currentClubid = currentClub.getId();
                 Log.d("CATTT", "currentClub: " + currentClub.toString());
                 Log.d("CATTT", "customsList mérete: " + customsList.size());
 
@@ -186,17 +190,44 @@ public class NewBookActivity extends MenuActivity {
                 FirebaseFirestore.getInstance().collection("club")
                         .add(currentClub)
                         .addOnSuccessListener(docRef -> {
+                            String firestoreClubId = docRef.getId();
                             Log.d("CATTT", "Dokumentum létrehozva ID: " + docRef.getId());
                             Toast.makeText(NewBookActivity.this, "Klub sikeresen feltöltve!", Toast.LENGTH_SHORT).show();
 
-                            Intent intent = new Intent(NewBookActivity.this, HomeActivity.class);
-                            startActivity(intent);
-                            finish();
+                           /* //connection kollekció (gombon belül!)
+                            FirebaseDatabase.getInstance()
+                                    .getReference("connections")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid()) //userid
+                                    .child("clubs")
+                                    .child(firestoreClubId)
+                                    .setValue(true);*/
+
+                            DatabaseReference clubRef = FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
+                                    .getReference("connections")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .child("clubs")
+                                    .child(firestoreClubId);
+
+                            clubRef.setValue(true)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Log.d("CONNECTION", "Klub connection létrehozva");
+                                        // csak itt indítsd az intentet
+                                        Intent intent = new Intent(NewBookActivity.this, HomeActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("CONNECTION", "Hiba a klub connection létrehozásakor", e);
+                                        Toast.makeText(NewBookActivity.this, "Connection hiba: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                    });
                         })
                         .addOnFailureListener(e -> {
                             Log.e("CATTT", e.getMessage(), e);
                             Toast.makeText(NewBookActivity.this, "Hiba a feltöltés során: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         });
+
+
+
 
 
             }
@@ -233,6 +264,7 @@ public class NewBookActivity extends MenuActivity {
 
             //könyv
             currentBook = new Book(cimm, szerzoo, email);
+            String currentBookid = currentBook.getId();
 
             // van kép (nem kötelező)
             if (picurl != null) {
@@ -243,15 +275,43 @@ public class NewBookActivity extends MenuActivity {
             FirebaseFirestore.getInstance().collection("books")
                     .add(currentBook)
                     .addOnSuccessListener(docRef -> {
+                        String firestoreBookId = docRef.getId();
                         Toast.makeText(this, "Könyv sikeresen feltöltve!", Toast.LENGTH_SHORT).show();
 
-                        Intent intent = new Intent(this, HomeActivity.class);
-                        startActivity(intent);
-                        finish();
+                       /* FirebaseDatabase.getInstance()
+                                .getReference("connections")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()) //userid
+                                .child("books")
+                                .child(firestoreBookId)
+                                .setValue(true);*/
+                        Log.d("CONNECTION", "Könyv 1");
+                        DatabaseReference bookRef = FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
+                                .getReference("connections")
+                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                .child("books")
+                                .child(firestoreBookId);
+
+                        Log.d("CONNECTION", "Könyv 2");
+                        bookRef.setValue(true)
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d("CONNECTION", "Könyv connection létrehozva");
+                                    // ide lehet tenni az intentet
+                                    Intent intent = new Intent(this, HomeActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("CONNECTION", "Hiba a könyv connection létrehozásakor", e);
+                                    Toast.makeText(this, "Connection hiba: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                });
+                        Log.d("CONNECTION", "Könyv 3");
+
                     })
                     .addOnFailureListener(e ->
                             Toast.makeText(this, "Hiba a feltöltés során: " + e.getMessage(), Toast.LENGTH_SHORT).show());
 
+
+            
             //navigációs menü
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnItemSelectedListener(item -> {

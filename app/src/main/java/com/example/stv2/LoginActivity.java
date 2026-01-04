@@ -65,6 +65,10 @@ public class LoginActivity extends AppCompatActivity {
 
             auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, task -> {
+                        if (task.isCanceled()) {
+                            Log.e("Download", "Task was cancelled");
+                            return;
+                        }
                         if (task.isSuccessful()) {
                             //siker
                             FirebaseUser user = auth.getCurrentUser();
