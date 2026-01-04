@@ -1,28 +1,68 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:elevation="4dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="240dp"
         android:orientation="vertical"
         android:padding="12dp">
 
         <TextView
-            android:id="@+id/tvClubName"
+            android:id="@+id/menu_clubname"
+            android:layout_width="357dp"
+            android:layout_height="35dp"
+            android:text=""
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.285"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:id="@+id/menu_clubpic"
+            android:layout_width="117dp"
+            android:layout_height="138dp"
+            android:layout_marginTop="23dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.015"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/menu_clubname"
+            app:layout_constraintVertical_bias="0.0">
+
+        </ImageView>
 
         <TextView
-            android:id="@+id/tvClubAdmin"
-            android:textSize="14sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:id="@+id/textView2"
+            android:layout_width="78dp"
+            android:layout_height="37dp"
+            android:layout_marginStart="49dp"
+            android:layout_marginTop="35dp"
+            android:text="Tagok:"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/menu_clubpic"
+            app:layout_constraintTop_toBottomOf="@+id/menu_clubname" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/menu_clubtags"
+            android:layout_width="78dp"
+            android:layout_height="37dp"
+            android:layout_marginTop="35dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView2"
+            app:layout_constraintTop_toBottomOf="@+id/menu_clubname" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
