@@ -1,77 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:background="#F5F3F7"
     app:menu="@menu/bottom_nav_menu"
-    android:padding="16dp">
+   >
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_width="425dp"
+        android:layout_height="573dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        tools:ignore="MissingConstraints">
 
-        <!-- Klub név -->
         <TextView
             android:id="@+id/club_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
             android:text="Klub neve"
-            android:textSize="26sp"
-            android:textStyle="bold"
             android:textColor="#6A1B9A"
-            android:paddingBottom="8dp"/>
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
-        <!-- Admin -->
+
         <TextView
             android:id="@+id/club_admin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
             android:text="Admin: valaki@email.com"
-            android:textSize="14sp"
             android:textColor="#6A1B9A"
-            android:paddingBottom="16dp"/>
+            android:textSize="14sp" />
 
         <!-- Könyv Card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="6dp"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#EDE7F6">
+            android:backgroundTint="#EDE7F6"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:padding="12dp"
-                android:gravity="center_vertical">
+                android:padding="12dp">
 
                 <ImageView
                     android:id="@+id/club_book_cover"
                     android:layout_width="60dp"
                     android:layout_height="80dp"
-                    android:scaleType="centerCrop"
-                    android:src="@android:drawable/ic_menu_gallery"
-                    android:contentDescription="Borító"
                     android:background="#D1C4E9"
-                    android:clipToOutline="true"/>
+                    android:clipToOutline="true"
+                    android:contentDescription="Borító"
+                    android:scaleType="centerCrop"
+                    android:src="@android:drawable/ic_menu_gallery" />
 
                 <TextView
                     android:id="@+id/club_book_title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Könyv címe"
-                    android:textSize="16sp"
-                    android:textColor="#4A148C"
                     android:layout_marginStart="16dp"
+                    android:layout_weight="1"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:layout_weight="1"/>
+                    android:text="Könyv címe"
+                    android:textColor="#4A148C"
+                    android:textSize="16sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -79,10 +81,10 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="6dp"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#F3E5F5">
+            android:backgroundTint="#F3E5F5"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -91,18 +93,20 @@
                 android:padding="12dp">
 
                 <TextView
-                    android:text="Fejezetek"
-                    android:textSize="16sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
 
-                    android:textStyle="bold"
+                    android:paddingBottom="8dp"
+                    android:text="Fejezetek"
                     android:textColor="#6A1B9A"
-                    android:paddingBottom="8dp" android:layout_height="wrap_content" android:layout_width="wrap_content"/>
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/chapters_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"/>
+                    android:nestedScrollingEnabled="false" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -110,10 +114,10 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="6dp"
             android:layout_marginBottom="16dp"
-            android:backgroundTint="#E1BEE7">
+            android:backgroundTint="#E1BEE7"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="6dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -122,19 +126,19 @@
                 android:padding="12dp">
 
                 <TextView
-                    android:text="Egyedi szobák"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="#6A1B9A"
-                    android:paddingBottom="8dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"/>
+                    android:paddingBottom="8dp"
+                    android:text="Egyedi szobák"
+                    android:textColor="#6A1B9A"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/customs_recycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:nestedScrollingEnabled="false"/>
+                    android:nestedScrollingEnabled="false" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -143,35 +147,36 @@
             android:id="@+id/club_public_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
             android:text="Publikus"
-            android:textSize="14sp"
             android:textColor="#6A1B9A"
-            android:paddingBottom="16dp"/>
+            android:textSize="14sp" />
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_navigation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/background_nav"
-            app:itemIconTint="@color/white"
-            app:itemTextColor="@color/white"
-            app:labelVisibilityMode="labeled"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_nav_menu" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="-28dp"
-            android:contentDescription="Új"
-            android:src="@drawable/ic_add_emoji"
-            app:backgroundTint="#3c0c3e"
-            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:tint="@android:color/white" />
     </LinearLayout>
-</ScrollView>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="-28dp"
+        android:contentDescription="Új"
+        android:src="@drawable/ic_add_emoji"
+        app:backgroundTint="#3c0c3e"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@android:color/white" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="414dp"
+        android:layout_height="156dp"
+        android:background="@drawable/background_nav"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+</androidx.constraintlayout.widget.ConstraintLayout>

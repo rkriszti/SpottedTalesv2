@@ -1,16 +1,25 @@
 package com.example.stv2.adapters;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.stv2.ClubsActivity;
+import com.example.stv2.HomeActivity;
 import com.example.stv2.R;
+import com.example.stv2.RegistActivity;
 import com.example.stv2.model.Club;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +27,13 @@ import java.util.List;
 public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder> {
 
     private List<Club> aktualis_clubs = new ArrayList<>();
+
+    private ClubsActivity.OnClubClickListener listener;
+
+    public ClubAdapter(ClubsActivity.OnClubClickListener l) {
+        listener = l;
+    }
+
 
     //frissítés
     public void setClubs(List<Club> list) {
@@ -37,12 +53,15 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         return new ClubViewHolder(v);
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public void onBindViewHolder(@NonNull ClubViewHolder holder, int position) {
         Club c = aktualis_clubs.get(position);
         holder.name.setText(c.getName());
-        holder.admin.setText("Admin: " + c.getAdmin());
         holder.pic.setImageResource(R.drawable.background2);
+        holder.members.setText(String.valueOf(c.getMembers().size()));
+        holder.button.setOnClickListener(v -> listener.onClubClick(c));
+
     }
 
     @Override
@@ -51,15 +70,17 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
     }
 
     static class ClubViewHolder extends RecyclerView.ViewHolder {
-        TextView name, members, admin;
+        TextView name, members;
         ImageView pic;
+        Button button;
 
         ClubViewHolder(View v) {
             super(v);
             name = v.findViewById(R.id.menu_clubname);
             members = v.findViewById(R.id.menu_clubtags); // tagok TextView
             pic = v.findViewById(R.id.menu_clubpic);      // club kép
-            // admin = v.findViewById(R.id.tvClubAdmin);  // ha van admin mező
+            button = v.findViewById(R.id.clubs_button);
+
         }
     }
 
