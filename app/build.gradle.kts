@@ -38,7 +38,8 @@ dependencies {
     implementation(libs.appcompat)
     implementation ("com.google.firebase:firebase-firestore")
     implementation ("com.google.firebase:firebase-auth") // ha auth-ot is használsz
-
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
     implementation ("com.google.firebase:firebase-storage:21.3.0")
     implementation ("com.google.firebase:firebase-storage")
     implementation(libs.material)

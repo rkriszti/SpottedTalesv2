@@ -32,7 +32,7 @@ public class SearchActivity extends MenuActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-
+/*
         setupBottomMenu(R.id.nav_search);
 
         recyclerView = findViewById(R.id.recyclerSearch);
@@ -64,9 +64,9 @@ public class SearchActivity extends MenuActivity {
 
         // ide majd jöhet Firestore-ból a feltöltés
         // loadBooks();
-        // loadClubs();
+        // loadClubs();*/
     }
-
+/*
     private void filter(String text) {
         text = text.toLowerCase();
 
@@ -88,4 +88,6 @@ public class SearchActivity extends MenuActivity {
             bookAdapter.setBooks(filtered);
         }
     }
+
+ */
 }

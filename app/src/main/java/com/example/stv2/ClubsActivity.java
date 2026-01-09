@@ -43,6 +43,7 @@ public class ClubsActivity extends MenuActivity{
         public void onClubClick(Club club) {
             Intent i = new Intent(ClubsActivity.this, ClubPageActivity.class);
             i.putExtra("clubId", club.getId()); //nem firestore id
+            Log.d("clubsid", club.getId() );
             startActivity(i);
         }
     };
