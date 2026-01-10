@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F3F7">
@@ -42,6 +43,16 @@
                     android:contentDescription="Edit club name"
                     android:visibility="gone"
                     android:layout_marginStart="8dp"/>
+
+                <ImageView
+                    android:id="@+id/clubsettingon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_setting"
+                    android:contentDescription="Edit club on"
+                    android:visibility="gone"
+                    android:layout_marginStart="8dp"/>
+
             </LinearLayout>
 
             <!-- ADMIN + STATUS -->
@@ -214,18 +225,6 @@
     </ScrollView>
 
     <!-- FAB -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="Add"
-        android:src="@drawable/ic_add_emoji"
-        app:backgroundTint="#3c0c3e"
-        app:tint="@android:color/white"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="12dp"
-        android:layout_marginEnd="16dp"/>
 
     <!-- MENÜSÁV -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -235,6 +234,17 @@
         android:background="@drawable/background_nav"
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        tools:layout_editor_absoluteX="0dp">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="Add"
+            android:src="@drawable/ic_add_emoji"
+            app:backgroundTint="#3c0c3e"
+            app:tint="@android:color/white" />
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 </androidx.constraintlayout.widget.ConstraintLayout>

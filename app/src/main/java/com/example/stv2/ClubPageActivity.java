@@ -27,11 +27,12 @@ import java.util.Map;
 public class ClubPageActivity extends MenuActivity {
 
     private TextView clubName, clubBookTitle;
-    private ImageView clubBookCover, clubAdminPic, clubStatusIcon;
+    private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton;
     private ImageView changeClubName, changeBook, changeChapter, changeUniqueChapter;
     private RecyclerView chaptersRecycler, customsRecycler;
     private LinearLayout chaptersHeader, customsHeader;
     private String userEmail;
+    Boolean settingIsOn = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +46,8 @@ public class ClubPageActivity extends MenuActivity {
         String clubId = getIntent().getStringExtra("clubId");
         if (clubId == null) { finish(); return; }
 
+
+         Settingbutton = findViewById(R.id.clubsettingon);
         // --- Views ---
         clubName = findViewById(R.id.club_name);
         clubBookTitle = findViewById(R.id.club_book_title);
@@ -124,13 +127,39 @@ public class ClubPageActivity extends MenuActivity {
                     setupRecycler(chaptersRecycler, club.getChapters());
                     setupRecycler(customsRecycler, club.getCustoms());
 
+
                     // Admin gombok láthatóság
                     String adminEmail = club.getAdmin();
                     boolean isAdmin = userEmail != null && userEmail.equals(adminEmail);
-                    changeClubName.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
-                    changeBook.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
-                    changeChapter.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
-                    changeUniqueChapter.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+
+                    if(isAdmin){
+                        Settingbutton.setVisibility(View.VISIBLE);
+
+                        Settingbutton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if (!settingIsOn){
+                                    //be kell kapcsolni
+                                    changeClubName.setVisibility(View.VISIBLE);
+                                    changeBook.setVisibility(View.VISIBLE);
+                                    changeChapter.setVisibility(View.VISIBLE);
+                                    changeUniqueChapter.setVisibility(View.VISIBLE);
+
+                                    settingIsOn = true;
+                                } else {
+                                    changeClubName.setVisibility(View.GONE);
+                                    changeBook.setVisibility(View.GONE);
+                                    changeChapter.setVisibility(View.GONE);
+                                    changeUniqueChapter.setVisibility(View.GONE);
+
+                                    settingIsOn = false;
+                                }
+                            }
+                        });
+                    }
+
+
+
 
                 }).addOnFailureListener(e -> {
                     Log.e("ClubPage", "Hiba a club betöltésénél", e);
