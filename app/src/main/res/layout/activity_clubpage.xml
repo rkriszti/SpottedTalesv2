@@ -6,11 +6,9 @@
     android:layout_height="match_parent"
     android:background="#F5F3F7">
 
-    <!-- GÖRGETÉS -->
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation">
 
@@ -20,14 +18,31 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- CLUB NÉV -->
-            <TextView
-                android:id="@+id/club_name"
+            <!-- CLUB NÉV + szerkesztés ikon -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="#6A1B9A"
-                android:textSize="26sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/club_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#6A1B9A"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/club_name_edit"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_edit"
+                    android:contentDescription="Edit club name"
+                    android:visibility="gone"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
 
             <!-- ADMIN + STATUS -->
             <LinearLayout
@@ -52,7 +67,6 @@
                     android:layout_height="24dp"
                     android:src="@drawable/ic_lock_open" />
             </LinearLayout>
-
 
             <!-- KÖNYV -->
             <androidx.cardview.widget.CardView
@@ -84,10 +98,19 @@
                         android:layout_weight="1"
                         android:textColor="#4A148C"
                         android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/book_club_edit"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_edit"
+                        android:contentDescription="Edit club name"
+                        android:visibility="gone"
+                        android:layout_marginStart="8dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- FEJEZETEK -->
+            <!-- FEJEZETEK + szerkesztő ikon -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -102,18 +125,38 @@
                     android:orientation="vertical"
                     android:padding="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/chapters_title_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Fejezetek"
-                        android:textColor="#6A1B9A"
-                        android:textStyle="bold"
-                        android:textSize="16sp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:id="@+id/chapters_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Fejezetek"
+                            android:textColor="#6A1B9A"
+                            android:textStyle="bold"
+                            android:textSize="16sp" />
+
+                        <ImageView
+                            android:id="@+id/chapters_edit"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_edit"
+                            android:contentDescription="Edit chapters"
+                            android:visibility="gone"
+                            android:layout_marginStart="8dp"/>
+                    </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/chapters_recycler"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:nestedScrollingEnabled="false" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -133,33 +176,49 @@
                     android:orientation="vertical"
                     android:padding="12dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/customs_title_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Egyedi szobák"
-                        android:textColor="#6A1B9A"
-                        android:textStyle="bold"
-                        android:textSize="16sp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Egyedi szobák"
+                            android:textColor="#6A1B9A"
+                            android:textStyle="bold"
+                            android:textSize="16sp" />
+
+                        <ImageView
+                            android:id="@+id/unique_chapters_edit"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginStart="8dp"
+                            android:contentDescription="Edit chapters"
+                            android:src="@drawable/ic_edit"
+                            android:visibility="gone" />
+                    </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/customs_recycler"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:nestedScrollingEnabled="false" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-
-
-
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 
     <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="Add"
         android:src="@drawable/ic_add_emoji"
         app:backgroundTint="#3c0c3e"
         app:tint="@android:color/white"
@@ -178,5 +237,4 @@
         app:itemTextColor="@color/white"
         app:menu="@menu/bottom_nav_menu"
         app:layout_constraintBottom_toBottomOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
