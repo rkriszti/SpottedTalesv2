@@ -33,6 +33,18 @@
                     android:layout_weight="1"
                     android:textColor="#6A1B9A"
                     android:textSize="26sp"
+                    android:visibility="visible"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/club_name_edittext"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="text"
+                    android:textColor="#6A1B9A"
+                    android:textSize="26sp"
+                    android:visibility="gone"
                     android:textStyle="bold" />
 
                 <ImageView

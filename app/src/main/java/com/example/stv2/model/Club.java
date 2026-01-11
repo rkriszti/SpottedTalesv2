@@ -96,6 +96,8 @@ public class Club {
         this.id = id;
     }
 
+
+
     //bonyolultabb setter
     /// chapters módosítás
     //chapter törlés

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import com.example.stv2.model.Book;
 import com.example.stv2.model.Club;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -27,6 +29,8 @@ import java.util.Map;
 public class ClubPageActivity extends MenuActivity {
 
     private TextView clubName, clubBookTitle;
+    private EditText clubNameEdit;
+
     private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton;
     private ImageView changeClubName, changeBook, changeChapter, changeUniqueChapter;
     private RecyclerView chaptersRecycler, customsRecycler;
@@ -48,6 +52,8 @@ public class ClubPageActivity extends MenuActivity {
 
 
          Settingbutton = findViewById(R.id.clubsettingon);
+
+        clubNameEdit = findViewById(R.id.club_name_edittext);
         // --- Views ---
         clubName = findViewById(R.id.club_name);
         clubBookTitle = findViewById(R.id.club_book_title);
@@ -128,7 +134,7 @@ public class ClubPageActivity extends MenuActivity {
                     setupRecycler(customsRecycler, club.getCustoms());
 
 
-                    // Admin gombok láthatóság
+                    //ADMIN----------------------------------------------------------------------
                     String adminEmail = club.getAdmin();
                     boolean isAdmin = userEmail != null && userEmail.equals(adminEmail);
 
@@ -140,18 +146,52 @@ public class ClubPageActivity extends MenuActivity {
                             public void onClick(View v) {
                                 if (!settingIsOn){
                                     //be kell kapcsolni
+                                    //kell?
                                     changeClubName.setVisibility(View.VISIBLE);
                                     changeBook.setVisibility(View.VISIBLE);
                                     changeChapter.setVisibility(View.VISIBLE);
                                     changeUniqueChapter.setVisibility(View.VISIBLE);
 
+                                    //név edittext megjelent
+                                    clubName.setVisibility(View.GONE);
+                                    clubNameEdit.setVisibility(View.VISIBLE);
+                                    //érték beállítása
+                                    clubNameEdit.setText(clubName.getText().toString());
+
+                                    //mentés gomb lesz
+                                    Settingbutton.setImageResource(R.drawable.ic_save);
                                     settingIsOn = true;
                                 } else {
+                                    //MENTENEK
+                                    if(!clubName.getText().toString().equals(clubNameEdit.getText().toString())){
+                                        FirebaseFirestore database = FirebaseFirestore.getInstance();
+                                        DocumentReference doksi = database.collection("club").document();
+                                        //ITT KÉNE ELMENTENI AZ ÚJ NEVET
+
+                                        // FONTOS: Itt a firebaseId-t használjuk a pontos dokumentum eléréséhez!
+                                        database.collection("club").document(club.getId())
+                                                .update("name", clubNameEdit.getText().toString())
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Log.d("ClubPage", "Név sikeresen frissítve!");
+                                                    clubName.setText(clubNameEdit.getText().toString());
+                                                    club.setName(clubNameEdit.getText().toString()); // A helyi objektumot is frissítjük
+                                                })
+                                                .addOnFailureListener(e -> Log.e("ClubPage", "Mentési hiba", e));
+                                    }
+
+                                    //név edittext megjelent
+                                    clubName.setVisibility(View.VISIBLE);
+                                    clubNameEdit.setVisibility(View.GONE);
+
+
+                                    //kell?
                                     changeClubName.setVisibility(View.GONE);
                                     changeBook.setVisibility(View.GONE);
                                     changeChapter.setVisibility(View.GONE);
                                     changeUniqueChapter.setVisibility(View.GONE);
 
+                                    //újra setting gomb lesz
+                                    Settingbutton.setImageResource(R.drawable.ic_setting);
                                     settingIsOn = false;
                                 }
                             }

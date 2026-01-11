@@ -194,32 +194,39 @@ public class NewBookActivity extends MenuActivity {
                             Log.d("CATTT", "Dokumentum létrehozva ID: " + docRef.getId());
                             Toast.makeText(NewBookActivity.this, "Klub sikeresen feltöltve!", Toast.LENGTH_SHORT).show();
 
-                           /* //connection kollekció (gombon belül!)
-                            FirebaseDatabase.getInstance()
-                                    .getReference("connections")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid()) //userid
-                                    .child("clubs")
-                                    .child(firestoreClubId)
-                                    .setValue(true);*/
-
-                            DatabaseReference clubRef = FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
-                                    .getReference("connections")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .child("clubs")
-                                    .child(firestoreClubId);
-
-                            clubRef.setValue(true)
+                            // CSAK az "id" mezőt írjuk felül az adatbázisban
+                            docRef.update("id", firestoreClubId)
                                     .addOnSuccessListener(aVoid -> {
-                                        Log.d("CONNECTION", "Klub connection létrehozva");
-                                        // csak itt indítsd az intentet
-                                        Intent intent = new Intent(NewBookActivity.this, HomeActivity.class);
-                                        startActivity(intent);
-                                        finish();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Log.e("CONNECTION", "Hiba a klub connection létrehozásakor", e);
-                                        Toast.makeText(NewBookActivity.this, "Connection hiba: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                        // Itt már szinkronban van a két ID
+                                        currentClub.setId(firestoreClubId);
+                                        Log.d("Firebase", "Az ID mező felülírva: " + firestoreClubId);
+
+
+
+                                        DatabaseReference clubRef = FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
+                                                .getReference("connections")
+                                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                                .child("clubs")
+                                                .child(firestoreClubId);
+
+                                        clubRef.setValue(true)
+                                                .addOnSuccessListener(Void -> {
+
+
+
+                                                    Log.d("CONNECTION", "Klub connection létrehozva");
+                                                    // csak itt indítsd az intentet
+                                                    Intent intent = new Intent(NewBookActivity.this, HomeActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Log.e("CONNECTION", "Hiba a klub connection létrehozásakor", e);
+                                                    Toast.makeText(NewBookActivity.this, "Connection hiba: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                                });
+                                        // Mehetünk tovább a Realtime DB-hez...
                                     });
+
                         })
                         .addOnFailureListener(e -> {
                             Log.e("CATTT", e.getMessage(), e);
@@ -318,7 +325,7 @@ public class NewBookActivity extends MenuActivity {
             int id = item.getItemId();
             if (id == R.id.nav_home) startActivity(new Intent(this, HomeActivity.class));
             else if (id == R.id.nav_search) startActivity(new Intent(this, SearchActivity.class));
-            else if (id == R.id.nav_clubs) startActivity(new Intent(this, ClubPageActivity.class));
+            else if (id == R.id.nav_clubs) startActivity(new Intent(this, ClubsActivity.class));
             else if (id == R.id.nav_profile) startActivity(new Intent(this, ProfileActivity.class));
             else Toast.makeText(this, "OpenAct hiba", Toast.LENGTH_SHORT).show();
             return true;
