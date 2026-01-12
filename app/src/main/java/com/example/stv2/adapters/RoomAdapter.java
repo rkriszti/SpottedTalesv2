@@ -6,6 +6,8 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,11 +27,14 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
     private List<String> titles;
     private Map<String, List<String>> data;
     private OnItemClickListener listener;
+    private Boolean isAdmin, isSettingon;
 
-    public RoomAdapter(List<String> titles, Map<String, List<String>> data, OnItemClickListener listener) {
+    public RoomAdapter(List<String> titles, Map<String, List<String>> data, OnItemClickListener listener, Boolean admin, Boolean setting) {
         this.titles = titles;
         this.data = data;
         this.listener = listener;
+        this.isAdmin = admin;
+        this.isSettingon = setting;
     }
 
     @NonNull
@@ -85,12 +90,16 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
     static class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout container;
         TextView titleText;
+        EditText titleEdit;
+        ImageView delete;
         LinearLayout contentLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             container = itemView.findViewById(R.id.container);
             titleText = itemView.findViewById(R.id.titleText);
+            titleEdit = itemView.findViewById(R.id.titleText_edittext);
+            delete = itemView.findViewById(R.id.chapter_delete);
             contentLayout = itemView.findViewById(R.id.contentLayout);
         }
     }

@@ -37,6 +37,7 @@ public class ClubPageActivity extends MenuActivity {
     private LinearLayout chaptersHeader, customsHeader;
     private String userEmail;
     Boolean settingIsOn = false;
+    private boolean isAdmin;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,14 +130,17 @@ public class ClubPageActivity extends MenuActivity {
                         clubBookTitle.setText("nincs még könyv");
                     }
 
+
+                    String adminEmail = club.getAdmin();
+                    isAdmin = userEmail != null && userEmail.equals(adminEmail);
+
                     // RecyclerView-ok
-                    setupRecycler(chaptersRecycler, club.getChapters());
+                    setupRecycler(chaptersRecycler, club.getChapters()); //ide már kell admin
                     setupRecycler(customsRecycler, club.getCustoms());
 
 
                     //ADMIN----------------------------------------------------------------------
-                    String adminEmail = club.getAdmin();
-                    boolean isAdmin = userEmail != null && userEmail.equals(adminEmail);
+
 
                     if(isAdmin){
                         Settingbutton.setVisibility(View.VISIBLE);
@@ -211,9 +215,9 @@ public class ClubPageActivity extends MenuActivity {
         List<String> titles = new ArrayList<>(data.keySet());
         RecyclerView.Adapter adapter = new RoomAdapter(titles, data, title -> {
             Intent i = new Intent(ClubPageActivity.this, ChatActivity.class);
-            i.putExtra("roomTitle", title);
+            i.putExtra("roomTitle", title); ///TODOO
             startActivity(i);
-        });
+        }, isAdmin, settingIsOn);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
