@@ -48,6 +48,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String title = titles.get(position);
+
         holder.titleText.setText(title);
 
         // Alapból elrejtve a chatszobák
@@ -59,20 +60,32 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
         // Click toggle: mutatja/elrejti a chatszobákat
         holder.container.setOnClickListener(v -> {
             if (holder.contentLayout.getVisibility() == View.GONE) {
+
                 holder.contentLayout.removeAllViews();
                 List<String> items = data.get(title);
+
                 if (items != null) {
                     for (String item : items) {
                         TextView tv = new TextView(context);
                         tv.setText(item);
                         tv.setTextColor(Color.BLACK);
                         tv.setPadding(32, 16, 32, 16);
+
+                        //chatszobába ugrás
                         tv.setOnClickListener(view -> {
                             Intent intent = new Intent(context, ChatActivity.class);
                             intent.putExtra("roomTitle", item);
                             context.startActivity(intent);
                         });
+
+                        //törlés
+                        ImageView delete = new ImageView(context);
+                        delete.setImageResource(R.drawable.ic_delete);
+
+                        /// setonclick todoo
+
                         holder.contentLayout.addView(tv);
+                        holder.contentLayout.addView(delete);
                     }
                 }
                 holder.contentLayout.setVisibility(View.VISIBLE);
@@ -88,7 +101,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout container;
+        LinearLayout container;//ebben van az egész
         TextView titleText;
         EditText titleEdit;
         ImageView delete;
@@ -97,10 +110,12 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             container = itemView.findViewById(R.id.container);
+
             titleText = itemView.findViewById(R.id.titleText);
+            contentLayout = itemView.findViewById(R.id.contentLayout); //?
+
+            //admin + setting
             titleEdit = itemView.findViewById(R.id.titleText_edittext);
-            delete = itemView.findViewById(R.id.chapter_delete);
-            contentLayout = itemView.findViewById(R.id.contentLayout);
         }
     }
 }

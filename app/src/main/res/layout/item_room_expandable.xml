@@ -9,6 +9,7 @@
     android:padding="8dp"
     android:background="?android:attr/selectableItemBackground">
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="72dp">
@@ -30,19 +31,8 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.523"/>
+            app:layout_constraintVertical_bias="0.523" />
 
-        <ImageView
-            android:id="@+id/chapter_delete"
-            android:layout_width="58dp"
-            android:layout_height="34dp"
-            android:background="@drawable/ic_delete"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.914"
-            app:layout_constraintStart_toEndOf="@+id/titleText"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/titleText"
@@ -62,8 +52,6 @@
             app:layout_constraintVertical_bias="0.523" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
     <LinearLayout
         android:id="@+id/contentLayout"
