@@ -32,7 +32,7 @@ public class ClubPageActivity extends MenuActivity {
     private EditText clubNameEdit, chaptersEdit;
 
     private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton;
-    private ImageView changeClubName, changeBook, changeChapter, changeUniqueChapter;
+    private ImageView changeClubName, changeBook, changeUniqueChapter;
     private RecyclerView chaptersRecycler, customsRecycler;
     private LinearLayout chaptersHeader, customsHeader;
     private String userEmail;
@@ -69,7 +69,6 @@ public class ClubPageActivity extends MenuActivity {
 
         changeClubName = findViewById(R.id.club_name_edit);
         changeBook = findViewById(R.id.book_club_edit);
-        changeChapter = findViewById(R.id.chapters_edit);
         changeUniqueChapter = findViewById(R.id.unique_chapters_edit);
 
         chaptersHeader = findViewById(R.id.chapters_title_parent);
@@ -155,7 +154,7 @@ public class ClubPageActivity extends MenuActivity {
                                     //kell?
                                     changeClubName.setVisibility(View.VISIBLE);
                                     changeBook.setVisibility(View.VISIBLE);
-                                    changeChapter.setVisibility(View.VISIBLE);
+
                                     changeUniqueChapter.setVisibility(View.VISIBLE);
                                     chaptersEdit.setVisibility(View.VISIBLE);
 
@@ -185,7 +184,24 @@ public class ClubPageActivity extends MenuActivity {
                                                 })
                                                 .addOnFailureListener(e -> Log.e("ClubPage", "Mentési hiba", e));
                                     }
-                                    if(!chaptersEdit.getText().to)
+
+
+                                    if(getEditTextNumber(chaptersEdit) > 0 &&
+                                            getEditTextNumber(chaptersEdit)!= club.getChaptersSize()){
+                                    club.setChapters(getEditTextNumber(chaptersEdit));
+
+                                        // mentés Firestore-ba
+                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                        db.collection("club").document(club.getId())
+                                                .update("chapters", club.getChapters())
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Log.d("ClubPage", "Fejezetek száma sikeresen frissítve Firestore-ban!");
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Log.e("ClubPage", "Hiba a fejezetek mentésénél", e);
+                                                });
+
+                                    }
 
 
 
@@ -193,12 +209,12 @@ public class ClubPageActivity extends MenuActivity {
                                     //név edittext megjelent
                                     clubName.setVisibility(View.VISIBLE);
                                     clubNameEdit.setVisibility(View.GONE);
-
+                                    chaptersEdit.setVisibility(View.GONE);
 
                                     //kell?
                                     changeClubName.setVisibility(View.GONE);
                                     changeBook.setVisibility(View.GONE);
-                                    changeChapter.setVisibility(View.GONE);
+
                                     changeUniqueChapter.setVisibility(View.GONE);
 
                                     //újra setting gomb lesz
@@ -228,4 +244,20 @@ public class ClubPageActivity extends MenuActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
+
+    public int getEditTextNumber(EditText editText) {
+        if (editText == null) return 0; // vagy -1, ha hibát akarsz jelezni
+
+        String text = editText.getText().toString().trim();
+
+        if (text.isEmpty()) return 0; // üres mező → 0
+
+        try {
+            return Integer.parseInt(text); // konvertálás int-re
+        } catch (NumberFormatException e) {
+            return 0; // ha nem szám → 0
+        }
+    }
+
+
 }

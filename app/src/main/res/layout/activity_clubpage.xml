@@ -170,21 +170,14 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Hány fejezet van?"
+                            android:hint="Hány fejezet legyen?"
+                            android:textColorHint="#B0B46DC9"
                             android:textColor="#6A1B9A"
                             android:inputType="number"
                             android:visibility="gone"
                             android:textStyle="bold"
                             android:textSize="16sp" />
 
-                        <ImageView
-                            android:id="@+id/chapters_edit"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:src="@drawable/ic_edit"
-                            android:contentDescription="Edit chapters"
-                            android:visibility="gone"
-                            android:layout_marginStart="8dp"/>
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
