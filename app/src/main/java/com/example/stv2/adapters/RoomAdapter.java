@@ -55,14 +55,14 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
         String title = titles.get(position);
         holder.titleText.setText(title);
 
-        // --- 1. FŐCÍM TÖRLÉSE (Ezt a cikluson KÍVÜLRE tedd) ---
+
         if (isAdmin && isSettingon && isUniqueChapters) {
             holder.deleteChapter.setVisibility(View.VISIBLE);
 
             holder.deleteChapter.setOnClickListener(v -> {
-                data.remove(title); // Törlés a Map-ből
-                titles.remove(position); // Törlés a listából
-                notifyItemRemoved(position); // Az egész kártya eltűnik
+                data.remove(title);
+                titles.remove(position);
+                notifyItemRemoved(position);
                 notifyItemRangeChanged(position, titles.size());
             });
         } else {
@@ -74,7 +74,6 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
         holder.contentLayout.setVisibility(View.GONE);
         Context context = holder.itemView.getContext();
 
-        // Kattintásra lenyíló rész
         holder.container.setOnClickListener(v -> {
             if (holder.contentLayout.getVisibility() == View.GONE) {
                 holder.contentLayout.removeAllViews();
@@ -82,7 +81,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
 
                 if (items != null) {
                     for (String item : items) {
-                        // Itt hozzuk létre a rowLayout-ot a belső elemeknek
+
                         LinearLayout rowLayout = new LinearLayout(context);
                         rowLayout.setOrientation(LinearLayout.HORIZONTAL);
                         rowLayout.setPadding(32, 16, 32, 16);
@@ -101,15 +100,13 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
                             params.setMargins(16, 0, 0, 0);
                             deleteIcon.setLayoutParams(params);
 
-                            // --- 2. BELSŐ ELEM TÖRLÉSE (Ez a cikluson BELÜL van) ---
+
                             deleteIcon.setOnClickListener(d -> {
-                                // Csak szólunk az Activity-nek, hogy törölje az adatot a Firestore-ból
                                 if (deletelistener != null) {
-                                    // Itt a 'title' a szoba neve, az 'item' pedig a konkrét elem neve
                                     deletelistener.onDeleteClick(title);
                                 }
 
-                                // Helyi vizuális frissítés (hogy ne kelljen várni a hálózatra)
+                                //frissítés lokál
                                 List<String> currentItems = data.get(title);
                                 if (currentItems != null) {
                                     currentItems.remove(item);

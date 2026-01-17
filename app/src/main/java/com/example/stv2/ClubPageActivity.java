@@ -14,13 +14,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.stv2.adapters.ClubAdapter;
 import com.example.stv2.adapters.RoomAdapter;
 import com.example.stv2.model.Book;
 import com.example.stv2.model.Club;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -28,18 +26,23 @@ import java.util.List;
 import java.util.Map;
 
 public class ClubPageActivity extends MenuActivity {
+    //globálisan kell
     private Club club;
+    private String userEmail;
+
+    //xml részek
     private TextView clubName, clubBookTitle;
     private EditText clubNameEdit, chaptersEdit,addcustomEdit ;
-
     private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton;
-    private ImageView  changeBook;
+
+    //elhelyezés
     private RecyclerView chaptersRecycler, customsRecycler;
     private LinearLayout chaptersHeader, customsHeader;
-    private String userEmail;
-    Boolean settingIsOn = false;
-    private boolean isAdmin;
 
+    private Boolean settingIsOn = false;
+    private Boolean isAdmin;
+
+    //saját listener
     public interface OnDeleteCustomClickListener {
         void onDeleteClick(String custom);
     }
@@ -64,12 +67,13 @@ public class ClubPageActivity extends MenuActivity {
             }
         }
     };
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clubpage);
         setupBottomMenu(R.id.nav_clubs);
-
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userEmail = user != null ? user.getEmail() : null;
@@ -77,33 +81,38 @@ public class ClubPageActivity extends MenuActivity {
         String clubId = getIntent().getStringExtra("clubId");
         if (clubId == null) { finish(); return; }
 
+        //button
+        Settingbutton = findViewById(R.id.clubsettingon);
 
-         Settingbutton = findViewById(R.id.clubsettingon);
-
+        //edittext
         clubNameEdit = findViewById(R.id.club_name_edittext);
+        /// könyvcím ---> search oldal kéne
+        /// könyvboritó
+        /// adnimpic ---> profiloldal kéne
+        /// statusicon módosítás?
         chaptersEdit = findViewById(R.id.chapters_edittext);
         addcustomEdit = findViewById(R.id.addcustom_edittext);
-        // --- Views ---
-        clubName = findViewById(R.id.club_name);
+
+        //elemek
+        clubName = findViewById(R.id.club_name); //cím
         clubBookTitle = findViewById(R.id.club_book_title);
         clubBookCover = findViewById(R.id.club_book_cover);
         clubAdminPic = findViewById(R.id.club_admin_pic);
         clubStatusIcon = findViewById(R.id.club_status_icon);
 
+        //lecsukáskor ő jeleníti meg a fejezetek
         chaptersRecycler = findViewById(R.id.chapters_recycler);
         customsRecycler = findViewById(R.id.customs_recycler);
 
-        changeBook = findViewById(R.id.book_club_edit);
-
-
-
+        //erre nyomva csukódik le a recycler
         chaptersHeader = findViewById(R.id.chapters_title_parent);
         customsHeader = findViewById(R.id.customs_title_parent);
 
-        // Toggle a fejezetekhez
+        //csak ha rányomunk, alapvetően rejtett
         chaptersRecycler.setVisibility(View.GONE);
         customsRecycler.setVisibility(View.GONE);
 
+        //recycler megjelenítés
         chaptersHeader.setOnClickListener(v -> {
             if (chaptersRecycler.getVisibility() == View.GONE) {
                 chaptersRecycler.setVisibility(View.VISIBLE);
@@ -168,7 +177,6 @@ public class ClubPageActivity extends MenuActivity {
 
                     //ADMIN----------------------------------------------------------------------
 
-
                     if(isAdmin){
                         Settingbutton.setVisibility(View.VISIBLE);
 
@@ -177,16 +185,15 @@ public class ClubPageActivity extends MenuActivity {
                             public void onClick(View v) {
                                 if (!settingIsOn){
                                     //be kell kapcsolni
-                                    //kell?
 
-                                    changeBook.setVisibility(View.VISIBLE);
+                                    //fejezetek módosítása
                                     addcustomEdit.setVisibility(View.VISIBLE);
-
                                     chaptersEdit.setVisibility(View.VISIBLE);
 
                                     //név edittext megjelent
                                     clubName.setVisibility(View.GONE);
                                     clubNameEdit.setVisibility(View.VISIBLE);
+
                                     //érték beállítása
                                     clubNameEdit.setText(clubName.getText().toString());
 
@@ -194,34 +201,33 @@ public class ClubPageActivity extends MenuActivity {
                                     Settingbutton.setImageResource(R.drawable.ic_save);
                                     settingIsOn = true;
 
+                                    //egyből frissítés
                                     setupRecycler(chaptersRecycler, club.getChapters());
                                     setupRecycleruniq(customsRecycler, club.getCustoms());
+
                                 } else {
                                     //MENTENEK
+
+                                    //klub cím változás mentése
                                     if(!clubName.getText().toString().equals(clubNameEdit.getText().toString())){
                                         FirebaseFirestore database = FirebaseFirestore.getInstance();
-                                        DocumentReference doksi = database.collection("club").document();
-                                        //ITT KÉNE ELMENTENI AZ ÚJ NEVET
 
-                                        // FONTOS: Itt a firebaseId-t használjuk a pontos dokumentum eléréséhez!
                                         database.collection("club").document(club.getId())
                                                 .update("name", clubNameEdit.getText().toString())
                                                 .addOnSuccessListener(aVoid -> {
                                                     Log.d("ClubPage", "Név sikeresen frissítve!");
                                                     clubName.setText(clubNameEdit.getText().toString());
-                                                    club.setName(clubNameEdit.getText().toString()); // A helyi objektumot is frissítjük
+                                                    club.setName(clubNameEdit.getText().toString());
                                                 })
                                                 .addOnFailureListener(e -> Log.e("ClubPage", "Mentési hiba", e));
                                     }
 
-
+                                    //hány fejezet legyen
                                     if(getEditTextNumber(chaptersEdit) > 0 &&
                                             getEditTextNumber(chaptersEdit)!= club.getChaptersSize()){
                                     club.setChapters(getEditTextNumber(chaptersEdit));
 
-
-
-                                        // mentés Firestore-ba
+                                        //hány fejezet
                                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                                         db.collection("club").document(club.getId())
                                                 .update("chapters", club.getChapters())
@@ -233,10 +239,12 @@ public class ClubPageActivity extends MenuActivity {
                                                 });
 
                                     }
+
+                                    //custom fejezet hozzáadás
                                     if(!addcustomEdit.getText().toString().isEmpty()){
                                         club.setCustom(addcustomEdit.getText().toString());
 
-                                        // mentés Firestore-ba
+
                                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                                         db.collection("club").document(club.getId())
                                                 .update("customs", club.getCustoms())
@@ -250,14 +258,11 @@ public class ClubPageActivity extends MenuActivity {
 
 
                                     //customtörlés
-
                                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                                     db.collection("club").document(club.getId())
                                             .update("customs", club.getCustoms()) // A módosított Map mentése
                                             .addOnSuccessListener(aVoid -> Log.d("ClubPage", "Egyedi szobák sikeresen frissítve!"))
                                             .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a mentésnél", e));
-
-
 
 
                                     //név edittext megjelent
@@ -266,14 +271,11 @@ public class ClubPageActivity extends MenuActivity {
                                     chaptersEdit.setVisibility(View.GONE);
                                     addcustomEdit.setVisibility(View.GONE);
 
-                                    //kell?
-
-                                    changeBook.setVisibility(View.GONE);
-
                                     //újra setting gomb lesz
                                     Settingbutton.setImageResource(R.drawable.ic_setting);
                                     settingIsOn = false;
 
+                                    //frissítés
                                     setupRecycler(chaptersRecycler, club.getChapters());
                                     setupRecycleruniq(customsRecycler, club.getCustoms());
                         }
@@ -314,16 +316,16 @@ public class ClubPageActivity extends MenuActivity {
     }
 
     public int getEditTextNumber(EditText editText) {
-        if (editText == null) return 0; // vagy -1, ha hibát akarsz jelezni
+        if (editText == null) return 0;
 
         String text = editText.getText().toString().trim();
 
-        if (text.isEmpty()) return 0; // üres mező → 0
+        if (text.isEmpty()) return 0;
 
         try {
-            return Integer.parseInt(text); // konvertálás int-re
+            return Integer.parseInt(text);
         } catch (NumberFormatException e) {
-            return 0; // ha nem szám → 0
+            return 0;
         }
     }
 

@@ -122,18 +122,9 @@
                         android:textColor="#4A148C"
                         android:textSize="16sp" />
 
-                    <ImageView
-                        android:id="@+id/book_club_edit"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_edit"
-                        android:contentDescription="Edit club name"
-                        android:visibility="gone"
-                        android:layout_marginStart="8dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- FEJEZETEK + szerkesztő ikon -->
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
