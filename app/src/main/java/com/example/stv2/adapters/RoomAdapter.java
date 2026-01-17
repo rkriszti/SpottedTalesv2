@@ -22,19 +22,21 @@ import java.util.Map;
 
 public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
 
-    public interface OnItemClickListener { void onClick(String title); }
-
     private List<String> titles;
     private Map<String, List<String>> data;
     private OnItemClickListener listener;
-    private Boolean isAdmin, isSettingon;
+    private Boolean isAdmin, isSettingon, isUniqueChapters;
 
-    public RoomAdapter(List<String> titles, Map<String, List<String>> data, OnItemClickListener listener, Boolean admin, Boolean setting) {
+    public interface OnItemClickListener { void onClick(String title); }
+
+    public RoomAdapter(List<String> titles, Map<String, List<String>> data, OnItemClickListener listener,
+                       Boolean admin, Boolean setting, Boolean isUniqueChapters) {
         this.titles = titles;
         this.data = data;
         this.listener = listener;
         this.isAdmin = admin;
         this.isSettingon = setting;
+        this.isUniqueChapters = isUniqueChapters;
     }
 
     @NonNull
@@ -48,49 +50,53 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String title = titles.get(position);
-
         holder.titleText.setText(title);
 
-        // Alapból elrejtve a chatszobák
+        // Főcím törlés gombja (a szoba neve mellett)
+        if (isAdmin && isSettingon && isUniqueChapters) {
+            holder.deleteChapter.setVisibility(View.VISIBLE);
+        } else {
+            holder.deleteChapter.setVisibility(View.GONE);
+        }
+
         holder.contentLayout.removeAllViews();
         holder.contentLayout.setVisibility(View.GONE);
-
         Context context = holder.itemView.getContext();
 
-        // Click toggle: mutatja/elrejti a chatszobákat
         holder.container.setOnClickListener(v -> {
             if (holder.contentLayout.getVisibility() == View.GONE) {
-
                 holder.contentLayout.removeAllViews();
                 List<String> items = data.get(title);
 
                 if (items != null) {
                     for (String item : items) {
+                        LinearLayout rowLayout = new LinearLayout(context);
+                        rowLayout.setOrientation(LinearLayout.HORIZONTAL);
+                        rowLayout.setPadding(32, 16, 32, 16);
+
                         TextView tv = new TextView(context);
                         tv.setText(item);
                         tv.setTextColor(Color.BLACK);
-                        tv.setPadding(32, 16, 32, 16);
+                        tv.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+                        rowLayout.addView(tv);
 
-                        //chatszobába ugrás
-                        tv.setOnClickListener(view -> {
-                            Intent intent = new Intent(context, ChatActivity.class);
-                            intent.putExtra("roomTitle", item);
-                            context.startActivity(intent);
-                        });
+                        // DINAMIKUS TÖRLÉS IKON LÉTREHOZÁSA
+                        if (isAdmin && isSettingon && isUniqueChapters) {
+                            ImageView deleteIcon = new ImageView(context);
+                            deleteIcon.setImageResource(R.drawable.ic_delete); // Győződj meg róla, hogy ez a fájl létezik!
 
-                        //törlés
-                        ImageView delete = new ImageView(context);
-                        delete.setImageResource(R.drawable.ic_delete);
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(64, 64);
+                            params.setMargins(16, 0, 0, 0);
+                            deleteIcon.setLayoutParams(params);
 
-                        LinearLayout.LayoutParams params =
-                                new LinearLayout.LayoutParams(64, 64); // px, teszthez jó
-                        params.setMargins(16, 16, 16, 16);
-                        delete.setLayoutParams(params);
+                            deleteIcon.setOnClickListener(d -> {
+                                rowLayout.setVisibility(View.GONE);
+                                // Itt hívd meg a Firestore törlést, ha szükséges
+                            });
+                            rowLayout.addView(deleteIcon);
+                        }
 
-                        /// setonclick todoo
-
-                        holder.contentLayout.addView(tv);
-                        holder.contentLayout.addView(delete);
+                        holder.contentLayout.addView(rowLayout);
                     }
                 }
                 holder.contentLayout.setVisibility(View.VISIBLE);
@@ -99,28 +105,25 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
             }
         });
     }
-
     @Override
     public int getItemCount() {
         return titles.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout container;//ebben van az egész
+        LinearLayout container;
         TextView titleText;
         EditText titleEdit;
-        ImageView delete;
+        ImageView deleteChapter;
         LinearLayout contentLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             container = itemView.findViewById(R.id.container);
-
             titleText = itemView.findViewById(R.id.titleText);
-            contentLayout = itemView.findViewById(R.id.contentLayout); //?
-
-            //admin + setting
+            contentLayout = itemView.findViewById(R.id.contentLayout);
             titleEdit = itemView.findViewById(R.id.titleText_edittext);
+            deleteChapter = itemView.findViewById(R.id.expand_deletebutton);
         }
     }
 }

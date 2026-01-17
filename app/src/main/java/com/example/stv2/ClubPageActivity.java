@@ -71,6 +71,7 @@ public class ClubPageActivity extends MenuActivity {
         changeBook = findViewById(R.id.book_club_edit);
         changeUniqueChapter = findViewById(R.id.unique_chapters_edit);
 
+
         chaptersHeader = findViewById(R.id.chapters_title_parent);
         customsHeader = findViewById(R.id.customs_title_parent);
 
@@ -137,7 +138,7 @@ public class ClubPageActivity extends MenuActivity {
 
                     // RecyclerView-ok
                     setupRecycler(chaptersRecycler, club.getChapters()); //ide már kell admin
-                    setupRecycler(customsRecycler, club.getCustoms());
+                    setupRecycleruniq(customsRecycler, club.getCustoms());
 
 
                     //ADMIN----------------------------------------------------------------------
@@ -167,6 +168,9 @@ public class ClubPageActivity extends MenuActivity {
                                     //mentés gomb lesz
                                     Settingbutton.setImageResource(R.drawable.ic_save);
                                     settingIsOn = true;
+
+                                    setupRecycler(chaptersRecycler, club.getChapters());
+                                    setupRecycleruniq(customsRecycler, club.getCustoms());
                                 } else {
                                     //MENTENEK
                                     if(!clubName.getText().toString().equals(clubNameEdit.getText().toString())){
@@ -220,8 +224,11 @@ public class ClubPageActivity extends MenuActivity {
                                     //újra setting gomb lesz
                                     Settingbutton.setImageResource(R.drawable.ic_setting);
                                     settingIsOn = false;
-                                }
-                            }
+
+                                    setupRecycler(chaptersRecycler, club.getChapters());
+                                    setupRecycleruniq(customsRecycler, club.getCustoms());
+                        }
+                    }
                         });
                     }
 
@@ -240,7 +247,18 @@ public class ClubPageActivity extends MenuActivity {
             Intent i = new Intent(ClubPageActivity.this, ChatActivity.class);
             i.putExtra("roomTitle", title); ///TODOO
             startActivity(i);
-        }, isAdmin, settingIsOn);
+        }, isAdmin, settingIsOn, false);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
+    }
+
+    private void setupRecycleruniq(RecyclerView recyclerView, Map<String, List<String>> data) {
+        List<String> titles = new ArrayList<>(data.keySet());
+        RecyclerView.Adapter adapter = new RoomAdapter(titles, data, title -> {
+            Intent i = new Intent(ClubPageActivity.this, ChatActivity.class);
+            i.putExtra("roomTitle", title); ///TODOO
+            startActivity(i);
+        }, isAdmin, settingIsOn, true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
