@@ -82,6 +82,11 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
                         ImageView delete = new ImageView(context);
                         delete.setImageResource(R.drawable.ic_delete);
 
+                        LinearLayout.LayoutParams params =
+                                new LinearLayout.LayoutParams(64, 64); // px, teszthez jó
+                        params.setMargins(16, 16, 16, 16);
+                        delete.setLayoutParams(params);
+
                         /// setonclick todoo
 
                         holder.contentLayout.addView(tv);

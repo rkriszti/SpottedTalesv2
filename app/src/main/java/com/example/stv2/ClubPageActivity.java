@@ -29,7 +29,7 @@ import java.util.Map;
 public class ClubPageActivity extends MenuActivity {
 
     private TextView clubName, clubBookTitle;
-    private EditText clubNameEdit;
+    private EditText clubNameEdit, chaptersEdit;
 
     private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton;
     private ImageView changeClubName, changeBook, changeChapter, changeUniqueChapter;
@@ -55,6 +55,8 @@ public class ClubPageActivity extends MenuActivity {
          Settingbutton = findViewById(R.id.clubsettingon);
 
         clubNameEdit = findViewById(R.id.club_name_edittext);
+        chaptersEdit = findViewById(R.id.chapters_edittext);
+
         // --- Views ---
         clubName = findViewById(R.id.club_name);
         clubBookTitle = findViewById(R.id.club_book_title);
@@ -155,6 +157,7 @@ public class ClubPageActivity extends MenuActivity {
                                     changeBook.setVisibility(View.VISIBLE);
                                     changeChapter.setVisibility(View.VISIBLE);
                                     changeUniqueChapter.setVisibility(View.VISIBLE);
+                                    chaptersEdit.setVisibility(View.VISIBLE);
 
                                     //név edittext megjelent
                                     clubName.setVisibility(View.GONE);
@@ -182,6 +185,10 @@ public class ClubPageActivity extends MenuActivity {
                                                 })
                                                 .addOnFailureListener(e -> Log.e("ClubPage", "Mentési hiba", e));
                                     }
+                                    if(!chaptersEdit.getText().to)
+
+
+
 
                                     //név edittext megjelent
                                     clubName.setVisibility(View.VISIBLE);

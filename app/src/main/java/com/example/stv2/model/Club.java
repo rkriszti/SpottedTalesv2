@@ -15,7 +15,7 @@ public class Club {
     private Map<String, List<String>> chapters;
     private Map<String, List<String>> customs;
     private Boolean ispublic;
-    private List<String> members;
+    private List<String> members; //email
 
     public Club() {}
 
@@ -31,6 +31,11 @@ public class Club {
 
         this.chapters = new HashMap<>();
         this.customs = new HashMap<>();
+
+        if(chapterdbb<1){
+            chapterdbb = 1;
+        }
+
        //chapters ------------------------------------------------------------
         String seged = ". fejezet";
         //ch = 3, akkor 1,2,3
@@ -97,10 +102,71 @@ public class Club {
     }
 
 
+    public boolean setChapters(int number) {
+        String seged = ". fejezet";
+        if(number > 0){
 
-    //bonyolultabb setter
-    /// chapters módosítás
-    //chapter törlés
+            if (chapters == null) {
+                chapters = new HashMap<>();
+            }
 
-    /// members módosítás, hozzáad/elvesz
+            if(number >= getChaptersSize()){
+              //n = 5, get = 2
+                // 3 4 5
+
+                //ch = 3, akkor 1,2,3
+                for (int i = getChaptersSize()+1; i <= number; i++) {
+                    String szam = Integer.toString(i);
+                    this.chapters.put(szam + seged , new ArrayList<>());
+                }
+                return true;
+            } else {
+                //n = 2, get = 5
+                //töröl 5,4,3
+
+                for (int i = getChaptersSize(); i > number; i--) {
+                    String szam = Integer.toString(i);
+                    chapters.remove(szam + seged);
+                }
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+
+    public int getChaptersSize(){
+        if (chapters == null) {
+            return 0;
+        }
+        return chapters.size();
+    }
+
+    public boolean addMember(String email){
+        if (members == null) members = new ArrayList<>();
+        if(email != null && !email.isEmpty() && !members.contains(email)  ){
+            members.add(email);
+            return true ;
+        }
+        return false;
+
+    }
+
+    public boolean deleteMember(String email){
+        if (members == null) members = new ArrayList<>();
+        if (email == null) return false;
+        if(!email.isEmpty() && members.contains(email)){
+            members.remove(email);
+            return true ;
+        }
+        return false;
+    }
+
+    public int getMemberSize(){
+        if (members == null) members = new ArrayList<>();
+        return members.size();
+    }
+
+
 }
