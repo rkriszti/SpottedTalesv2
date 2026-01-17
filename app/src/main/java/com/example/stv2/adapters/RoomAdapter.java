@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stv2.ChatActivity;
+import com.example.stv2.ClubPageActivity;
 import com.example.stv2.R;
 
 import java.util.List;
@@ -26,17 +27,19 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
     private Map<String, List<String>> data;
     private OnItemClickListener listener;
     private Boolean isAdmin, isSettingon, isUniqueChapters;
+    private  ClubPageActivity.OnDeleteCustomClickListener deletelistener;
 
     public interface OnItemClickListener { void onClick(String title); }
 
     public RoomAdapter(List<String> titles, Map<String, List<String>> data, OnItemClickListener listener,
-                       Boolean admin, Boolean setting, Boolean isUniqueChapters) {
+                       Boolean admin, Boolean setting, Boolean isUniqueChapters, ClubPageActivity.OnDeleteCustomClickListener listenerr) {
         this.titles = titles;
         this.data = data;
         this.listener = listener;
         this.isAdmin = admin;
         this.isSettingon = setting;
         this.isUniqueChapters = isUniqueChapters;
+        this.deletelistener = listenerr;
     }
 
     @NonNull
@@ -52,17 +55,26 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
         String title = titles.get(position);
         holder.titleText.setText(title);
 
-        // Főcím törlés gombja (a szoba neve mellett)
+        // --- 1. FŐCÍM TÖRLÉSE (Ezt a cikluson KÍVÜLRE tedd) ---
         if (isAdmin && isSettingon && isUniqueChapters) {
             holder.deleteChapter.setVisibility(View.VISIBLE);
+
+            holder.deleteChapter.setOnClickListener(v -> {
+                data.remove(title); // Törlés a Map-ből
+                titles.remove(position); // Törlés a listából
+                notifyItemRemoved(position); // Az egész kártya eltűnik
+                notifyItemRangeChanged(position, titles.size());
+            });
         } else {
             holder.deleteChapter.setVisibility(View.GONE);
         }
 
+        // Alaphelyzetbe állítás
         holder.contentLayout.removeAllViews();
         holder.contentLayout.setVisibility(View.GONE);
         Context context = holder.itemView.getContext();
 
+        // Kattintásra lenyíló rész
         holder.container.setOnClickListener(v -> {
             if (holder.contentLayout.getVisibility() == View.GONE) {
                 holder.contentLayout.removeAllViews();
@@ -70,6 +82,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
 
                 if (items != null) {
                     for (String item : items) {
+                        // Itt hozzuk létre a rowLayout-ot a belső elemeknek
                         LinearLayout rowLayout = new LinearLayout(context);
                         rowLayout.setOrientation(LinearLayout.HORIZONTAL);
                         rowLayout.setPadding(32, 16, 32, 16);
@@ -80,22 +93,37 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
                         tv.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
                         rowLayout.addView(tv);
 
-                        // DINAMIKUS TÖRLÉS IKON LÉTREHOZÁSA
                         if (isAdmin && isSettingon && isUniqueChapters) {
                             ImageView deleteIcon = new ImageView(context);
-                            deleteIcon.setImageResource(R.drawable.ic_delete); // Győződj meg róla, hogy ez a fájl létezik!
+                            deleteIcon.setImageResource(R.drawable.ic_delete);
 
                             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(64, 64);
                             params.setMargins(16, 0, 0, 0);
                             deleteIcon.setLayoutParams(params);
 
+                            // --- 2. BELSŐ ELEM TÖRLÉSE (Ez a cikluson BELÜL van) ---
                             deleteIcon.setOnClickListener(d -> {
-                                rowLayout.setVisibility(View.GONE);
-                                // Itt hívd meg a Firestore törlést, ha szükséges
+                                // Csak szólunk az Activity-nek, hogy törölje az adatot a Firestore-ból
+                                if (deletelistener != null) {
+                                    // Itt a 'title' a szoba neve, az 'item' pedig a konkrét elem neve
+                                    deletelistener.onDeleteClick(title);
+                                }
+
+                                // Helyi vizuális frissítés (hogy ne kelljen várni a hálózatra)
+                                List<String> currentItems = data.get(title);
+                                if (currentItems != null) {
+                                    currentItems.remove(item);
+                                    if (currentItems.isEmpty()) {
+                                        data.remove(title);
+                                        titles.remove(title);
+                                        notifyDataSetChanged();
+                                    } else {
+                                        rowLayout.setVisibility(View.GONE);
+                                    }
+                                }
                             });
                             rowLayout.addView(deleteIcon);
                         }
-
                         holder.contentLayout.addView(rowLayout);
                     }
                 }
@@ -105,6 +133,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
             }
         });
     }
+
     @Override
     public int getItemCount() {
         return titles.size();

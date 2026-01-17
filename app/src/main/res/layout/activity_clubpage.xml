@@ -212,21 +212,25 @@
                         android:gravity="center_vertical">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="167dp"
                             android:layout_height="wrap_content"
                             android:text="Egyedi szobák"
                             android:textColor="#6A1B9A"
-                            android:textStyle="bold"
-                            android:textSize="16sp" />
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
 
-                        <ImageView
-                            android:id="@+id/unique_chapters_edit"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginStart="8dp"
-                            android:contentDescription="Edit chapters"
-                            android:src="@drawable/ic_edit"
-                            android:visibility="gone" />
+                        <EditText
+                            android:id="@+id/addcustom_edittext"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="Hozzáad"
+                            android:textColor="#6A1B9A"
+                            android:textColorHint="#BD60CF"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:visibility="gone"/>
+
+
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView

@@ -164,9 +164,24 @@ public class Club {
     }
 
     public int getMemberSize(){
-        if (members == null) members = new ArrayList<>();
+        if (members == null) members = new ArrayList<String>();
         return members.size();
     }
+
+    public boolean deleteCustom( String name){
+        if(customs!= null && name != null && customs.containsKey(name)){
+            customs.remove(name);
+            return true;
+        }
+        return false;
+    }
+    public boolean setCustom(String name){
+        if(name!=null && !customs.containsKey(name)){
+            customs.put(name, new ArrayList<String>());
+            return true;
+        } return false;
+    }
+
 
 
 }

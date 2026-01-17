@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.stv2.adapters.ClubAdapter;
 import com.example.stv2.adapters.RoomAdapter;
 import com.example.stv2.model.Book;
 import com.example.stv2.model.Club;
@@ -27,23 +28,48 @@ import java.util.List;
 import java.util.Map;
 
 public class ClubPageActivity extends MenuActivity {
-
+    private Club club;
     private TextView clubName, clubBookTitle;
-    private EditText clubNameEdit, chaptersEdit;
+    private EditText clubNameEdit, chaptersEdit,addcustomEdit ;
 
     private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton;
-    private ImageView changeClubName, changeBook, changeUniqueChapter;
+    private ImageView  changeBook;
     private RecyclerView chaptersRecycler, customsRecycler;
     private LinearLayout chaptersHeader, customsHeader;
     private String userEmail;
     Boolean settingIsOn = false;
     private boolean isAdmin;
 
+    public interface OnDeleteCustomClickListener {
+        void onDeleteClick(String custom);
+    }
+
+    private OnDeleteCustomClickListener deleteListener = new OnDeleteCustomClickListener() {
+        @Override
+        public void onDeleteClick(String customKey) {
+            if (club != null && club.getCustoms() != null) {
+
+                club.deleteCustom(customKey);
+
+                FirebaseFirestore.getInstance()
+                        .collection("club")
+                        .document(club.getId())
+                        .update("customs", club.getCustoms())
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d("ClubPage", "Sikeres törlés: " + customKey);
+
+                            setupRecycleruniq(customsRecycler, club.getCustoms());
+                        })
+                        .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a törlésnél", e));
+            }
+        }
+    };
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clubpage);
         setupBottomMenu(R.id.nav_clubs);
+
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userEmail = user != null ? user.getEmail() : null;
@@ -56,7 +82,7 @@ public class ClubPageActivity extends MenuActivity {
 
         clubNameEdit = findViewById(R.id.club_name_edittext);
         chaptersEdit = findViewById(R.id.chapters_edittext);
-
+        addcustomEdit = findViewById(R.id.addcustom_edittext);
         // --- Views ---
         clubName = findViewById(R.id.club_name);
         clubBookTitle = findViewById(R.id.club_book_title);
@@ -67,9 +93,8 @@ public class ClubPageActivity extends MenuActivity {
         chaptersRecycler = findViewById(R.id.chapters_recycler);
         customsRecycler = findViewById(R.id.customs_recycler);
 
-        changeClubName = findViewById(R.id.club_name_edit);
         changeBook = findViewById(R.id.book_club_edit);
-        changeUniqueChapter = findViewById(R.id.unique_chapters_edit);
+
 
 
         chaptersHeader = findViewById(R.id.chapters_title_parent);
@@ -106,7 +131,7 @@ public class ClubPageActivity extends MenuActivity {
                 .addOnSuccessListener(querySnapshot -> {
                     if (querySnapshot.isEmpty()) { finish(); return; }
 
-                    Club club = querySnapshot.getDocuments().get(0).toObject(Club.class);
+                    club = querySnapshot.getDocuments().get(0).toObject(Club.class);
                     if (club == null) return;
 
                     clubName.setText(club.getName());
@@ -153,10 +178,10 @@ public class ClubPageActivity extends MenuActivity {
                                 if (!settingIsOn){
                                     //be kell kapcsolni
                                     //kell?
-                                    changeClubName.setVisibility(View.VISIBLE);
-                                    changeBook.setVisibility(View.VISIBLE);
 
-                                    changeUniqueChapter.setVisibility(View.VISIBLE);
+                                    changeBook.setVisibility(View.VISIBLE);
+                                    addcustomEdit.setVisibility(View.VISIBLE);
+
                                     chaptersEdit.setVisibility(View.VISIBLE);
 
                                     //név edittext megjelent
@@ -194,6 +219,8 @@ public class ClubPageActivity extends MenuActivity {
                                             getEditTextNumber(chaptersEdit)!= club.getChaptersSize()){
                                     club.setChapters(getEditTextNumber(chaptersEdit));
 
+
+
                                         // mentés Firestore-ba
                                         FirebaseFirestore db = FirebaseFirestore.getInstance();
                                         db.collection("club").document(club.getId())
@@ -206,6 +233,29 @@ public class ClubPageActivity extends MenuActivity {
                                                 });
 
                                     }
+                                    if(!addcustomEdit.getText().toString().isEmpty()){
+                                        club.setCustom(addcustomEdit.getText().toString());
+
+                                        // mentés Firestore-ba
+                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                        db.collection("club").document(club.getId())
+                                                .update("customs", club.getCustoms())
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Log.d("ClubPage", "Custom száma sikeresen frissítve Firestore-ban!");
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Log.e("ClubPage", "Hiba a Custom mentésénél", e);
+                                                });
+                                    }
+
+
+                                    //customtörlés
+
+                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                    db.collection("club").document(club.getId())
+                                            .update("customs", club.getCustoms()) // A módosított Map mentése
+                                            .addOnSuccessListener(aVoid -> Log.d("ClubPage", "Egyedi szobák sikeresen frissítve!"))
+                                            .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a mentésnél", e));
 
 
 
@@ -214,12 +264,11 @@ public class ClubPageActivity extends MenuActivity {
                                     clubName.setVisibility(View.VISIBLE);
                                     clubNameEdit.setVisibility(View.GONE);
                                     chaptersEdit.setVisibility(View.GONE);
+                                    addcustomEdit.setVisibility(View.GONE);
 
                                     //kell?
-                                    changeClubName.setVisibility(View.GONE);
-                                    changeBook.setVisibility(View.GONE);
 
-                                    changeUniqueChapter.setVisibility(View.GONE);
+                                    changeBook.setVisibility(View.GONE);
 
                                     //újra setting gomb lesz
                                     Settingbutton.setImageResource(R.drawable.ic_setting);
@@ -247,18 +296,19 @@ public class ClubPageActivity extends MenuActivity {
             Intent i = new Intent(ClubPageActivity.this, ChatActivity.class);
             i.putExtra("roomTitle", title); ///TODOO
             startActivity(i);
-        }, isAdmin, settingIsOn, false);
+        }, isAdmin, settingIsOn, false, deleteListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
 
     private void setupRecycleruniq(RecyclerView recyclerView, Map<String, List<String>> data) {
         List<String> titles = new ArrayList<>(data.keySet());
+
         RecyclerView.Adapter adapter = new RoomAdapter(titles, data, title -> {
             Intent i = new Intent(ClubPageActivity.this, ChatActivity.class);
             i.putExtra("roomTitle", title); ///TODOO
             startActivity(i);
-        }, isAdmin, settingIsOn, true);
+        }, isAdmin, settingIsOn, true, deleteListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
