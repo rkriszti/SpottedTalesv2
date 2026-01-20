@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -31,9 +32,10 @@ public class ClubPageActivity extends MenuActivity {
     private String userEmail;
 
     //xml részek
-    private TextView clubName, clubBookTitle;
+    private TextView clubName, clubBookTitle, statusText;
     private EditText clubNameEdit, chaptersEdit,addcustomEdit ;
     private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton;
+    private ToggleButton statusChange;
 
     //elhelyezés
     private RecyclerView chaptersRecycler, customsRecycler;
@@ -89,7 +91,8 @@ public class ClubPageActivity extends MenuActivity {
         /// könyvcím ---> search oldal kéne
         /// könyvboritó
         /// adnimpic ---> profiloldal kéne
-        /// statusicon módosítás?
+        statusText = findViewById(R.id.club_status_text);
+        statusChange = findViewById(R.id.club_status_change);
         chaptersEdit = findViewById(R.id.chapters_edittext);
         addcustomEdit = findViewById(R.id.addcustom_edittext);
 
@@ -129,6 +132,7 @@ public class ClubPageActivity extends MenuActivity {
             }
         });
 
+
         loadClub(clubId);
     }
 
@@ -144,6 +148,15 @@ public class ClubPageActivity extends MenuActivity {
                     if (club == null) return;
 
                     clubName.setText(club.getName());
+
+                    //státusz beállítás
+                    if (club.getIspublic()){
+                        statusChange.setBackgroundResource(R.drawable.ic_lock_open);
+                    } else {
+                        statusChange.setBackgroundResource(R.drawable.ic_lock);
+                    }
+
+
 
                     // Admin profilkép
                     String adminPicUri = null; // TODO: lekérni Firestore-ból
@@ -186,6 +199,36 @@ public class ClubPageActivity extends MenuActivity {
                                 if (!settingIsOn){
                                     //be kell kapcsolni
 
+                                    //státusz változás
+                                    statusChange.setOnClickListener(a -> {
+                                        if(club.getIspublic()){
+                                            //public -> privát
+
+                                            //adatbázisban
+                                            club.setIspublic(false);
+                                            //kinézetben
+                                            statusChange.setBackgroundResource(R.drawable.ic_lock);
+                                            clubStatusIcon.setImageResource(R.drawable.ic_lock);
+
+                                        } else {
+                                            //priv -> public
+                                            //adatbázisban
+                                            club.setIspublic(true);
+                                            //kinézetben
+                                            statusChange.setBackgroundResource(R.drawable.ic_lock_open);
+                                            clubStatusIcon.setImageResource(R.drawable.ic_lock_open);
+                                        }
+
+                                        FirebaseFirestore dba = FirebaseFirestore.getInstance();
+                                        dba.collection("club").document(club.getId())
+                                                .update("ispublic", club.getIspublic())
+                                                .addOnSuccessListener(aVoid -> {
+                                                    Log.d("ClubPage", "Státusz sikeresen frissítve!");
+
+                                                })
+                                                .addOnFailureListener(e -> Log.e("ClubPage", "Mentési hiba", e));
+                                    });
+
                                     //fejezetek módosítása
                                     addcustomEdit.setVisibility(View.VISIBLE);
                                     chaptersEdit.setVisibility(View.VISIBLE);
@@ -196,6 +239,12 @@ public class ClubPageActivity extends MenuActivity {
 
                                     //érték beállítása
                                     clubNameEdit.setText(clubName.getText().toString());
+
+                                    //publikusság
+                                    clubStatusIcon.setVisibility(View.GONE);
+                                    statusChange.setVisibility(View.VISIBLE);
+                                    statusText.setVisibility(View.VISIBLE);
+
 
                                     //mentés gomb lesz
                                     Settingbutton.setImageResource(R.drawable.ic_save);
@@ -274,6 +323,11 @@ public class ClubPageActivity extends MenuActivity {
                                     //újra setting gomb lesz
                                     Settingbutton.setImageResource(R.drawable.ic_setting);
                                     settingIsOn = false;
+
+                                    //publikusság
+                                    clubStatusIcon.setVisibility(View.VISIBLE);
+                                    statusChange.setVisibility(View.GONE);
+                                    statusText.setVisibility(View.GONE);
 
                                     //frissítés
                                     setupRecycler(chaptersRecycler, club.getChapters());
