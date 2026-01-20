@@ -9,21 +9,23 @@ import android.widget.Switch;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.stv2.adapters.BookAdapter;
-import com.example.stv2.adapters.ClubAdapter;
+import com.example.stv2.adapters.SearchBookAdapter;
+import com.example.stv2.adapters.SearchClubAdapter;
 import com.example.stv2.model.Book;
 import com.example.stv2.model.Club;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SearchActivity extends MenuActivity {
-    private RecyclerView recyclerView;
+
     private EditText etSearch;
     private Switch switchSearch;
+    private RecyclerView recyclerSearch;
 
-    private BookAdapter bookAdapter;
-    private ClubAdapter clubAdapter;
+    private SearchBookAdapter bookAdapter;
+    private SearchClubAdapter clubAdapter;
 
     private List<Book> allBooks = new ArrayList<>();
     private List<Club> allClubs = new ArrayList<>();
@@ -32,41 +34,62 @@ public class SearchActivity extends MenuActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-/*
         setupBottomMenu(R.id.nav_search);
 
-        recyclerView = findViewById(R.id.recyclerSearch);
         etSearch = findViewById(R.id.etSearch);
         switchSearch = findViewById(R.id.switchSearch);
+        recyclerSearch = findViewById(R.id.recyclerSearch);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerSearch.setLayoutManager(new LinearLayoutManager(this));
 
-        bookAdapter = new BookAdapter();
-        clubAdapter = new ClubAdapter();
+        bookAdapter = new SearchBookAdapter();
+        clubAdapter = new SearchClubAdapter();
 
-        // alapértelmezés: könyvek
-        recyclerView.setAdapter(bookAdapter);
+        recyclerSearch.setAdapter(bookAdapter);
+
+        loadBooks();
+        loadClubs();
 
         switchSearch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            recyclerView.setAdapter(isChecked ? clubAdapter : bookAdapter);
+            if (isChecked) {
+                recyclerSearch.setAdapter(clubAdapter);
+            } else {
+                recyclerSearch.setAdapter(bookAdapter);
+            }
             filter(etSearch.getText().toString());
         });
 
         etSearch.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void afterTextChanged(Editable s) {}
+
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 filter(s.toString());
             }
-
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void afterTextChanged(Editable s) {}
         });
-
-        // ide majd jöhet Firestore-ból a feltöltés
-        // loadBooks();
-        // loadClubs();*/
     }
-/*
+
+    private void loadBooks() {
+        FirebaseFirestore.getInstance()
+                .collection("books")
+                .get()
+                .addOnSuccessListener(qs -> {
+                    allBooks = qs.toObjects(Book.class);
+                    bookAdapter.setBooks(allBooks);
+                });
+    }
+
+    private void loadClubs() {
+        FirebaseFirestore.getInstance()
+                .collection("club")
+                .get()
+                .addOnSuccessListener(qs -> {
+                    allClubs = qs.toObjects(Club.class);
+                    clubAdapter.setClubs(allClubs);
+                });
+    }
+
     private void filter(String text) {
         text = text.toLowerCase();
 
@@ -88,6 +111,4 @@ public class SearchActivity extends MenuActivity {
             bookAdapter.setBooks(filtered);
         }
     }
-
- */
 }
