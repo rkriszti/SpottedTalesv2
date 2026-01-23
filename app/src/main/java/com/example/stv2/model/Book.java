@@ -1,41 +1,87 @@
 package com.example.stv2.model;
 
-import android.net.Uri;
-
-import java.util.UUID;
-
 public class Book {
-    private String id;
+
+    private String id;          // Firestore document ID
     private String title;
     private String author;
-    private String email; //ki készítette
-    private String coverpic; //nem kötelező elem
+    private String email;       // ki hozta létre
+    private String coverpic;    // downloadUrl
+    private boolean isEditing;  // CSAK UI állapot, NEM Firestore adat
 
-    // Üres konstruktor szükséges Firestore-hoz
-    public Book() {}
-
-    public Book(String title, String author, String user){
-        this.title = title;
-        this.author = author;
-        this.email = user;
-        this.id = UUID.randomUUID().toString();
-       /// this.coverpic =  def kép
-    }
-    public Book(String title, String author, String user, String uri){
-        this.title = title;
-        this.author = author;
-        this.email = user;
-        this.coverpic = uri;
+    // Kötelező Firestore-hoz
+    public Book() {
+        this.isEditing = false;
     }
 
-    // Getterek Firestore-hoz
-    public String getTitle() { return title; }
-    public String getId(){ return id; }
-    public String getAuthor() { return author; }
-    public String getEmail() { return email;}
-    public String getCoverpic() { return coverpic;}
+    // Új könyv létrehozásakor (ID-t Firestore adja!)
+    public Book(String title, String author, String email) {
+        this.title = title;
+        this.author = author;
+        this.email = email;
+        this.isEditing = false;
+    }
 
-    /// setterek módosításhoz
-    public void setCoverpic(String u){ this.coverpic = u;}
+    // Új könyv képpel
+    public Book(String title, String author, String email, String coverpic) {
+        this.title = title;
+        this.author = author;
+        this.email = email;
+        this.coverpic = coverpic;
+        this.isEditing = false;
+    }
 
+    // -------- GETTEREK --------
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getCoverpic() {
+        return coverpic;
+    }
+
+    public boolean isEditing() {
+        return isEditing;
+    }
+
+    // -------- SETTEREK --------
+
+    // Firestore betöltés után KÖTELEZŐEN be kell állítani
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setCoverpic(String coverpic) {
+        this.coverpic = coverpic;
+    }
+
+    // UI állapot (RecyclerView miatt!)
+    public void setEditing(boolean editing) {
+        isEditing = editing;
+    }
 }

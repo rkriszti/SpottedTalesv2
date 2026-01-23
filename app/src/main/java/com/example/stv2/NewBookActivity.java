@@ -224,7 +224,7 @@ public class NewBookActivity extends MenuActivity {
                                                     Log.e("CONNECTION", "Hiba a klub connection létrehozásakor", e);
                                                     Toast.makeText(NewBookActivity.this, "Connection hiba: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                                 });
-                                        // Mehetünk tovább a Realtime DB-hez...
+
                                     });
 
                         })
@@ -291,6 +291,14 @@ public class NewBookActivity extends MenuActivity {
                                 .child("books")
                                 .child(firestoreBookId)
                                 .setValue(true);*/
+
+                        // CSAK az "id" mezőt írjuk felül az adatbázisban
+                        docRef.update("id", firestoreBookId)
+                                .addOnSuccessListener(aVoid -> {
+                                    // Itt már szinkronban van a két ID
+                                    currentBook.setId(firestoreBookId);
+                                    Log.d("Firebase", "Az ID mező felülírva: " + firestoreBookId);   });
+
                         Log.d("CONNECTION", "Könyv 1");
                         DatabaseReference bookRef = FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
                                 .getReference("connections")

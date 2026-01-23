@@ -1,10 +1,15 @@
 package com.example.stv2;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +21,11 @@ import com.example.stv2.model.Book;
 import com.example.stv2.model.Club;
 import com.example.stv2.model.User;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -31,14 +41,16 @@ public class SearchActivity extends MenuActivity {
     private SearchUserAdapter userAdapter;
 
     private String username;
-
-    private AppCompatButton buttonBook, buttonClub, buttonUser;
-
-    private boolean optionBook, optionClub, optionUser;
-
     private List<Book> allBooks = new ArrayList<>();
     private List<Club> allClubs = new ArrayList<>();
     private List<User> allUsers = new ArrayList<>();
+    private List<String> adminBooks = new ArrayList<>();
+
+    private AppCompatButton buttonBook, buttonClub, buttonUser;
+    private boolean optionBook, optionClub, optionUser;
+
+    private int selectedPosition = -1; // az éppen szerkesztett könyv pozíciója
+    private ActivityResultLauncher<String> pickImageLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,16 +61,27 @@ public class SearchActivity extends MenuActivity {
         buttonBook = findViewById(R.id.buttonbook);
         buttonClub = findViewById(R.id.buttonclub);
         buttonUser = findViewById(R.id.buttonuser);
-
         etSearch = findViewById(R.id.etSearch);
         recyclerSearch = findViewById(R.id.recyclerSearch);
         recyclerSearch.setLayoutManager(new LinearLayoutManager(this));
 
-        bookAdapter = new SearchBookAdapter();
         clubAdapter = new SearchClubAdapter();
         userAdapter = new SearchUserAdapter();
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // ActivityResultLauncher regisztrálása
+        pickImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.GetContent(),
+                uri -> {
+                    if (uri != null && selectedPosition != -1 && bookAdapter != null) {
+                        bookAdapter.updateBookCover(uri, selectedPosition);
+                        selectedPosition = -1;
+                    }
+                }
+        );
+
+        loadAdminBooks(userId);
 
         FirebaseFirestore.getInstance()
                 .collection("users")
@@ -71,28 +94,18 @@ public class SearchActivity extends MenuActivity {
                     }
                 });
 
-        loadBooks();
         loadClubs();
         loadUsers();
 
-        select(false, false, false); // kezdeti állapot
+        select(false, false, false);
 
-        buttonBook.setOnClickListener(v -> {
-            if (!optionBook) select(true, false, false);
-        });
-
-        buttonClub.setOnClickListener(v -> {
-            if (!optionClub) select(false, true, false);
-        });
-
-        buttonUser.setOnClickListener(v -> {
-            if (!optionUser) select(false, false, true);
-        });
+        buttonBook.setOnClickListener(v -> { if (!optionBook) select(true,false,false); });
+        buttonClub.setOnClickListener(v -> { if (!optionClub) select(false,true,false); });
+        buttonUser.setOnClickListener(v -> { if (!optionUser) select(false,false,true); });
 
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void afterTextChanged(Editable s) {}
-
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 filter(s.toString());
@@ -105,16 +118,13 @@ public class SearchActivity extends MenuActivity {
         optionClub = club;
         optionUser = user;
 
-        buttonBook.setBackgroundResource(
-                book ? R.drawable.background2 : R.drawable.grey_background);
-        buttonClub.setBackgroundResource(
-                club ? R.drawable.background2 : R.drawable.grey_background);
-        buttonUser.setBackgroundResource(
-                user ? R.drawable.background2 : R.drawable.grey_background);
+        buttonBook.setBackgroundResource(book ? R.drawable.background2 : R.drawable.grey_background);
+        buttonClub.setBackgroundResource(club ? R.drawable.background2 : R.drawable.grey_background);
+        buttonUser.setBackgroundResource(user ? R.drawable.background2 : R.drawable.grey_background);
 
-        if (book) recyclerSearch.setAdapter(bookAdapter);
-        if (club) recyclerSearch.setAdapter(clubAdapter);
-        if (user) recyclerSearch.setAdapter(userAdapter);
+        if (book && bookAdapter != null) recyclerSearch.setAdapter(bookAdapter);
+        if (club && clubAdapter != null) recyclerSearch.setAdapter(clubAdapter);
+        if (user && userAdapter != null) recyclerSearch.setAdapter(userAdapter);
 
         filter(etSearch.getText().toString());
     }
@@ -125,7 +135,7 @@ public class SearchActivity extends MenuActivity {
                 .get()
                 .addOnSuccessListener(qs -> {
                     allBooks = qs.toObjects(Book.class);
-                    bookAdapter.setBooks(allBooks);
+                    if (bookAdapter != null) bookAdapter.setBooks(allBooks);
                 });
     }
 
@@ -150,38 +160,58 @@ public class SearchActivity extends MenuActivity {
     }
 
     private void filter(String text) {
-
-
         text = text.toLowerCase();
-
-        if (optionBook) {
+        if (optionBook && bookAdapter != null) {
             List<Book> filtered = new ArrayList<>();
-            for (Book b : allBooks) {
-                if (b.getTitle().toLowerCase().contains(text)) {
-                    filtered.add(b);
-                }
-            }
+            for (Book b : allBooks) if (b.getTitle().toLowerCase().contains(text)) filtered.add(b);
             bookAdapter.setBooks(filtered);
         }
-
         if (optionClub) {
             List<Club> filtered = new ArrayList<>();
-            for (Club c : allClubs) {
-                if (c.getName().toLowerCase().contains(text)) {
-                    filtered.add(c);
-                }
-            }
+            for (Club c : allClubs) if (c.getName().toLowerCase().contains(text)) filtered.add(c);
             clubAdapter.setClubs(filtered);
         }
-
         if (optionUser) {
             List<User> filtered = new ArrayList<>();
-            for (User u : allUsers) {
-                if (u.getUsername().toLowerCase().contains(text)&& username!=null && !u.getUsername().equals(username)) {
-                    filtered.add(u);
-                }
-            }
+            for (User u : allUsers) if (u.getUsername().toLowerCase().contains(text) && username!=null && !u.getUsername().equals(username)) filtered.add(u);
             userAdapter.setUsers(filtered);
         }
     }
+
+    private void loadAdminBooks(String userid) {
+        adminBooks = new ArrayList<>();
+        DatabaseReference ref = FirebaseDatabase.getInstance(
+                        "https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
+                .getReference("connections").child(userid).child("books");
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot child : snapshot.getChildren()) {
+                    String bookId = child.getKey();
+                    adminBooks.add(bookId);
+                }
+
+                // Adapter létrehozása a betöltött adminBooks után
+                bookAdapter = new SearchBookAdapter(adminBooks, pickImageLauncher);
+
+                // Cover click listener beállítása
+                bookAdapter.setOnCoverClickListener(pos -> {
+                    selectedPosition = pos;
+                    pickImageLauncher.launch("image/*");
+                });
+
+                recyclerSearch.setAdapter(bookAdapter);
+                loadBooks();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("CONNECTION", "RTDB hiba", error.toException());
+            }
+        });
+    }
+
+    // az adapter hívásához a kiválasztott pozíció frissítése
+    public void setSelectedPosition(int pos) { selectedPosition = pos; }
 }
