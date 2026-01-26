@@ -29,19 +29,19 @@ import java.util.Map;
 public class ClubPageActivity extends MenuActivity {
     //globálisan kell
     private Club club;
-    private String userEmail;
+    private String userEmail, bookid;
 
     //xml részek
-    private TextView clubName, clubBookTitle, statusText;
+    private TextView clubName, clubBookTitle, statusText, clubBookAuthor;
     private EditText clubNameEdit, chaptersEdit,addcustomEdit ;
-    private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton;
+    private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton, club_book_edit;
     private ToggleButton statusChange;
 
     //elhelyezés
     private RecyclerView chaptersRecycler, customsRecycler;
     private LinearLayout chaptersHeader, customsHeader;
 
-    private Boolean settingIsOn = false;
+    private Boolean settingIsOn = false, choosingHappened = false;
     private Boolean isAdmin;
 
     //saját listener
@@ -79,9 +79,16 @@ public class ClubPageActivity extends MenuActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userEmail = user != null ? user.getEmail() : null;
+        bookid = "";
 
         String clubId = getIntent().getStringExtra("clubId");
         if (clubId == null) { finish(); return; }
+
+        if(!getIntent().getStringExtra("chosenbook").isEmpty() && getIntent().getStringExtra("chosenbook")!=null){
+            //könyv választás történt
+            bookid = getIntent().getStringExtra("chosenbook");
+            choosingHappened = true;
+        }
 
         //button
         Settingbutton = findViewById(R.id.clubsettingon);
@@ -100,8 +107,10 @@ public class ClubPageActivity extends MenuActivity {
         clubName = findViewById(R.id.club_name); //cím
         clubBookTitle = findViewById(R.id.club_book_title);
         clubBookCover = findViewById(R.id.club_book_cover);
+        clubBookAuthor = findViewById(R.id.club_book_author);
         clubAdminPic = findViewById(R.id.club_admin_pic);
         clubStatusIcon = findViewById(R.id.club_status_icon);
+        club_book_edit = findViewById(R.id.club_book_edit);
 
         //lecsukáskor ő jeleníti meg a fejezetek
         chaptersRecycler = findViewById(R.id.chapters_recycler);
@@ -171,13 +180,44 @@ public class ClubPageActivity extends MenuActivity {
 
                     // Book cover + title
                     Book book = club.getBook();
-                    if (book != null && book.getCoverpic() != null) {
+                    if (!choosingHappened && book != null && book.getCoverpic() != null) {
+                        // nem történt változás és van könyve
                         Glide.with(this).load(book.getCoverpic()).centerCrop().into(clubBookCover);
                         clubBookTitle.setText(book.getTitle());
+                        clubBookAuthor.setText(book.getAuthor());
+                    } else if (choosingHappened && bookid != null && !bookid.isEmpty()) {
+                        // könyvválasztás történt → lekérjük a könyvet és frissítjük a UI-t
+                        FirebaseFirestore.getInstance()
+                                .collection("books")
+                                .document(bookid)
+                                .get()
+                                .addOnSuccessListener(doc -> {
+                                    Book b = doc.toObject(Book.class);
+                                    if (b != null) {
+                                        club.setBook(b);
+                                        // UI frissítés
+                                        Glide.with(this).load(b.getCoverpic()).centerCrop().into(clubBookCover);
+                                        clubBookTitle.setText(b.getTitle());
+                                        clubBookAuthor.setText(b.getAuthor());
+
+                                        // Firestore-ban csak a bookId frissítése
+                                        club.setBookId(bookid);
+                                        FirebaseFirestore.getInstance()
+                                                .collection("club")
+                                                .document(club.getId())
+                                                .update("bookId", bookid)
+                                                .addOnSuccessListener(aVoid -> Log.d("ClubPage", "Club könyv frissítve Firestore-ban"))
+                                                .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a club könyv frissítésénél", e));
+                                    }
+                                })
+                                .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a könyv lekérésénél", e));
                     } else {
+                        // nincs választott könyv, nincs változás
                         clubBookCover.setImageResource(R.drawable.background2);
                         clubBookTitle.setText("nincs még könyv");
+                        clubBookAuthor.setText("");
                     }
+
 
 
                     String adminEmail = club.getAdmin();
@@ -245,6 +285,13 @@ public class ClubPageActivity extends MenuActivity {
                                     statusChange.setVisibility(View.VISIBLE);
                                     statusText.setVisibility(View.VISIBLE);
 
+                                    //book picking for club
+                                    club_book_edit.setVisibility(View.VISIBLE);
+                                    club_book_edit.setOnClickListener(k -> {
+                                        Intent i = new Intent(ClubPageActivity.this, SearchActivity.class);
+                                        i.putExtra("choose", "true");
+                                        startActivity(i);
+                                    });
 
                                     //mentés gomb lesz
                                     Settingbutton.setImageResource(R.drawable.ic_save);
@@ -329,6 +376,7 @@ public class ClubPageActivity extends MenuActivity {
                                     statusChange.setVisibility(View.GONE);
                                     statusText.setVisibility(View.GONE);
 
+                                    club_book_edit.setVisibility(View.GONE);
                                     //frissítés
                                     setupRecycler(chaptersRecycler, club.getChapters());
                                     setupRecycleruniq(customsRecycler, club.getCustoms());

@@ -1,5 +1,6 @@
 package com.example.stv2;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -47,10 +48,25 @@ public class SearchActivity extends MenuActivity {
     private List<String> adminBooks = new ArrayList<>();
 
     private AppCompatButton buttonBook, buttonClub, buttonUser;
-    private boolean optionBook, optionClub, optionUser;
+    private boolean optionBook, optionClub, optionUser, chooseForClub;
 
     private int selectedPosition = -1; // az éppen szerkesztett könyv pozíciója
     private ActivityResultLauncher<String> pickImageLauncher;
+
+    //saját listener
+    public interface OnChooseBookListener {
+        void onChoose(String bookid);
+    }
+
+    private OnChooseBookListener listener = new OnChooseBookListener() {
+        @Override
+        public void onChoose(String bookid) {
+            Intent i = new Intent(SearchActivity.this, ClubPageActivity.class);
+            i.putExtra("chosenbook", bookid);
+            startActivity(i);
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +81,22 @@ public class SearchActivity extends MenuActivity {
         recyclerSearch = findViewById(R.id.recyclerSearch);
         recyclerSearch.setLayoutManager(new LinearLayoutManager(this));
 
+        chooseForClub = false;
+        if(getIntent()!=null && getIntent().getStringExtra("choose")!=null &&
+        !getIntent().getStringExtra("choose").isEmpty() && getIntent().getStringExtra("choose").equals("true")){
+            chooseForClub = true;
+        } else {
+            chooseForClub = false;
+        }
+
+
         clubAdapter = new SearchClubAdapter();
         userAdapter = new SearchUserAdapter();
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // ActivityResultLauncher regisztrálása
+        /// kell??
         pickImageLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
                 uri -> {
@@ -193,7 +219,7 @@ public class SearchActivity extends MenuActivity {
                 }
 
                 // Adapter létrehozása a betöltött adminBooks után
-                bookAdapter = new SearchBookAdapter(adminBooks, pickImageLauncher);
+                bookAdapter = new SearchBookAdapter(adminBooks, pickImageLauncher, chooseForClub, listener);
 
                 // Cover click listener beállítása
                 bookAdapter.setOnCoverClickListener(pos -> {

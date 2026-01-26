@@ -7,11 +7,11 @@ public class Book {
     private String author;
     private String email;       // ki hozta létre
     private String coverpic;    // downloadUrl
-    private boolean isEditing;  // CSAK UI állapot, NEM Firestore adat
+    private boolean editing;  // CSAK UI állapot, NEM Firestore adat
 
     // Kötelező Firestore-hoz
     public Book() {
-        this.isEditing = false;
+        this.editing = false;
     }
 
     // Új könyv létrehozásakor (ID-t Firestore adja!)
@@ -19,7 +19,7 @@ public class Book {
         this.title = title;
         this.author = author;
         this.email = email;
-        this.isEditing = false;
+        this.editing = false;
     }
 
     // Új könyv képpel
@@ -28,7 +28,7 @@ public class Book {
         this.author = author;
         this.email = email;
         this.coverpic = coverpic;
-        this.isEditing = false;
+        this.editing = false;
     }
 
     // -------- GETTEREK --------
@@ -54,7 +54,7 @@ public class Book {
     }
 
     public boolean isEditing() {
-        return isEditing;
+        return editing;
     }
 
     // -------- SETTEREK --------
@@ -82,6 +82,6 @@ public class Book {
 
     // UI állapot (RecyclerView miatt!)
     public void setEditing(boolean editing) {
-        isEditing = editing;
+        this.editing = editing;
     }
 }

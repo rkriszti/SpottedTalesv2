@@ -137,14 +137,36 @@
                         android:scaleType="centerCrop"
                         android:src="@drawable/background2" />
 
-                    <TextView
-                        android:id="@+id/club_book_title"
+                    <!-- Szövegek konténerben -->
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
                         android:layout_weight="1"
-                        android:textColor="#4A148C"
-                        android:textSize="16sp" />
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:id="@+id/club_book_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="#4A148C"
+                            android:textSize="16sp"
+                          />
+
+                        <TextView
+                            android:id="@+id/club_book_author"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="#4A148C"
+                            android:textSize="16sp"
+                          />
+                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/club_book_edit"
+                        android:layout_width="53dp"
+                        android:layout_height="49dp"
+                        android:background="@drawable/ic_edit"
+                        android:visibility="gone" />
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

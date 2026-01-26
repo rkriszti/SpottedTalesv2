@@ -1,6 +1,7 @@
 package com.example.stv2.adapters;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +17,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.example.stv2.ClubPageActivity;
 import com.example.stv2.R;
+import com.example.stv2.SearchActivity;
 import com.example.stv2.model.Book;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -34,11 +37,15 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
     private List<String> usersbooks = new ArrayList<>();
     private ActivityResultLauncher<String> pickImageLauncher;
     private OnCoverClickListener coverClickListener;
+    private boolean ischoosing = false;
+    SearchActivity.OnChooseBookListener listener;
 
     public SearchBookAdapter(List<String> usersbooks,
-                             ActivityResultLauncher<String> pickImageLauncher) {
+                             ActivityResultLauncher<String> pickImageLauncher, boolean ischoosing, SearchActivity.OnChooseBookListener list) {
         this.usersbooks = usersbooks;
         this.pickImageLauncher = pickImageLauncher;
+        this.ischoosing = ischoosing;
+        this.listener = list;
     }
 
     public void setBooks(List<Book> list) {
@@ -85,6 +92,11 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
             h.authoredit.setVisibility(View.GONE);
             h.book_save.setVisibility(View.GONE);
             h.book_edit.setVisibility(View.GONE);
+            if(ischoosing){
+                h.book_edit.setVisibility(View.VISIBLE);
+                listener.onChoose(b.getId());
+            }
+
             h.book_delete.setVisibility(View.GONE);
         }
 

@@ -11,6 +11,7 @@ public class Club {
     private String id;
     private String name;
     private String admin;
+    private String bookId;
     private Book book;
     private Map<String, List<String>> chapters;
     private Map<String, List<String>> customs;
@@ -57,6 +58,14 @@ public class Club {
             customs.put("Értékelések", new ArrayList<>()); //legvégére review chat
         }
 
+    }
+
+    public String getBookId() {
+        return bookId;
+    }
+
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
     }
 
     // Getterek Firestore-hoz
