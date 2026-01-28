@@ -82,6 +82,7 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
             h.book_save.setVisibility(View.VISIBLE);
             h.book_edit.setVisibility(View.GONE);
             h.book_delete.setVisibility(View.VISIBLE);
+            h.book_chooseforclub.setVisibility(View.GONE);
 
             h.titleedit.setText(b.getTitle());
             h.authoredit.setText(b.getAuthor());
@@ -92,9 +93,14 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
             h.authoredit.setVisibility(View.GONE);
             h.book_save.setVisibility(View.GONE);
             h.book_edit.setVisibility(View.GONE);
+            Log.d("ChooseBook", "searcadapternél choose:" + ischoosing  );
+            h.book_chooseforclub.setVisibility(View.GONE);
             if(ischoosing){
-                h.book_edit.setVisibility(View.VISIBLE);
-                listener.onChoose(b.getId());
+                Log.d("ChooseBook", "searchadapter megjelenik kiválaszt gombok"  );
+                h.book_chooseforclub.setVisibility(View.VISIBLE);
+                h.book_chooseforclub.setOnClickListener(v -> {
+                    listener.onChoose(b.getId());
+                });
             }
 
             h.book_delete.setVisibility(View.GONE);
@@ -276,7 +282,7 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
     static class VH extends RecyclerView.ViewHolder {
         TextView title, author;
         EditText titleedit, authoredit;
-        ImageView cover, book_edit, book_save, book_delete;
+        ImageView cover, book_edit, book_save, book_delete, book_chooseforclub;
 
         VH(View v) {
             super(v);
@@ -288,6 +294,7 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
             book_edit = v.findViewById(R.id.book_edit);
             book_save = v.findViewById(R.id.book_save);
             book_delete = v.findViewById(R.id.book_delete);
+            book_chooseforclub = v.findViewById(R.id.book_chooseforclub);
         }
     }
 }

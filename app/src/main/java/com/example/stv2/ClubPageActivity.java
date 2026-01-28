@@ -82,10 +82,14 @@ public class ClubPageActivity extends MenuActivity {
         bookid = "";
 
         String clubId = getIntent().getStringExtra("clubId");
+        //ha clubid-t nem kap leáll!
         if (clubId == null) { finish(); return; }
 
-        if(!getIntent().getStringExtra("chosenbook").isEmpty() && getIntent().getStringExtra("chosenbook")!=null){
+        Log.d("ChooseBook", "clubpageben ellenőrzés" );
+        if(getIntent().getStringExtra("chosenbook")!=null
+                && !getIntent().getStringExtra("chosenbook").isEmpty()){
             //könyv választás történt
+            Log.d("ChooseBook", "clubpagenek szóltak hogy kiválasztás történt" );
             bookid = getIntent().getStringExtra("chosenbook");
             choosingHappened = true;
         }
@@ -95,8 +99,6 @@ public class ClubPageActivity extends MenuActivity {
 
         //edittext
         clubNameEdit = findViewById(R.id.club_name_edittext);
-        /// könyvcím ---> search oldal kéne
-        /// könyvboritó
         /// adnimpic ---> profiloldal kéne
         statusText = findViewById(R.id.club_status_text);
         statusChange = findViewById(R.id.club_status_change);
@@ -143,6 +145,9 @@ public class ClubPageActivity extends MenuActivity {
 
 
         loadClub(clubId);
+        if(choosingHappened){
+            updateBook(bookid);
+        }
     }
 
     private void loadClub(String clubId) {
@@ -157,6 +162,30 @@ public class ClubPageActivity extends MenuActivity {
                     if (club == null) return;
 
                     clubName.setText(club.getName());
+
+                    String savedBookId = club.getBookId();
+
+                    if (savedBookId != null && !savedBookId.isEmpty()) {
+                        FirebaseFirestore.getInstance()
+                                .collection("books")
+                                .document(savedBookId)
+                                .get()
+                                .addOnSuccessListener(doc -> {
+                                    Book b = doc.toObject(Book.class);
+                                    if (b != null) {
+                                        club.setBook(b); // 🔥 EZ HIÁNYZOTT
+
+                                        // UI frissítés
+                                        clubBookCover.setImageResource(R.drawable.background2);
+                                        if (b.getCoverpic() != null) {
+                                            Glide.with(this).load(b.getCoverpic()).centerCrop().into(clubBookCover);
+                                        }
+                                        clubBookTitle.setText(b.getTitle());
+                                        clubBookAuthor.setText(b.getAuthor());
+                                    }
+                                })
+                                .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a könyv lekérésénél", e));
+                    }
 
                     //státusz beállítás
                     if (club.getIspublic()){
@@ -179,44 +208,30 @@ public class ClubPageActivity extends MenuActivity {
                     clubStatusIcon.setImageResource(club.getIspublic() ? R.drawable.ic_lock_open : R.drawable.ic_lock);
 
                     // Book cover + title
-                    Book book = club.getBook();
-                    if (!choosingHappened && book != null && book.getCoverpic() != null) {
-                        // nem történt változás és van könyve
-                        Glide.with(this).load(book.getCoverpic()).centerCrop().into(clubBookCover);
-                        clubBookTitle.setText(book.getTitle());
-                        clubBookAuthor.setText(book.getAuthor());
-                    } else if (choosingHappened && bookid != null && !bookid.isEmpty()) {
-                        // könyvválasztás történt → lekérjük a könyvet és frissítjük a UI-t
+                    // Book cover + title
+                    String currentBookId = (bookid != null && !bookid.isEmpty()) ? bookid : club.getBookId();
+                    if(currentBookId != null && !currentBookId.isEmpty()) {
                         FirebaseFirestore.getInstance()
                                 .collection("books")
-                                .document(bookid)
+                                .document(currentBookId)
                                 .get()
                                 .addOnSuccessListener(doc -> {
                                     Book b = doc.toObject(Book.class);
-                                    if (b != null) {
+                                    if(b != null) {
                                         club.setBook(b);
-                                        // UI frissítés
-                                        Glide.with(this).load(b.getCoverpic()).centerCrop().into(clubBookCover);
+                                        clubBookCover.setImageResource(R.drawable.background2);
+                                        if(b.getCoverpic() != null)
+                                            Glide.with(this).load(b.getCoverpic()).centerCrop().into(clubBookCover);
                                         clubBookTitle.setText(b.getTitle());
                                         clubBookAuthor.setText(b.getAuthor());
-
-                                        // Firestore-ban csak a bookId frissítése
-                                        club.setBookId(bookid);
-                                        FirebaseFirestore.getInstance()
-                                                .collection("club")
-                                                .document(club.getId())
-                                                .update("bookId", bookid)
-                                                .addOnSuccessListener(aVoid -> Log.d("ClubPage", "Club könyv frissítve Firestore-ban"))
-                                                .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a club könyv frissítésénél", e));
                                     }
-                                })
-                                .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a könyv lekérésénél", e));
+                                });
                     } else {
-                        // nincs választott könyv, nincs változás
                         clubBookCover.setImageResource(R.drawable.background2);
                         clubBookTitle.setText("nincs még könyv");
                         clubBookAuthor.setText("");
                     }
+
 
 
 
@@ -288,8 +303,10 @@ public class ClubPageActivity extends MenuActivity {
                                     //book picking for club
                                     club_book_edit.setVisibility(View.VISIBLE);
                                     club_book_edit.setOnClickListener(k -> {
+                                        Log.d("ChooseBook", "rányomtak a bookchoose gombra, irány a search" );
                                         Intent i = new Intent(ClubPageActivity.this, SearchActivity.class);
                                         i.putExtra("choose", "true");
+                                        i.putExtra("clubid", club.getId());
                                         startActivity(i);
                                     });
 
@@ -431,5 +448,55 @@ public class ClubPageActivity extends MenuActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
+        // Ellenőrizzük, hogy van-e új bookid
+        String newBookId = getIntent().getStringExtra("chosenbook");
+        if (newBookId != null && !newBookId.equals(bookid) && !newBookId.isEmpty()) {
+            bookid = newBookId;
+            updateBook(bookid);
+        }
+    }
+
+    private void updateBook(String bookId) {
+        Log.d("ClubPage", "update started" );
+        FirebaseFirestore.getInstance()
+                .collection("books")
+                .document(bookId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    Log.d("ClubPage", "könyv lekérése" );
+                    Log.d("ClubPage", "doc.exists(): " + doc.exists());
+                    Log.d("ClubPage", "doc data: " + doc.getData());
+                    Book b = doc.toObject(Book.class);
+                    Log.d("ClubPage", "Book: " + b);
+
+                    if(doc.toObject(Book.class)==null || !doc.exists()){
+                        Log.d("ClubPage", "ilyen doc nincs" );
+                    }
+                    if (doc.exists() && b != null && club != null) {
+                        Log.d("ClubPage", "nem null semmi" );
+                        club.setBook(b);
+                        club.setBookId(bookId);
+
+                        // UI frissítés
+                        clubBookCover.setImageResource(R.drawable.background2);
+                        if(b.getCoverpic()!=null)
+                            Glide.with(this).load(b.getCoverpic()).centerCrop().into(clubBookCover);
+                        clubBookTitle.setText(b.getTitle());
+                        clubBookAuthor.setText(b.getAuthor());
+                        Log.d("ClubPage", "ui frissít" );
+
+                        // Firestore frissítés
+                        FirebaseFirestore.getInstance()
+                                .collection("club")
+                                .document(club.getId())
+                                .update("bookId", bookId)
+                                .addOnSuccessListener(aVoid -> Log.d("ClubPage", "Club könyv frissítve Firestore-ban"))
+                                .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a club könyv frissítésénél", e));
+                    }
+                });
+    }
 }

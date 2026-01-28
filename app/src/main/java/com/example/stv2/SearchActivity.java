@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -41,7 +42,7 @@ public class SearchActivity extends MenuActivity {
     private SearchClubAdapter clubAdapter;
     private SearchUserAdapter userAdapter;
 
-    private String username;
+    private String username, clubidbeforechoosing;
     private List<Book> allBooks = new ArrayList<>();
     private List<Club> allClubs = new ArrayList<>();
     private List<User> allUsers = new ArrayList<>();
@@ -62,7 +63,9 @@ public class SearchActivity extends MenuActivity {
         @Override
         public void onChoose(String bookid) {
             Intent i = new Intent(SearchActivity.this, ClubPageActivity.class);
+            Log.d("ChooseBook", "search megkap bookid:" + bookid );
             i.putExtra("chosenbook", bookid);
+            i.putExtra("clubId", clubidbeforechoosing);
             startActivity(i);
         }
     };
@@ -87,6 +90,14 @@ public class SearchActivity extends MenuActivity {
             chooseForClub = true;
         } else {
             chooseForClub = false;
+        }
+        Log.d("ChooseBook", "search choose:" + chooseForClub );
+
+        clubidbeforechoosing = "";
+        if(getIntent()!=null && getIntent().getStringExtra("clubid")!=null &&
+                !getIntent().getStringExtra("clubid").isEmpty()){
+            clubidbeforechoosing = getIntent().getStringExtra("clubid");
+            Log.d("ChooseBook", "search átjött a clubid:" + clubidbeforechoosing );
         }
 
 
@@ -219,6 +230,7 @@ public class SearchActivity extends MenuActivity {
                 }
 
                 // Adapter létrehozása a betöltött adminBooks után
+                Log.d("ChooseBook", "search choose átadása adapternek"  );
                 bookAdapter = new SearchBookAdapter(adminBooks, pickImageLauncher, chooseForClub, listener);
 
                 // Cover click listener beállítása
