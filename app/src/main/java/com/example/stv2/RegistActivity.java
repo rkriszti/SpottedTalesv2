@@ -115,6 +115,11 @@ public class RegistActivity extends AppCompatActivity {
                                 String uid = fuser.getUid();
                                 User user = new User(username, email);
 
+                                //feltöltés későbbre (3 elem)
+                                for (int i = 0; i < 3; i++) {
+                                    user.getFavorites().add("");
+                                }
+
                                 user.saveToFirestore(uid,
                                         () -> { // onSuccess
                                             Toast.makeText(RegistActivity.this, "Sikeres regisztráció!", Toast.LENGTH_SHORT).show();

@@ -48,7 +48,7 @@
         android:layout_marginBottom="216dp"
         android:background="@drawable/rounded_button"
         android:radius="40dp"
-        android:text="BelépésN"
+        android:text="Belépés"
         android:textColor="@color/white"
         android:textColorHint="@color/white"
         android:textStyle="bold"

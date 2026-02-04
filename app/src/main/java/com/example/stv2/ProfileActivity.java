@@ -1,5 +1,6 @@
 package com.example.stv2;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,10 +21,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.util.List;
+
 public class ProfileActivity extends MenuActivity {
 
-    private String userid;
+    private int which;
+    private String userid, favbookid, bookid;
     private Boolean ownprofile = false;
+    private Boolean favchosen = false;
+    private List<String> favs;
 
     private ImageView profilepic, book1, book2, book3, profile_edit, profile_save;
     private TextView profileusername, book1title, book2title, book3title;
@@ -32,15 +38,6 @@ public class ProfileActivity extends MenuActivity {
     private User user;
 
     private boolean isEditing = false;
-
-    private enum PickTarget {
-        PROFILE,
-        BOOK1,
-        BOOK2,
-        BOOK3
-    }
-
-    private PickTarget currentPickTarget;
 
 
     @Override
@@ -61,13 +58,21 @@ public class ProfileActivity extends MenuActivity {
             ownprofile = true;
         }
 
+        //kedvenc változás
+        if(getIntent()!=null &&
+                getIntent().getIntExtra("whichbook", -1)!=-1){
+            favchosen = true;
+            which = getIntent().getIntExtra("whichbook", -1);
+            bookid = getIntent().getStringExtra("bookid");
+        }
+
         profilepic = findViewById(R.id.profile_pic);
         profileusername = findViewById(R.id.profile_username);
 
         book1 = findViewById(R.id.bookFirst);
         book2 = findViewById(R.id.bookSecond);
         book3 = findViewById(R.id.bookThird);
-        book1title = findViewById(R.id.bookThirdTitle);
+        book1title = findViewById(R.id.bookFirstTitle);
         book2title = findViewById(R.id.bookSecondTitle);
         book3title = findViewById(R.id.bookThirdTitle);
         username_edittext = findViewById(R.id.profile_username_edittext);
@@ -81,6 +86,7 @@ public class ProfileActivity extends MenuActivity {
 
         loadUser();
         setListeners();
+
 
     }
 
@@ -99,25 +105,49 @@ public class ProfileActivity extends MenuActivity {
                     user = doc.toObject(User.class);
                     if (user == null) return;
 
+                   /* while(user.getFavorites().size() < which-1){
+                        Log.d("Profile", "Which túl nagy --");
+                        which--;
+                    }*/
+
                     //adatok betöltése
                     Glide.with(this).load(user.getProfilepicurl()).into(profilepic);
                     profileusername.setText(user.getUsername());
                     username_edittext.setText(user.getUsername());
 
-                    //kedvencek
-                    user.getFavbook(0, book -> {
-                        book1title.setText(book.getTitle());
-                        Glide.with(this).load(book.getCoverpic()).into(book1);
-                    });
-                    user.getFavbook(1, book -> {
-                        book2title.setText(book.getTitle());
-                        Glide.with(this).load(book.getCoverpic()).into(book2);
-                    });
+                    favs = user.getFavorites();
+                    if (favs.isEmpty()) {
+                        favs.add("");
+                    }
+                    while(favs.size() <3){
+                        favs.add("");
+                    }
 
-                    user.getFavbook(2, book -> {
-                        book3title.setText(book.getTitle());
-                        Glide.with(this).load(book.getCoverpic()).into(book3);
-                    });
+                    //kedvencek
+                    if (!favs.get(0).isEmpty()) {
+                        user.getFavbook(0, book -> {
+                            book1title.setText(book.getTitle());
+                            Glide.with(this).load(book.getCoverpic()).into(book1);
+                        });
+                    }
+
+                    if (!favs.get(1).isEmpty()) {
+                        user.getFavbook(1, book -> {
+                            book2title.setText(book.getTitle());
+                            Glide.with(this).load(book.getCoverpic()).into(book2);
+                        });
+                    }
+
+                    if (!favs.get(2).isEmpty()) {
+                        user.getFavbook(2, book -> {
+                            book3title.setText(book.getTitle());
+                            Glide.with(this).load(book.getCoverpic()).into(book3);
+                        });
+                    }
+
+                    if(favchosen){
+                        updateFavorite(which, bookid);
+                    }
 
 
                 });
@@ -166,107 +196,115 @@ public class ProfileActivity extends MenuActivity {
             }
         });
 
-        profilepic.setOnClickListener(p -> {
+        profilepic.setOnClickListener(v -> {
             if (!isEditing) return;
-            currentPickTarget = PickTarget.PROFILE;
-            pickMedia.launch(new PickVisualMediaRequest.Builder()
-                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                    .build());
+
+            pickProfileImage.launch(
+                    new PickVisualMediaRequest.Builder()
+                            .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                            .build()
+            );
         });
 
 
         book1.setOnClickListener(v -> {
-            if (!isEditing) return;
-            currentPickTarget = PickTarget.BOOK1;
-            launchPicker();
+            if(isEditing){
+                Intent i = new Intent(ProfileActivity.this, SearchActivity.class);
+                i.putExtra("favchange", 1);
+                startActivity(i);
+            }
         });
 
         book2.setOnClickListener(v -> {
-            if (!isEditing) return;
-            currentPickTarget = PickTarget.BOOK2;
-            launchPicker();
+            if(isEditing){
+                Intent i = new Intent(ProfileActivity.this, SearchActivity.class);
+                i.putExtra("favchange", 2);
+                startActivity(i);
+            }
         });
 
         book3.setOnClickListener(v -> {
-            if (!isEditing) return;
-            currentPickTarget = PickTarget.BOOK3;
-            launchPicker();
+            if(isEditing){
+                Intent i = new Intent(ProfileActivity.this, SearchActivity.class);
+                i.putExtra("favchange", 3);
+                startActivity(i);
+            }
         });
     }
 
-    private void launchPicker() {
-        pickMedia.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build());
-    }
-
-    private void uploadProfilePic(Uri uri) {
-        Glide.with(this).load(uri).into(profilepic); // azonnali preview
-
-       FirebaseStorage storage = FirebaseStorage.getInstance();
-         StorageReference ref = storage.getReference()
-                .child("profiles/" + userid + ".jpg");
-
-        ref.putFile(uri)
-                .addOnSuccessListener(t ->
-                        ref.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                            user.setProfilepicurl(downloadUri.toString());
-
-                            FirebaseFirestore.getInstance()
-                                    .collection("users")
-                                    .document(userid)
-                                    .update("profilepicurl", downloadUri.toString());
-                        })
-                );
-    }
-
-    private void uploadBookCover(Uri uri, int index) {
-        ImageView targetView = index == 0 ? book1 : index == 1 ? book2 : book3;
-        Glide.with(this).load(uri).into(targetView);
-
-        String bookId = user.getFavorites().get(index);
-
-        FirebaseStorage.getInstance()
-                .getReference()
-                .child("books/" + bookId + ".jpg")
-                .putFile(uri)
-                .addOnSuccessListener(t ->
-                        FirebaseStorage.getInstance()
-                                .getReference("books/" + bookId + ".jpg")
-                                .getDownloadUrl()
-                                .addOnSuccessListener(downloadUri ->
-                                        FirebaseFirestore.getInstance()
-                                                .collection("books")
-                                                .document(bookId)
-                                                .update("coverpic", downloadUri.toString())
-                                )
-                );
-    }
 
 
-    private ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+    private ActivityResultLauncher<PickVisualMediaRequest> pickProfileImage =
             registerForActivityResult(
                     new ActivityResultContracts.PickVisualMedia(),
                     uri -> {
                         if (uri == null) return;
 
-                        switch (currentPickTarget) {
-                            case PROFILE:
-                                uploadProfilePic(uri);
-                                break;
-                            case BOOK1:
-                                uploadBookCover(uri, 0);
-                                break;
-                            case BOOK2:
-                                uploadBookCover(uri, 1);
-                                break;
-                            case BOOK3:
-                                uploadBookCover(uri, 2);
-                                break;
-                        }
+                        // azonnali preview
+                        Glide.with(this).load(uri).into(profilepic);
+
+                        // feltöltés Storage-be
+                        StorageReference imageRef = FirebaseStorage.getInstance()
+                                .getReference()
+                                .child("profiles/" + userid + ".jpg");
+
+                        imageRef.putFile(uri)
+                                .addOnSuccessListener(taskSnapshot ->
+                                        imageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                                            String picurl = downloadUri.toString();
+                                            user.setProfilepicurl(picurl);
+
+                                            // Firestore frissítés
+                                            FirebaseFirestore.getInstance()
+                                                    .collection("users")
+                                                    .document(userid)
+                                                    .update("profilepicurl", picurl);
+                                        })
+                                )
+                                .addOnFailureListener(e ->
+                                        Log.e("FirebaseUpload", "Profilkép feltöltési hiba: " + e.getMessage()));
                     }
             );
 
+    private void updateFavorite(int index, String newBookId) {
+        if(user == null) return;
+
+
+        int idx = index - 1;
+
+        // ha a lista túl rövid, töltsd fel üres stringekkel
+        if (favs.isEmpty()) {
+            favs.add("");
+        }
+        while(favs.size() <3){
+            favs.add("");
+        }
+
+        // most már biztonságos a set
+        favs.set(idx, newBookId);
+
+        // 2. Firestore frissítés
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(userid)
+                .update("favorites", user.getFavorites())
+                .addOnSuccessListener(aVoid -> Log.d("Profile", "Kedvenc frissítve"))
+                .addOnFailureListener(e -> Log.e("Profile", "Hiba a kedvenc mentésénél", e));
+
+        // 3. UI update
+        user.getFavbook(index-1, book -> {
+            if(index == 1) {
+                book1title.setText(book.getTitle());
+                Glide.with(this).load(book.getCoverpic()).into(book1);
+            } else if(index == 2) {
+                book2title.setText(book.getTitle());
+                Glide.with(this).load(book.getCoverpic()).into(book2);
+            } else if(index == 3) {
+                book3title.setText(book.getTitle());
+                Glide.with(this).load(book.getCoverpic()).into(book3);
+            }
+        });
+    }
 
 
 }

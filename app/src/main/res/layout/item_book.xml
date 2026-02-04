@@ -118,5 +118,16 @@
         app:layout_constraintStart_toEndOf="@+id/book_title"
         app:layout_constraintTop_toTopOf="parent"></ImageView>
 
+    <ImageView
+        android:id="@+id/book_favchoose"
+        android:layout_width="48dp"
+        android:layout_height="68dp"
+        android:background="@drawable/ic_choose"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/book_title"
+        app:layout_constraintTop_toTopOf="parent"></ImageView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

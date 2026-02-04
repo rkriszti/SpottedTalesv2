@@ -38,14 +38,16 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
     private ActivityResultLauncher<String> pickImageLauncher;
     private OnCoverClickListener coverClickListener;
     private boolean ischoosing = false;
+    private boolean isfavchoose = false;
     SearchActivity.OnChooseBookListener listener;
 
     public SearchBookAdapter(List<String> usersbooks,
-                             ActivityResultLauncher<String> pickImageLauncher, boolean ischoosing, SearchActivity.OnChooseBookListener list) {
+                             ActivityResultLauncher<String> pickImageLauncher, boolean ischoosing, SearchActivity.OnChooseBookListener list, boolean isfavchoose) {
         this.usersbooks = usersbooks;
         this.pickImageLauncher = pickImageLauncher;
         this.ischoosing = ischoosing;
         this.listener = list;
+        this.isfavchoose = isfavchoose;
     }
 
     public void setBooks(List<Book> list) {
@@ -83,6 +85,7 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
             h.book_edit.setVisibility(View.GONE);
             h.book_delete.setVisibility(View.VISIBLE);
             h.book_chooseforclub.setVisibility(View.GONE);
+            h.book_favchoose.setVisibility(View.GONE);
 
             h.titleedit.setText(b.getTitle());
             h.authoredit.setText(b.getAuthor());
@@ -99,7 +102,14 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
                 Log.d("ChooseBook", "searchadapter megjelenik kiválaszt gombok"  );
                 h.book_chooseforclub.setVisibility(View.VISIBLE);
                 h.book_chooseforclub.setOnClickListener(v -> {
-                    listener.onChoose(b.getId());
+                    listener.onChoose(b.getId(), "CLUB");
+                });
+            }
+            if(isfavchoose){
+                Log.d("ChooseBook", "searchadapter megjelenik kiválaszt gombok FAVORITE"  );
+                h.book_favchoose.setVisibility(View.VISIBLE);
+                h.book_favchoose.setOnClickListener(v -> {
+                    listener.onChoose(b.getId(),"PROFILE");
                 });
             }
 
@@ -282,7 +292,7 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
     static class VH extends RecyclerView.ViewHolder {
         TextView title, author;
         EditText titleedit, authoredit;
-        ImageView cover, book_edit, book_save, book_delete, book_chooseforclub;
+        ImageView cover, book_edit, book_save, book_delete, book_chooseforclub, book_favchoose;
 
         VH(View v) {
             super(v);
@@ -295,6 +305,7 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
             book_save = v.findViewById(R.id.book_save);
             book_delete = v.findViewById(R.id.book_delete);
             book_chooseforclub = v.findViewById(R.id.book_chooseforclub);
+            book_favchoose = v.findViewById(R.id.book_favchoose);
         }
     }
 }

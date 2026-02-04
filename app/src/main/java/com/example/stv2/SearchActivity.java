@@ -32,6 +32,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SearchActivity extends MenuActivity {
 
@@ -42,6 +43,7 @@ public class SearchActivity extends MenuActivity {
     private SearchClubAdapter clubAdapter;
     private SearchUserAdapter userAdapter;
 
+    private int which;
     private String username, clubidbeforechoosing;
     private List<Book> allBooks = new ArrayList<>();
     private List<Club> allClubs = new ArrayList<>();
@@ -49,24 +51,37 @@ public class SearchActivity extends MenuActivity {
     private List<String> adminBooks = new ArrayList<>();
 
     private AppCompatButton buttonBook, buttonClub, buttonUser;
-    private boolean optionBook, optionClub, optionUser, chooseForClub;
+    private boolean optionBook, optionClub, optionUser, chooseForClub, chooseFav;
 
     private int selectedPosition = -1; // az éppen szerkesztett könyv pozíciója
     private ActivityResultLauncher<String> pickImageLauncher;
 
     //saját listener
     public interface OnChooseBookListener {
-        void onChoose(String bookid);
+        void onChoose(String bookid, String code);
+        //CLUB/PROFILE
     }
 
     private OnChooseBookListener listener = new OnChooseBookListener() {
         @Override
-        public void onChoose(String bookid) {
-            Intent i = new Intent(SearchActivity.this, ClubPageActivity.class);
-            Log.d("ChooseBook", "search megkap bookid:" + bookid );
-            i.putExtra("chosenbook", bookid);
-            i.putExtra("clubId", clubidbeforechoosing);
-            startActivity(i);
+        public void onChoose(String bookid, String code) {
+            if(Objects.equals(code, "CLUB")){
+                Intent i = new Intent(SearchActivity.this, ClubPageActivity.class);
+                Log.d("ChooseBook", "search megkap bookid:" + bookid );
+                i.putExtra("chosenbook", bookid);
+                i.putExtra("clubId", clubidbeforechoosing);
+                startActivity(i);
+            }
+            if(Objects.equals(code, "PROFILE")){
+                Intent i = new Intent(SearchActivity.this, ProfileActivity.class);
+                Log.d("ChooseBook", "profil megkap bookid:" + bookid );
+
+                i.putExtra("whichbook", which);
+                i.putExtra("bookid", bookid);
+                i.putExtra("userid", FirebaseAuth.getInstance().getUid());
+                startActivity(i);
+            }
+
         }
     };
 
@@ -84,6 +99,7 @@ public class SearchActivity extends MenuActivity {
         recyclerSearch = findViewById(R.id.recyclerSearch);
         recyclerSearch.setLayoutManager(new LinearLayoutManager(this));
 
+        //clugpage-ből hív-----------------------------------------------------
         chooseForClub = false;
         if(getIntent()!=null && getIntent().getStringExtra("choose")!=null &&
         !getIntent().getStringExtra("choose").isEmpty() && getIntent().getStringExtra("choose").equals("true")){
@@ -100,6 +116,14 @@ public class SearchActivity extends MenuActivity {
             Log.d("ChooseBook", "search átjött a clubid:" + clubidbeforechoosing );
         }
 
+        //profilról hív--------------------------------------------------------------
+        chooseFav = false;
+        if(getIntent()!=null &&
+                getIntent().getIntExtra("favchange", -1)!=-1){
+            chooseFav = true;
+            which = getIntent().getIntExtra("favchange", -1);
+        }
+
 
         clubAdapter = new SearchClubAdapter();
         userAdapter = new SearchUserAdapter();
@@ -107,7 +131,6 @@ public class SearchActivity extends MenuActivity {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         // ActivityResultLauncher regisztrálása
-        /// kell??
         pickImageLauncher = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
                 uri -> {
@@ -135,6 +158,12 @@ public class SearchActivity extends MenuActivity {
         loadUsers();
 
         select(false, false, false);
+        if(chooseForClub){
+            select(true, false, false);
+        }
+        if(chooseFav){
+            select(true, false, false);
+        }
 
         buttonBook.setOnClickListener(v -> { if (!optionBook) select(true,false,false); });
         buttonClub.setOnClickListener(v -> { if (!optionClub) select(false,true,false); });
@@ -247,7 +276,7 @@ public class SearchActivity extends MenuActivity {
 
                 // Adapter létrehozása a betöltött adminBooks után
                 Log.d("ChooseBook", "search choose átadása adapternek"  );
-                bookAdapter = new SearchBookAdapter(adminBooks, pickImageLauncher, chooseForClub, listener);
+                bookAdapter = new SearchBookAdapter(adminBooks, pickImageLauncher, chooseForClub, listener, chooseFav);
 
                 // Cover click listener beállítása
                 bookAdapter.setOnCoverClickListener(pos -> {
