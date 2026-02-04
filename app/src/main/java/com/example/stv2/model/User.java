@@ -2,11 +2,13 @@ package com.example.stv2.model;
 
 import android.util.Log;
 
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class User {
     String username;
@@ -60,5 +62,27 @@ public class User {
     public void setAdmin(Boolean admin) { this.admin = admin; }
 
     public List<String> getFavorites() { return favorites; }
+
+    public void getFavbook(int number,  Consumer<Book> callback){
+        int size = favorites.size();
+        if (favorites == null || favorites.size() == 0) return;
+
+
+        if(number<0){ number = 0;}if(number >2){number = 2;}
+
+        FirebaseFirestore.getInstance()
+                .collection("books")
+                .document(favorites.get(number))
+                .get()
+                .addOnSuccessListener(doc -> {
+                    Book book = doc.toObject(Book.class);
+                    if (book != null) callback.accept(book);
+                })
+                .addOnFailureListener(e ->
+                        Log.e("BOOK", "Hiba a könyvek lekérésekor", e)
+                );
+
+
+    }
     public void setFavorites(List<String> favorites) { this.favorites = favorites; }
 }

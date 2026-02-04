@@ -166,7 +166,7 @@ public class SearchActivity extends MenuActivity {
         filter(etSearch.getText().toString());
     }
 
-    private void loadBooks() {
+    private void loadBooksOLD() {
         FirebaseFirestore.getInstance()
                 .collection("books")
                 .get()
@@ -175,6 +175,22 @@ public class SearchActivity extends MenuActivity {
                     if (bookAdapter != null) bookAdapter.setBooks(allBooks);
                 });
     }
+
+    private void loadBooks() {
+        FirebaseFirestore.getInstance()
+                .collection("books")
+                .addSnapshotListener((snapshot, e) -> {
+                    if (e != null) {
+                        Log.w("SearchActivity", "Firestore hiba", e);
+                        return;
+                    }
+                    if (snapshot != null) {
+                        allBooks = snapshot.toObjects(Book.class);
+                        if (bookAdapter != null) bookAdapter.setBooks(allBooks);
+                    }
+                });
+    }
+
 
     private void loadClubs() {
         FirebaseFirestore.getInstance()

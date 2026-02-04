@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 
 public abstract class MenuActivity extends AppCompatActivity {
 
@@ -36,6 +37,7 @@ public abstract class MenuActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_profile) {
                 Intent intent = new Intent(MenuActivity.this, ProfileActivity.class);
+                intent.putExtra("userid",  FirebaseAuth.getInstance().getUid());
                 startActivity(intent);
                 //  Toast.makeText(this, "👤 Profil", Toast.LENGTH_SHORT).show();
                 return true;
