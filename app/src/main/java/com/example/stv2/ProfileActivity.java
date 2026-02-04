@@ -26,12 +26,13 @@ import java.util.List;
 public class ProfileActivity extends MenuActivity {
 
     private int which;
+    private int deletehappened = -1;
     private String userid, favbookid, bookid;
     private Boolean ownprofile = false;
     private Boolean favchosen = false;
     private List<String> favs;
 
-    private ImageView profilepic, book1, book2, book3, profile_edit, profile_save;
+    private ImageView profilepic, book1, book2, book3, profile_edit, profile_save, delete_first, delete_second, delete_third;
     private TextView profileusername, book1title, book2title, book3title;
     private EditText username_edittext;
 
@@ -79,6 +80,10 @@ public class ProfileActivity extends MenuActivity {
 
         profile_edit = findViewById(R.id.profile_edit);
         profile_save = findViewById(R.id.profile_save);
+
+        delete_first = findViewById(R.id.delete_first);
+        delete_second = findViewById(R.id.delete_second);
+        delete_third = findViewById(R.id.delete_third);
 
         if(ownprofile){
             profile_edit.setVisibility(View.VISIBLE);
@@ -167,32 +172,16 @@ public class ProfileActivity extends MenuActivity {
             profileusername.setVisibility(View.GONE);
             username_edittext.setVisibility(View.VISIBLE);
 
+            delete_first.setVisibility(View.VISIBLE);
+            delete_second.setVisibility(View.VISIBLE);
+            delete_third.setVisibility(View.VISIBLE);
+
         });
 
         //edit off - save
         profile_save.setOnClickListener(k -> {
             if(isEditing){
-                isEditing = false;
-                profile_save.setVisibility(View.GONE);
-                profile_edit.setVisibility(View.VISIBLE);
-
-                profileusername.setVisibility(View.VISIBLE);
-                username_edittext.setVisibility(View.GONE);
-
-                if(!user.getUsername().equals(username_edittext.getText())){
-                    profileusername.setText(username_edittext.getText());
-                    username_edittext.setText(username_edittext.getText());
-
-                    user.setUsername(username_edittext.getText().toString());
-
-                    FirebaseFirestore.getInstance()
-                            .collection("users")
-                            .document(userid)
-                            .update("username", username_edittext.getText().toString())
-                            .addOnSuccessListener(aVoid -> Log.d("Profil", "Profil oldalon a username change megtörtént"))
-                            .addOnFailureListener(e -> Log.e("Profil", "Hiba profil oldali username change", e));
-
-                }
+                save();
             }
         });
 
@@ -230,9 +219,107 @@ public class ProfileActivity extends MenuActivity {
                 startActivity(i);
             }
         });
+
+        delete_first.setOnClickListener(ff->{
+            if(isEditing){
+                user.getFavorites().set(0, "");
+                deletehappened = 1;
+                onlyFirestoreSave(deletehappened);
+
+            }
+        });
+
+        delete_second.setOnClickListener(fff->{
+            if(isEditing){
+                user.getFavorites().set(1, "");
+                deletehappened = 2;
+                onlyFirestoreSave(deletehappened);
+
+            }
+        });
+
+        delete_third.setOnClickListener(ffff->{
+            if(isEditing){
+                user.getFavorites().set(2, "");
+                deletehappened = 3;
+                onlyFirestoreSave(deletehappened);
+
+            }
+        });
     }
 
+    private void onlyFirestoreSave(int delete){
 
+        if(delete!=-1){
+            switch(delete){
+                case 1:
+                    book1title.setText("Válassz!");
+                    Glide.with(this).load(R.drawable.default_book).into(book1);
+                    break;
+                case 2:
+                    book2title.setText("Válassz!");
+                    Glide.with(this).load(R.drawable.default_book).into(book2);
+                    break;
+                case 3:
+                    book3title.setText("Válassz!");
+                    Glide.with(this).load(R.drawable.default_book).into(book3);
+                    break;
+            }
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(userid)
+                    .update("favorites", user.getFavorites())
+                    .addOnSuccessListener(aVoid -> Log.d("Profil", "Profil oldalon a fav change megtörtént"))
+                    .addOnFailureListener(e -> Log.e("Profil", "Hiba profil oldali fav change", e));
+
+            deletehappened = -1;
+        }
+
+        if(!user.getUsername().equals(username_edittext.getText())){
+            profileusername.setText(username_edittext.getText());
+            username_edittext.setText(username_edittext.getText());
+
+            user.setUsername(username_edittext.getText().toString());
+
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(userid)
+                    .update("username", username_edittext.getText().toString())
+                    .addOnSuccessListener(aVoid -> Log.d("Profil", "Profil oldalon a username change megtörtént"))
+                    .addOnFailureListener(e -> Log.e("Profil", "Hiba profil oldali username change", e));
+
+        }
+
+
+    }
+    private void save(){
+        isEditing = false;
+        profile_save.setVisibility(View.GONE);
+        profile_edit.setVisibility(View.VISIBLE);
+
+        profileusername.setVisibility(View.VISIBLE);
+        username_edittext.setVisibility(View.GONE);
+
+        delete_first.setVisibility(View.GONE);
+        delete_second.setVisibility(View.GONE);
+        delete_third.setVisibility(View.GONE);
+
+        if(!user.getUsername().equals(username_edittext.getText())){
+            profileusername.setText(username_edittext.getText());
+            username_edittext.setText(username_edittext.getText());
+
+            user.setUsername(username_edittext.getText().toString());
+
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(userid)
+                    .update("username", username_edittext.getText().toString())
+                    .addOnSuccessListener(aVoid -> Log.d("Profil", "Profil oldalon a username change megtörtént"))
+                    .addOnFailureListener(e -> Log.e("Profil", "Hiba profil oldali username change", e));
+
+        }
+
+    }
 
     private ActivityResultLauncher<PickVisualMediaRequest> pickProfileImage =
             registerForActivityResult(

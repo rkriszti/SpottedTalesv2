@@ -271,87 +271,16 @@ public class NewBookActivity extends MenuActivity {
 
             //könyv
             currentBook = new Book(cimm, szerzoo, email);
-            String currentBookid = currentBook.getId();
 
-            // van kép (nem kötelező)
             if (picurl != null) {
                 currentBook.setCoverpic(picurl);
+                saveBookToFirestore(currentBook);
+            } else {
+                uploadDefaultImageAndSaveBook(currentBook);
             }
-
-            //könyv feltöltése kollekcióba
-            FirebaseFirestore.getInstance().collection("books")
-                    .add(currentBook)
-                    .addOnSuccessListener(docRef -> {
-                        String firestoreBookId = docRef.getId();
-                        Toast.makeText(this, "Könyv sikeresen feltöltve!", Toast.LENGTH_SHORT).show();
-
-                       /* FirebaseDatabase.getInstance()
-                                .getReference("connections")
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()) //userid
-                                .child("books")
-                                .child(firestoreBookId)
-                                .setValue(true);*/
-
-                        // CSAK az "id" mezőt írjuk felül az adatbázisban
-                        docRef.update("id", firestoreBookId)
-                                .addOnSuccessListener(aVoid -> {
-                                    // Itt már szinkronban van a két ID
-                                    currentBook.setId(firestoreBookId);
-                                    Log.d("Firebase", "Az ID mező felülírva: " + firestoreBookId);   });
-
-                        Log.d("CONNECTION", "Könyv 1");
-                        DatabaseReference bookRef = FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
-                                .getReference("connections")
-                                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                .child("books")
-                                .child(firestoreBookId);
-
-                        Log.d("CONNECTION", "Könyv 2");
-                        bookRef.setValue(true)
-                                .addOnSuccessListener(aVoid -> {
-                                    Log.d("CONNECTION", "Könyv connection létrehozva");
-                                    // ide lehet tenni az intentet
-                                    Intent intent = new Intent(this, HomeActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.e("CONNECTION", "Hiba a könyv connection létrehozásakor", e);
-                                    Toast.makeText(this, "Connection hiba: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                });
-                        Log.d("CONNECTION", "Könyv 3");
-
-                    })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this, "Hiba a feltöltés során: " + e.getMessage(), Toast.LENGTH_SHORT).show());
 
 
             
-            //navigációs menü
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.nav_home) startActivity(new Intent(this, HomeActivity.class));
-            else if (id == R.id.nav_search) startActivity(new Intent(this, SearchActivity.class));
-            else if (id == R.id.nav_clubs) startActivity(new Intent(this, ClubsActivity.class));
-            else if (id == R.id.nav_profile) startActivity(new Intent(this, ProfileActivity.class));
-            else Toast.makeText(this, "OpenAct hiba", Toast.LENGTH_SHORT).show();
-            return true;
-        });
-
-        //plusz gomb
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(vEW -> {
-            PopupMenu popup = new PopupMenu(this, vEW);
-            popup.getMenuInflater().inflate(R.menu.menu_new_items, popup.getMenu());
-            popup.setOnMenuItemClickListener(item -> {
-                int id = item.getItemId();
-                if (id == R.id.nav_club) startActivity(new Intent(this, NewBookActivity.class));
-                else if (id == R.id.nav_book) startActivity(new Intent(this, NewBookActivity.class));
-                return true;
-            });
-            popup.show();
-        });
 
 
         });
@@ -382,6 +311,51 @@ public class NewBookActivity extends MenuActivity {
 
         chipGroup.addView(chip);
     }
+
+    private void uploadDefaultImageAndSaveBook(Book book) {
+        FirebaseStorage storage = FirebaseStorage.getInstance("gs://stv2-84ad0.firebasestorage.app");
+        StorageReference imageRef = storage.getReference()
+                .child("books/default_book.jpg");
+
+        Uri uri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.default_book);
+
+        imageRef.putFile(uri)
+                .addOnSuccessListener(taskSnapshot ->
+                        imageRef.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                            picurl = downloadUri.toString();
+                            book.setCoverpic(picurl);
+                            saveBookToFirestore(book);
+                        })
+                )
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Default kép feltöltési hiba", Toast.LENGTH_SHORT).show()
+                );
+    }
+
+    private void saveBookToFirestore(Book currentBook) {
+        FirebaseFirestore.getInstance().collection("books")
+                .add(currentBook)
+                .addOnSuccessListener(docRef -> {
+                    String firestoreBookId = docRef.getId();
+
+                    docRef.update("id", firestoreBookId);
+
+                    DatabaseReference bookRef = FirebaseDatabase.getInstance(
+                                    "https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
+                            .getReference("connections")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .child("books")
+                            .child(firestoreBookId);
+
+                    bookRef.setValue(true)
+                            .addOnSuccessListener(aVoid -> {
+                                startActivity(new Intent(this, HomeActivity.class));
+                                finish();
+                            });
+                });
+    }
+
+
 
 }//activity vége
 
