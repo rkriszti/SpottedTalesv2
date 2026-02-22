@@ -1,5 +1,6 @@
 package com.example.stv2;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
@@ -45,6 +47,7 @@ public class ProfileActivity extends MenuActivity {
     private ImageView profilepic, book1, book2, book3, profile_edit, profile_save, delete_first, delete_second, delete_third;
     private TextView profileusername, book1title, book2title, book3title;
     private EditText username_edittext;
+    private ToggleButton helpButton;
 
     private User user;
 
@@ -106,6 +109,7 @@ public class ProfileActivity extends MenuActivity {
 
         Button importbutton = findViewById(R.id.buttonimport);
         Button buttonchoose = findViewById(R.id.buttonchoose);
+         helpButton = findViewById(R.id.goodreadshelp);
 
         //csv fájl kiválasztása
         importbutton.setOnClickListener(v -> {
@@ -117,6 +121,13 @@ public class ProfileActivity extends MenuActivity {
         buttonchoose.setOnClickListener(k ->{
             Intent intent = new Intent(ProfileActivity.this, RecommendActivity.class);
             startActivity(intent);
+        });
+
+        helpButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                showHelpDialog();
+                helpButton.setChecked(false);
+            }
         });
 
         loadUser();
@@ -501,5 +512,16 @@ public class ProfileActivity extends MenuActivity {
                 }
             }
         }
+    }
+
+    private void showHelpDialog() {
+        // Layout felfújása (inflate)
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_help, null);
+
+        new AlertDialog.Builder(this)
+                .setView(dialogView) // A saját XML-ünket használjuk
+                .setPositiveButton("Értem", (dialog, which) -> dialog.dismiss())
+                .create()
+                .show();
     }
 }
