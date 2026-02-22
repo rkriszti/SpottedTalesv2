@@ -1,8 +1,10 @@
 package com.example.stv2;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Button;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -21,6 +23,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileActivity extends MenuActivity {
@@ -39,6 +49,11 @@ public class ProfileActivity extends MenuActivity {
     private User user;
 
     private boolean isEditing = false;
+
+    //import csv
+    private List<String> importcach = new ArrayList<>();
+    private static final String PREFS_NAME = "profile_cache";
+    private static final String IMPORTED_BOOKS_KEY = "imported_books";
 
 
     @Override
@@ -89,9 +104,23 @@ public class ProfileActivity extends MenuActivity {
             profile_edit.setVisibility(View.VISIBLE);
         }
 
+        Button importbutton = findViewById(R.id.buttonimport);
+        Button buttonchoose = findViewById(R.id.buttonchoose);
+
+        //csv fájl kiválasztása
+        importbutton.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.setType("text/csv");
+            startActivityForResult(Intent.createChooser(intent, "CSV kiválasztása"), 1001);
+        });
+
+        buttonchoose.setOnClickListener(k ->{
+            Intent intent = new Intent(ProfileActivity.this, RecommendActivity.class);
+            startActivity(intent);
+        });
+
         loadUser();
         setListeners();
-
 
     }
 
@@ -394,4 +423,86 @@ public class ProfileActivity extends MenuActivity {
     }
 
 
+    private void saveImportedBooks() {
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        JSONArray array = new JSONArray();
+        for(String bookJson : importcach){
+            try {
+                array.put(new JSONObject(bookJson));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        editor.putString(IMPORTED_BOOKS_KEY, array.toString());
+        editor.apply();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 1001 && resultCode == RESULT_OK && data != null){
+            Uri uri = data.getData();
+            if(uri != null){
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(uri);
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    importcach.clear();
+                    String line;
+                    boolean firstLine = true;
+
+                    while((line = reader.readLine()) != null){
+                        if(firstLine){
+                            firstLine = false;
+                            continue;
+                        }
+
+                        // Regex, ami a vesszők mentén vág, de figyel az idézőjelekre
+                        // Ez kezeli, ha a címben vagy a szerzőnél vessző van
+                        String[] columns = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+
+                        // A CSV-dben az indexek (0-tól kezdve):
+                        // Title (2. oszlop) -> index 1
+                        // Bookshelves (Q oszlop) -> index 16
+                        // Exclusive Shelf (S oszlop) -> index 18
+                        if(columns.length > 18){
+                            String title = columns[1].replace("\"", "").trim();
+
+                            // Q (Bookshelves) és S (Exclusive Shelf) oszlopok összefésülése
+                            String qColumn = columns[16].replace("\"", "").trim();
+                            String sColumn = columns[18].replace("\"", "").trim();
+
+                            String combinedLists = qColumn;
+                            if (!sColumn.isEmpty()) {
+                                combinedLists = combinedLists.isEmpty() ? sColumn : combinedLists + ", " + sColumn;
+                            }
+
+                            JSONObject bookObject = new JSONObject();
+                            bookObject.put("title", title);
+
+                            JSONArray listsJson = new JSONArray();
+                            for(String l : combinedLists.split(",")){
+                                String clean = l.trim();
+                                if(!clean.isEmpty()) listsJson.put(clean);
+                            }
+                            bookObject.put("lists", listsJson);
+
+                            importcach.add(bookObject.toString());
+                        }
+                    }
+                    reader.close();
+                    saveImportedBooks();
+                    Log.d("CSV", "Sikeres import: " + importcach.size() + " könyv.");
+
+                } catch (Exception e){
+                    Log.e("CSV", "Hiba az importáláskor", e);
+                }
+            }
+        }
+    }
 }
