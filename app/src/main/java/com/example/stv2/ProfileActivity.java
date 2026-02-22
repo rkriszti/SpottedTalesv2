@@ -462,18 +462,15 @@ public class ProfileActivity extends MenuActivity {
                             continue;
                         }
 
-                        // Regex, ami a vesszők mentén vág, de figyel az idézőjelekre
-                        // Ez kezeli, ha a címben vagy a szerzőnél vessző van
+                        //regex,
+                        //páros " " (ha könyv nevében lenne , feliseri)
                         String[] columns = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 
-                        // A CSV-dben az indexek (0-tól kezdve):
-                        // Title (2. oszlop) -> index 1
-                        // Bookshelves (Q oszlop) -> index 16
-                        // Exclusive Shelf (S oszlop) -> index 18
+
                         if(columns.length > 18){
                             String title = columns[1].replace("\"", "").trim();
 
-                            // Q (Bookshelves) és S (Exclusive Shelf) oszlopok összefésülése
+                            //oszlop index 0-tól van)
                             String qColumn = columns[16].replace("\"", "").trim();
                             String sColumn = columns[18].replace("\"", "").trim();
 
