@@ -20,6 +20,7 @@ import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.example.stv2.model.User;
+import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -44,7 +45,8 @@ public class ProfileActivity extends MenuActivity {
     private Boolean favchosen = false;
     private List<String> favs;
 
-    private ImageView profilepic, book1, book2, book3, profile_edit, profile_save, delete_first, delete_second, delete_third;
+    private ShapeableImageView profilepic;
+    private ImageView  book1, book2, book3, profile_edit, profile_save, delete_first, delete_second, delete_third;
     private TextView profileusername, book1title, book2title, book3title;
     private EditText username_edittext;
     private ToggleButton helpButton;
