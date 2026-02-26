@@ -158,7 +158,7 @@ public class SearchActivity extends MenuActivity {
         loadClubs();
         loadUsers();
 
-        select(false, false, false);
+        select(true, false, false);
         if(chooseForClub){
             select(true, false, false);
         }

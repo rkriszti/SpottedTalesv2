@@ -4,7 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.widget.ProgressBar;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +32,7 @@ import java.util.List;
 public class ClubsActivity extends MenuActivity{
     //saját klubbok listája
 
+    private ProgressBar progressBar;
     private RecyclerView recyclerView; //activity_clubs-ban van
     private ClubAdapter clubAdapter;
     private List<Club> clubs = new ArrayList<>(); //lekért klubbok
@@ -60,7 +63,7 @@ public class ClubsActivity extends MenuActivity{
         recyclerView = findViewById(R.id.recyclerClubs);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         clubAdapter = new ClubAdapter(listener); //létrehozunk egy adapter példányt amit majd használunk
-
+        progressBar = findViewById(R.id.progressBar);
 
         //2. kapcsolat
         recyclerView.setAdapter(clubAdapter); //és összekapcsoljuk
@@ -75,6 +78,7 @@ public class ClubsActivity extends MenuActivity{
 
 
     private void loadClubsFromFirebase() {
+        progressBar.setVisibility(View.VISIBLE);
         Log.d("Clubs", "loadclubs függvény elindult");
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -100,6 +104,7 @@ public class ClubsActivity extends MenuActivity{
 
                 if (clubIds.isEmpty()) {
                     clubAdapter.setClubs(clubs); // üres lista
+                    progressBar.setVisibility(View.GONE);
                     return;
                 }
 
@@ -114,12 +119,7 @@ public class ClubsActivity extends MenuActivity{
                                     Club c = doc.toObject(Club.class);
                                     clubs.add(c);
                                 }
-                                count[0]++;
-                                if (count[0] == clubIds.size()) {
-                                    // csak amikor minden lekérés kész
-                                    Log.d("Clubs", "kész");
-                                    clubAdapter.setClubs(clubs);
-                                }
+                                checkIfFinished(count, clubIds.size());
                             })
                             .addOnFailureListener(e -> {
                                 Log.d("Clubs", "Nincs benn semmi");
@@ -132,9 +132,20 @@ public class ClubsActivity extends MenuActivity{
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
+            public void onCancelled(@NonNull DatabaseError error) {
+                progressBar.setVisibility(View.GONE);
+            }
         });
+
+
     }
 
-
+    private void checkIfFinished(int[] count, int total) {
+        count[0]++;
+        if (count[0] == total) {
+            clubAdapter.setClubs(clubs);
+            // 2. Elrejtjük a töltést, ha minden adat beérkezett
+            progressBar.setVisibility(View.GONE);
+        }
+    }
 }

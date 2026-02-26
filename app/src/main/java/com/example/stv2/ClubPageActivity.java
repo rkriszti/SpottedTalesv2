@@ -147,27 +147,30 @@ public class ClubPageActivity extends MenuActivity {
 
 
         loadClub(clubId);
-        if(choosingHappened){
-            updateBook(bookid);
-        }
+        //is choosing happened -> update book -> loadclub végén (aszinkron)
     }
 
     private void loadClub(String clubId) {
+        //lekérjük a club adatait
         FirebaseFirestore.getInstance()
                 .collection("club")
-                .whereEqualTo("id", clubId)
+                .document(clubId)
                 .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (querySnapshot.isEmpty()) { finish(); return; }
+                .addOnSuccessListener(docc -> {
+                    if (!docc.exists()) {
+                        return;
+                    }
 
-                    club = querySnapshot.getDocuments().get(0).toObject(Club.class);
+                    club = docc.toObject(Club.class);
                     if (club == null) return;
 
                     clubName.setText(club.getName());
+                    club.setId(docc.getId());
 
-                    String savedBookId = club.getBookId();
+                    /*String savedBookId = club.getBookId();
 
                     if (savedBookId != null && !savedBookId.isEmpty()) {
+                        //ha van neki könyve
                         FirebaseFirestore.getInstance()
                                 .collection("books")
                                 .document(savedBookId)
@@ -175,7 +178,7 @@ public class ClubPageActivity extends MenuActivity {
                                 .addOnSuccessListener(doc -> {
                                     Book b = doc.toObject(Book.class);
                                     if (b != null) {
-                                        club.setBook(b); // 🔥 EZ HIÁNYZOTT
+                                        club.setBook(b);
 
                                         // UI frissítés
                                         clubBookCover.setImageResource(R.drawable.background2);
@@ -187,7 +190,7 @@ public class ClubPageActivity extends MenuActivity {
                                     }
                                 })
                                 .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a könyv lekérésénél", e));
-                    }
+                    }*/
 
                     //státusz beállítás
                     if (club.getIspublic()){
@@ -209,8 +212,7 @@ public class ClubPageActivity extends MenuActivity {
                     // Status icon
                     clubStatusIcon.setImageResource(club.getIspublic() ? R.drawable.ic_lock_open : R.drawable.ic_lock);
 
-                    // Book cover + title
-                    // Book cover + title
+                    //ha van könyv beállítva
                     String currentBookId = (bookid != null && !bookid.isEmpty()) ? bookid : club.getBookId();
                     if(currentBookId != null && !currentBookId.isEmpty()) {
                         FirebaseFirestore.getInstance()
@@ -235,8 +237,6 @@ public class ClubPageActivity extends MenuActivity {
                     }
 
 
-
-
                     String adminEmail = club.getAdmin();
                     isAdmin = userEmail != null && userEmail.equals(adminEmail);
 
@@ -248,169 +248,175 @@ public class ClubPageActivity extends MenuActivity {
                     //ADMIN----------------------------------------------------------------------
 
                     if(isAdmin){
-                        Settingbutton.setVisibility(View.VISIBLE);
-
-                        Settingbutton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (!settingIsOn){
-                                    //be kell kapcsolni
-
-                                    //státusz változás
-                                    statusChange.setOnClickListener(a -> {
-                                        if(club.getIspublic()){
-                                            //public -> privát
-
-                                            //adatbázisban
-                                            club.setIspublic(false);
-                                            //kinézetben
-                                            statusChange.setBackgroundResource(R.drawable.ic_lock);
-                                            clubStatusIcon.setImageResource(R.drawable.ic_lock);
-
-                                        } else {
-                                            //priv -> public
-                                            //adatbázisban
-                                            club.setIspublic(true);
-                                            //kinézetben
-                                            statusChange.setBackgroundResource(R.drawable.ic_lock_open);
-                                            clubStatusIcon.setImageResource(R.drawable.ic_lock_open);
-                                        }
-
-                                        FirebaseFirestore dba = FirebaseFirestore.getInstance();
-                                        dba.collection("club").document(club.getId())
-                                                .update("ispublic", club.getIspublic())
-                                                .addOnSuccessListener(aVoid -> {
-                                                    Log.d("ClubPage", "Státusz sikeresen frissítve!");
-
-                                                })
-                                                .addOnFailureListener(e -> Log.e("ClubPage", "Mentési hiba", e));
-                                    });
-
-                                    //fejezetek módosítása
-                                    addcustomEdit.setVisibility(View.VISIBLE);
-                                    chaptersEdit.setVisibility(View.VISIBLE);
-
-                                    //név edittext megjelent
-                                    clubName.setVisibility(View.GONE);
-                                    clubNameEdit.setVisibility(View.VISIBLE);
-
-                                    //érték beállítása
-                                    clubNameEdit.setText(clubName.getText().toString());
-
-                                    //publikusság
-                                    clubStatusIcon.setVisibility(View.GONE);
-                                    statusChange.setVisibility(View.VISIBLE);
-                                    statusText.setVisibility(View.VISIBLE);
-
-                                    //book picking for club
-                                    club_book_edit.setVisibility(View.VISIBLE);
-                                    club_book_edit.setOnClickListener(k -> {
-                                        Log.d("ChooseBook", "rányomtak a bookchoose gombra, irány a search" );
-                                        Intent i = new Intent(ClubPageActivity.this, SearchActivity.class);
-                                        i.putExtra("choose", "true");
-                                        i.putExtra("clubid", club.getId());
-                                        startActivity(i);
-                                    });
-
-                                    //mentés gomb lesz
-                                    Settingbutton.setImageResource(R.drawable.ic_save);
-                                    settingIsOn = true;
-
-                                    //egyből frissítés
-                                    setupRecycler(chaptersRecycler, club.getChapters());
-                                    setupRecycleruniq(customsRecycler, club.getCustoms());
-
-                                } else {
-                                    //MENTENEK
-
-                                    //klub cím változás mentése
-                                    if(!clubName.getText().toString().equals(clubNameEdit.getText().toString())){
-                                        FirebaseFirestore database = FirebaseFirestore.getInstance();
-
-                                        database.collection("club").document(club.getId())
-                                                .update("name", clubNameEdit.getText().toString())
-                                                .addOnSuccessListener(aVoid -> {
-                                                    Log.d("ClubPage", "Név sikeresen frissítve!");
-                                                    clubName.setText(clubNameEdit.getText().toString());
-                                                    club.setName(clubNameEdit.getText().toString());
-                                                })
-                                                .addOnFailureListener(e -> Log.e("ClubPage", "Mentési hiba", e));
-                                    }
-
-                                    //hány fejezet legyen
-                                    if(getEditTextNumber(chaptersEdit) > 0 &&
-                                            getEditTextNumber(chaptersEdit)!= club.getChaptersSize()){
-                                    club.setChapters(getEditTextNumber(chaptersEdit));
-
-                                        //hány fejezet
-                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                        db.collection("club").document(club.getId())
-                                                .update("chapters", club.getChapters())
-                                                .addOnSuccessListener(aVoid -> {
-                                                    Log.d("ClubPage", "Fejezetek száma sikeresen frissítve Firestore-ban!");
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    Log.e("ClubPage", "Hiba a fejezetek mentésénél", e);
-                                                });
-
-                                    }
-
-                                    //custom fejezet hozzáadás
-                                    if(!addcustomEdit.getText().toString().isEmpty()){
-                                        club.setCustom(addcustomEdit.getText().toString());
-
-
-                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                        db.collection("club").document(club.getId())
-                                                .update("customs", club.getCustoms())
-                                                .addOnSuccessListener(aVoid -> {
-                                                    Log.d("ClubPage", "Custom száma sikeresen frissítve Firestore-ban!");
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    Log.e("ClubPage", "Hiba a Custom mentésénél", e);
-                                                });
-                                    }
-
-
-                                    //customtörlés
-                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                                    db.collection("club").document(club.getId())
-                                            .update("customs", club.getCustoms()) // A módosított Map mentése
-                                            .addOnSuccessListener(aVoid -> Log.d("ClubPage", "Egyedi szobák sikeresen frissítve!"))
-                                            .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a mentésnél", e));
-
-
-                                    //név edittext megjelent
-                                    clubName.setVisibility(View.VISIBLE);
-                                    clubNameEdit.setVisibility(View.GONE);
-                                    chaptersEdit.setVisibility(View.GONE);
-                                    addcustomEdit.setVisibility(View.GONE);
-
-                                    //újra setting gomb lesz
-                                    Settingbutton.setImageResource(R.drawable.ic_setting);
-                                    settingIsOn = false;
-
-                                    //publikusság
-                                    clubStatusIcon.setVisibility(View.VISIBLE);
-                                    statusChange.setVisibility(View.GONE);
-                                    statusText.setVisibility(View.GONE);
-
-                                    club_book_edit.setVisibility(View.GONE);
-                                    //frissítés
-                                    setupRecycler(chaptersRecycler, club.getChapters());
-                                    setupRecycleruniq(customsRecycler, club.getCustoms());
-                        }
-                    }
-                        });
+                        admin();
                     }
 
-
-
+                    if(choosingHappened){
+                        updateBook(bookid);
+                    }
 
                 }).addOnFailureListener(e -> {
                     Log.e("ClubPage", "Hiba a club betöltésénél", e);
                     finish();
                 });
+    }
+
+    private void admin(){
+        //feltétel hogy már admin, check ->loadclub
+        Settingbutton.setVisibility(View.VISIBLE);
+
+        Settingbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!settingIsOn){
+                    //be kell kapcsolni
+
+                    //státusz változás
+                    statusChange.setOnClickListener(a -> {
+                        if(club.getIspublic()){
+                            //public -> privát
+
+                            //adatbázisban
+                            club.setIspublic(false);
+                            //kinézetben
+                            statusChange.setBackgroundResource(R.drawable.ic_lock);
+                            clubStatusIcon.setImageResource(R.drawable.ic_lock);
+
+                        } else {
+                            //priv -> public
+                            //adatbázisban
+                            club.setIspublic(true);
+                            //kinézetben
+                            statusChange.setBackgroundResource(R.drawable.ic_lock_open);
+                            clubStatusIcon.setImageResource(R.drawable.ic_lock_open);
+                        }
+
+                        FirebaseFirestore dba = FirebaseFirestore.getInstance();
+                        dba.collection("club").document(club.getId())
+                                .update("ispublic", club.getIspublic())
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d("ClubPage", "Státusz sikeresen frissítve!");
+
+                                })
+                                .addOnFailureListener(e -> Log.e("ClubPage", "Mentési hiba", e));
+                    });
+
+                    //fejezetek módosítása
+                    addcustomEdit.setVisibility(View.VISIBLE);
+                    chaptersEdit.setVisibility(View.VISIBLE);
+
+                    //név edittext megjelent
+                    clubName.setVisibility(View.GONE);
+                    clubNameEdit.setVisibility(View.VISIBLE);
+
+                    //érték beállítása
+                    clubNameEdit.setText(clubName.getText().toString());
+
+                    //publikusság
+                    clubStatusIcon.setVisibility(View.GONE);
+                    statusChange.setVisibility(View.VISIBLE);
+                    statusText.setVisibility(View.VISIBLE);
+
+                    //book picking for club
+                    club_book_edit.setVisibility(View.VISIBLE);
+                    club_book_edit.setOnClickListener(k -> {
+                        Log.d("ChooseBook", "rányomtak a bookchoose gombra, irány a search" );
+                        Intent i = new Intent(ClubPageActivity.this, SearchActivity.class);
+                        i.putExtra("choose", "true");
+                        i.putExtra("clubid", club.getId());
+                        startActivity(i);
+                    });
+
+                    //mentés gomb lesz
+                    Settingbutton.setImageResource(R.drawable.ic_save);
+                    settingIsOn = true;
+
+                    //egyből frissítés
+                    setupRecycler(chaptersRecycler, club.getChapters());
+                    setupRecycleruniq(customsRecycler, club.getCustoms());
+
+                } else {
+                    //MENTENEK
+
+                    //klub cím változás mentése
+                    if(!clubName.getText().toString().equals(clubNameEdit.getText().toString())){
+                        FirebaseFirestore database = FirebaseFirestore.getInstance();
+
+                        database.collection("club").document(club.getId())
+                                .update("name", clubNameEdit.getText().toString())
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d("ClubPage", "Név sikeresen frissítve!");
+                                    clubName.setText(clubNameEdit.getText().toString());
+                                    club.setName(clubNameEdit.getText().toString());
+                                })
+                                .addOnFailureListener(e -> Log.e("ClubPage", "Mentési hiba", e));
+                    }
+
+                    //hány fejezet legyen
+                    if(getEditTextNumber(chaptersEdit) > 0 &&
+                            getEditTextNumber(chaptersEdit)!= club.getChaptersSize()){
+                        club.setChapters(getEditTextNumber(chaptersEdit));
+
+                        //hány fejezet
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("club").document(club.getId())
+                                .update("chapters", club.getChapters())
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d("ClubPage", "Fejezetek száma sikeresen frissítve Firestore-ban!");
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("ClubPage", "Hiba a fejezetek mentésénél", e);
+                                });
+
+                    }
+
+                    //custom fejezet hozzáadás
+                    if(!addcustomEdit.getText().toString().isEmpty()){
+                        club.setCustom(addcustomEdit.getText().toString());
+
+
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("club").document(club.getId())
+                                .update("customs", club.getCustoms())
+                                .addOnSuccessListener(aVoid -> {
+                                    Log.d("ClubPage", "Custom száma sikeresen frissítve Firestore-ban!");
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("ClubPage", "Hiba a Custom mentésénél", e);
+                                });
+                    }
+
+
+                    //customtörlés
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("club").document(club.getId())
+                            .update("customs", club.getCustoms()) // A módosított Map mentése
+                            .addOnSuccessListener(aVoid -> Log.d("ClubPage", "Egyedi szobák sikeresen frissítve!"))
+                            .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a mentésnél", e));
+
+
+                    //név edittext megjelent
+                    clubName.setVisibility(View.VISIBLE);
+                    clubNameEdit.setVisibility(View.GONE);
+                    chaptersEdit.setVisibility(View.GONE);
+                    addcustomEdit.setVisibility(View.GONE);
+
+                    //újra setting gomb lesz
+                    Settingbutton.setImageResource(R.drawable.ic_setting);
+                    settingIsOn = false;
+
+                    //publikusság
+                    clubStatusIcon.setVisibility(View.VISIBLE);
+                    statusChange.setVisibility(View.GONE);
+                    statusText.setVisibility(View.GONE);
+
+                    club_book_edit.setVisibility(View.GONE);
+                    //frissítés
+                    setupRecycler(chaptersRecycler, club.getChapters());
+                    setupRecycleruniq(customsRecycler, club.getCustoms());
+                }
+            }
+        });
     }
 
     private void setupRecycler(RecyclerView recyclerView, Map<String, List<String>> data) {
@@ -463,12 +469,18 @@ public class ClubPageActivity extends MenuActivity {
     }
 
     private void updateBook(String bookId) {
+
+        if (club == null || club.getId() == null) {
+            Log.e("ClubPage", "Még nem töltött be a klub, nem tudok menteni!");
+            return;
+        }
         Log.d("ClubPage", "update started" );
         FirebaseFirestore.getInstance()
                 .collection("books")
                 .document(bookId)
                 .get()
                 .addOnSuccessListener(doc -> {
+
                     Log.d("ClubPage", "könyv lekérése" );
                     Log.d("ClubPage", "doc.exists(): " + doc.exists());
                     Log.d("ClubPage", "doc data: " + doc.getData());

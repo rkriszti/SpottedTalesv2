@@ -19,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.stv2.model.User;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -160,7 +161,12 @@ public class ProfileActivity extends MenuActivity {
                     }*/
 
                     //adatok betöltése
-                    Glide.with(this).load(user.getProfilepicurl()).into(profilepic);
+                    Glide.with(this).load(user.getProfilepicurl())
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .placeholder(R.drawable.ic_default_avatar)
+                            .error(R.drawable.ic_default_avatar)
+                            .into(profilepic)
+                          ;
                     profileusername.setText(user.getUsername());
                     username_edittext.setText(user.getUsername());
 
@@ -176,21 +182,33 @@ public class ProfileActivity extends MenuActivity {
                     if (!favs.get(0).isEmpty()) {
                         user.getFavbook(0, book -> {
                             book1title.setText(book.getTitle());
-                            Glide.with(this).load(book.getCoverpic()).into(book1);
+                            Glide.with(this).load(book.getCoverpic())
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .placeholder(R.drawable.default_book)
+                                    .error(R.drawable.default_book)
+                                    .into(book1);
                         });
                     }
 
                     if (!favs.get(1).isEmpty()) {
                         user.getFavbook(1, book -> {
                             book2title.setText(book.getTitle());
-                            Glide.with(this).load(book.getCoverpic()).into(book2);
+                            Glide.with(this).load(book.getCoverpic())
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .placeholder(R.drawable.default_book)
+                                    .error(R.drawable.default_book)
+                                    .into(book2);
                         });
                     }
 
                     if (!favs.get(2).isEmpty()) {
                         user.getFavbook(2, book -> {
                             book3title.setText(book.getTitle());
-                            Glide.with(this).load(book.getCoverpic()).into(book3);
+                            Glide.with(this).load(book.getCoverpic())
+                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                    .placeholder(R.drawable.default_book)
+                                    .error(R.drawable.default_book)
+                                    .into(book3);
                         });
                     }
 
