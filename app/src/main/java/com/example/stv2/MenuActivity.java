@@ -79,18 +79,28 @@ public abstract class MenuActivity extends AppCompatActivity {
 
     protected void setupTopMenu() {
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.top_toolbar);
-            toolbar.setTitle("Spotted Tales");
+        androidx.drawerlayout.widget.DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        com.google.android.material.navigation.NavigationView navigationView = findViewById(R.id.nav_view);
 
-            toolbar.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.action_logout) {
-                    FirebaseAuth.getInstance().signOut();
-                    startActivity(new Intent(this, LoginActivity.class));
-                    finish();
-                    return true;
-                }
-                return false;
-            });
+        // Amikor a Toolbaron az ikonra kattintunk
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_logout) { // Vagy amit az ikonnak adtál
+                drawer.openDrawer(androidx.core.view.GravityCompat.END);
+                return true;
+            }
+            return false;
+        });
 
+        // Az oldalmenüben lévő kattintások kezelése
+        navigationView.setNavigationItemSelectedListener(item -> {
+            if (item.getItemId() == R.id.action_logout_actual) { // A menüben lévő Logout ID-ja
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(this, LoginActivity.class));
+                finish();
+            }
+            drawer.closeDrawer(androidx.core.view.GravityCompat.END);
+            return true;
+        });
     }
 
 }

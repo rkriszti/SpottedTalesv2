@@ -1,8 +1,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <item
         android:id="@+id/action_logout"
         android:icon="@drawable/ic_egyeb"
-        android:title="Kijelentkezés"
-        app:showAsAction="ifRoom" />
+        android:title="Menü"
+        app:showAsAction="always" />
 </menu>
