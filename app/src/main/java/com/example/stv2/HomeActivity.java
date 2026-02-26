@@ -9,6 +9,7 @@ public class HomeActivity extends MenuActivity {
         setContentView(R.layout.activity_open);
 
         setupBottomMenu(R.id.nav_home);
+        setupTopMenu();
 
     } //oncreate vége
 } //activity vége

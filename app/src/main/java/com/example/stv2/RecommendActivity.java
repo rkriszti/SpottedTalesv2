@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public class RecommendActivity extends AppCompatActivity {
+public class RecommendActivity extends MenuActivity {
 
     private Spinner listSpinner;
     private Button chooseButton;
@@ -37,6 +37,8 @@ public class RecommendActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recommend);
+        setupTopMenu();
+        setupBottomMenu();
 
         listSpinner = findViewById(R.id.listSpinner);
         chooseButton = findViewById(R.id.chooseButton);

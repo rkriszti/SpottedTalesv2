@@ -54,6 +54,7 @@ public class ClubsActivity extends MenuActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clubs);
         setupBottomMenu(R.id.nav_clubs);
+        setupTopMenu();
 
         //1. példányok létrehozása
         recyclerView = findViewById(R.id.recyclerClubs);

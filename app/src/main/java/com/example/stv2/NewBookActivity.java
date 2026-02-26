@@ -57,6 +57,7 @@ public class NewBookActivity extends MenuActivity {
         setContentView(R.layout.activity_new);
 
         setupBottomMenu(R.id.nav_search);
+        setupTopMenu();
 
         Switch kapcsolo = findViewById(R.id.switchForm);
         LinearLayout form_book = findViewById(R.id.form_book);

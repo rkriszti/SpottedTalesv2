@@ -91,6 +91,7 @@ public class SearchActivity extends MenuActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
         setupBottomMenu(R.id.nav_search);
+        setupTopMenu();
 
         buttonBook = findViewById(R.id.buttonbook);
         buttonClub = findViewById(R.id.buttonclub);

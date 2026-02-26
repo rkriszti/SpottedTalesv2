@@ -4,7 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="#A969185A"
     android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/top_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/background_nav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:menu="@menu/top_nav_menu"
+        app:title="Spotted Tales"
+        app:titleTextColor="@color/white" />
 
     <!-- ===== PROFIL HEADER ===== -->
     <androidx.cardview.widget.CardView
@@ -14,9 +26,9 @@
         android:layout_margin="16dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="6dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/top_toolbar">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -71,26 +83,26 @@
                 android:layout_width="37dp"
                 android:layout_height="39dp"
                 android:background="@drawable/ic_setting"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
-                android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/profile_username"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.515"/>
+                app:layout_constraintVertical_bias="0.515" />
 
             <ImageView
                 android:id="@+id/profile_save"
                 android:layout_width="37dp"
                 android:layout_height="39dp"
                 android:background="@drawable/ic_save"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
-                android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/profile_username"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.515"/>
+                app:layout_constraintVertical_bias="0.515" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -315,19 +327,22 @@
                         android:id="@+id/buttonimport"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginStart="28dp"
+                        android:layout_marginTop="8dp"
                         android:backgroundTint="@color/darkpurple"
                         android:text="CSV importálása"
-                        app:layout_constraintTop_toBottomOf="@id/goodreadshelp"
-                        app:layout_constraintStart_toStartOf="parent"/>
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/goodreadsTitle"
+                        app:layout_constraintVertical_bias="0.0" />
 
                     <Button
                         android:id="@+id/buttonchoose"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
-                        android:text="Mit olvassak?"
                         android:backgroundTint="@color/darkpurple"
+                        android:text="Mit olvassak?"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0.509"

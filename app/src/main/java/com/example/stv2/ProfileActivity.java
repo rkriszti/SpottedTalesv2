@@ -65,7 +65,9 @@ public class ProfileActivity extends MenuActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
         setupBottomMenu(R.id.nav_profile);
+        setupTopMenu();
 
         //van e id
         if(getIntent()!=null && getIntent().getStringExtra("userid")!=null &&

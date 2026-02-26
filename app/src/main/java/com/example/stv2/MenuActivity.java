@@ -77,4 +77,20 @@ public abstract class MenuActivity extends AppCompatActivity {
         );
     }
 
+    protected void setupTopMenu() {
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.top_toolbar);
+            toolbar.setTitle("Spotted Tales");
+
+            toolbar.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.action_logout) {
+                    FirebaseAuth.getInstance().signOut();
+                    startActivity(new Intent(this, LoginActivity.class));
+                    finish();
+                    return true;
+                }
+                return false;
+            });
+
+    }
+
 }
