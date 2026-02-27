@@ -71,7 +71,7 @@
         app:tint="@android:color/white" />
 
 
-    ></androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"

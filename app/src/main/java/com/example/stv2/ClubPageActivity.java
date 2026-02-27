@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.stv2.adapters.MembersAdapter;
 import com.example.stv2.adapters.RoomAdapter;
 import com.example.stv2.model.Book;
 import com.example.stv2.model.Club;
@@ -25,11 +27,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ClubPageActivity extends MenuActivity {
     //globálisan kell
     private Club club;
     private String userEmail, bookid;
+    private Button members;
 
     //xml részek
     private TextView clubName, clubBookTitle, statusText, clubBookAuthor;
@@ -70,6 +74,23 @@ public class ClubPageActivity extends MenuActivity {
         }
     };
 
+    //saját listener
+    public interface OnChooseBookListener {
+        void onChoose(String email);
+        //CLUB/PROFILE
+    }
+
+    private ClubPageActivity.OnChooseBookListener listener = new ClubPageActivity.OnChooseBookListener() {
+        @Override
+        public void onChoose(String userid) {
+                Intent i = new Intent(ClubPageActivity.this, ProfileActivity.class);
+                Log.d("choosemember", "profil megkap userid:" + userid );
+
+                i.putExtra("userid", userid);
+                startActivity(i);
+        }
+    };
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,6 +119,7 @@ public class ClubPageActivity extends MenuActivity {
 
         //button
         Settingbutton = findViewById(R.id.clubsettingon);
+        members = findViewById(R.id.club_members);
 
         //edittext
         clubNameEdit = findViewById(R.id.club_name_edittext);
@@ -143,6 +165,30 @@ public class ClubPageActivity extends MenuActivity {
             } else {
                 customsRecycler.setVisibility(View.GONE);
             }
+        });
+
+        members.setOnClickListener(v -> {
+            setContentView(R.layout.activity_clubpage_members);
+
+            RecyclerView membersRecycler = findViewById(R.id.members_recycler);
+            ImageView backButton = findViewById(R.id.club_backbutton);
+
+            membersRecycler.setLayoutManager(new LinearLayoutManager(this));
+            membersRecycler.setVisibility(View.VISIBLE);
+
+            if (club != null && club.getMembers() != null) {
+                MembersAdapter adapter = new MembersAdapter(club.getMembers(), listener);
+                membersRecycler.setAdapter(adapter);
+            }
+            backButton.setOnClickListener(b -> {
+                recreate();
+            });
+
+            setupBottomMenu(R.id.nav_clubs);
+            setupTopMenu();
+
+
+
         });
 
 

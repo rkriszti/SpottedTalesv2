@@ -132,6 +132,13 @@
                     android:textOff=""
                     android:textOn="" />
 
+                <Button
+                    android:id="@+id/club_members"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="#6E1A5D"
+                    android:text="Tagok" />
+
 
             </LinearLayout>
 
@@ -316,16 +323,20 @@
         app:menu="@menu/bottom_nav_menu"
         tools:layout_editor_absoluteX="0dp">
 
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:contentDescription="Add"
+            android:layout_marginBottom="-28dp"
+            android:contentDescription="Új"
             android:src="@drawable/ic_add_emoji"
             app:backgroundTint="#3c0c3e"
+            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:tint="@android:color/white" />
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView

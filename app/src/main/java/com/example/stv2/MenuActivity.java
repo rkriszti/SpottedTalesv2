@@ -82,25 +82,40 @@ public abstract class MenuActivity extends AppCompatActivity {
         androidx.drawerlayout.widget.DrawerLayout drawer = findViewById(R.id.drawer_layout);
         com.google.android.material.navigation.NavigationView navigationView = findViewById(R.id.nav_view);
 
-        // Amikor a Toolbaron az ikonra kattintunk
-        toolbar.setOnMenuItemClickListener(item -> {
-            if (item.getItemId() == R.id.action_logout) { // Vagy amit az ikonnak adtál
-                drawer.openDrawer(androidx.core.view.GravityCompat.END);
-                return true;
-            }
-            return false;
-        });
+        // 1. Toolbar kezelése (Oldalmenü nyitása az ikonnal)
+        if (toolbar != null && drawer != null) {
+            toolbar.setOnMenuItemClickListener(item -> {
+                if (item.getItemId() == R.id.action_logout) { // Ez a Toolbaron lévő ikon ID-ja
+                    drawer.openDrawer(androidx.core.view.GravityCompat.END);
+                    return true;
+                }
+                return false;
+            });
+        }
 
-        // Az oldalmenüben lévő kattintások kezelése
-        navigationView.setNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.action_logout_actual) { // A menüben lévő Logout ID-ja
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(this, LoginActivity.class));
-                finish();
-            }
-            drawer.closeDrawer(androidx.core.view.GravityCompat.END);
-            return true;
-        });
+        // 2. NavigationView kezelése (Oldalmenüben lévő gombok)
+        // Itt volt a NullPointerException: a null-check megvédi az appot az összeomlástól
+        if (navigationView != null && drawer != null) {
+            navigationView.setNavigationItemSelectedListener(item -> {
+                int id = item.getItemId();
+
+                if (id == R.id.action_logout_actual) { // A side_menu.xml-ben lévő logout ID
+                    FirebaseAuth.getInstance().signOut();
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    // Tisztítjuk a stacket, hogy ne lehessen a "vissza" gombbal visszajönni
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+
+                // Bármelyik gombra nyomunk, a végén becsukjuk a menüt
+                drawer.closeDrawer(androidx.core.view.GravityCompat.END);
+                return true;
+            });
+        } else {
+            // Logoljuk, ha gond van, így látod a Logcat-ben, de nem száll el az app
+            android.util.Log.e("MenuActivity", "Hiba: nav_view vagy drawer_layout nem található a layoutban!");
+        }
     }
 
 }
