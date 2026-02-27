@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.stv2.ClubsActivity;
 import com.example.stv2.HomeActivity;
 import com.example.stv2.R;
@@ -58,8 +59,20 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
     public void onBindViewHolder(@NonNull ClubViewHolder holder, int position) {
         Club c = aktualis_clubs.get(position);
         holder.name.setText(c.getName());
-        holder.pic.setImageResource(R.drawable.background2);
         holder.members.setText(String.valueOf(c.getMembers().size()));
+
+        String imageUrl = null;
+        if (c.getBook() != null) {
+            imageUrl = c.getBook().getCoverpic();
+        }
+
+        Glide.with(holder.itemView.getContext())
+                .load(imageUrl)
+                .placeholder(R.drawable.background2)
+                .error(R.drawable.background2)
+                .centerCrop()
+                .into(holder.pic);
+
         holder.button.setOnClickListener(v -> listener.onClubClick(c));
 
     }

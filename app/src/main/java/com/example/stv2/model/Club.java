@@ -72,6 +72,7 @@ public class Club {
     public String getAdmin() {
         return admin;
     }
+
     public Book getBook() {
         return book;
     }
@@ -101,15 +102,16 @@ public class Club {
     public Map<String, List<String>> getCustoms() {
         return customs;
     }
-
     public String getId() {
         return id;
     }
-
     public void setId(String id) {
         this.id = id;
     }
 
+    public boolean isMember(String email){
+        return this.members.contains(email);
+    }
 
     public boolean setChapters(int number) {
         String seged = ". fejezet";
@@ -143,7 +145,6 @@ public class Club {
         return false;
 
     }
-
 
     public int getChaptersSize(){
         if (chapters == null) {
@@ -184,6 +185,7 @@ public class Club {
         }
         return false;
     }
+
     public boolean setCustom(String name){
         if(name!=null && !customs.containsKey(name)){
             customs.put(name, new ArrayList<String>());

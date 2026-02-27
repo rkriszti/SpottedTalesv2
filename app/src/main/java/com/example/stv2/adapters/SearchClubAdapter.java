@@ -21,9 +21,13 @@ import java.util.List;
 public class SearchClubAdapter extends RecyclerView.Adapter<SearchClubAdapter.VH> {
 
     private List<Club> clubs = new ArrayList<>();
+    private String useremail;
+    private boolean isUserMember = false, isClubPublic = false;
+    private int type = -1;
 
-    public void setClubs(List<Club> list) {
+    public void setClubs(List<Club> list, String email) {
         clubs = list;
+        useremail = email;
         notifyDataSetChanged();
     }
 
@@ -42,6 +46,25 @@ public class SearchClubAdapter extends RecyclerView.Adapter<SearchClubAdapter.VH
         h.name.setText(c.getName());
         h.members.setText(String.valueOf(c.getMembers().size()));
         h.pic.setImageResource(R.drawable.background2);
+
+        isClubPublic = c.getIspublic();
+        isUserMember = c.isMember(useremail);
+
+        if (isUserMember){
+            //ha tagja akkor mindegy hogy publik vagy sem
+            h.button.setText("Tovább");
+            type = 1;
+        } else {
+            //ha nem tag
+            if(isClubPublic){
+                h.button.setText("Csatlakozás");
+                type = 2;
+            } else {
+                //privát
+                h.button.setText("Csatlakozási kérelem");
+                type = 3;
+            }
+        }
 
         h.button.setOnClickListener(v -> {
             Intent i = new Intent(v.getContext(), ClubPageActivity.class);

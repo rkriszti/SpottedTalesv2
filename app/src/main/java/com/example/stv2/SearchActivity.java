@@ -44,7 +44,7 @@ public class SearchActivity extends MenuActivity {
     private SearchUserAdapter userAdapter;
 
     private int which;
-    private String username, clubidbeforechoosing;
+    private String username, clubidbeforechoosing, email;
     private List<Book> allBooks = new ArrayList<>();
     private List<Club> allClubs = new ArrayList<>();
     private List<User> allUsers = new ArrayList<>();
@@ -151,6 +151,7 @@ public class SearchActivity extends MenuActivity {
                 .addOnSuccessListener(doc -> {
                     if (doc.exists()) {
                         username = doc.getString("username");
+                        email = doc.getString("email");
                         filter(etSearch.getText().toString());
                     }
                 });
@@ -228,7 +229,7 @@ public class SearchActivity extends MenuActivity {
                 .get()
                 .addOnSuccessListener(qs -> {
                     allClubs = qs.toObjects(Club.class);
-                    clubAdapter.setClubs(allClubs);
+                    clubAdapter.setClubs(allClubs, email);
                 });
     }
 
@@ -252,7 +253,7 @@ public class SearchActivity extends MenuActivity {
         if (optionClub) {
             List<Club> filtered = new ArrayList<>();
             for (Club c : allClubs) if (c.getName().toLowerCase().contains(text)) filtered.add(c);
-            clubAdapter.setClubs(filtered);
+            clubAdapter.setClubs(filtered, email);
         }
         if (optionUser) {
             List<User> filtered = new ArrayList<>();
