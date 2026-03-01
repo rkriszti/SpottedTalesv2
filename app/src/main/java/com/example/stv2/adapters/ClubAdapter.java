@@ -66,12 +66,16 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
             imageUrl = c.getBook().getCoverpic();
         }
 
-        Glide.with(holder.itemView.getContext())
-                .load(imageUrl)
-                .placeholder(R.drawable.background2)
-                .error(R.drawable.background2)
-                .centerCrop()
-                .into(holder.pic);
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Glide.with(holder.itemView.getContext())
+                    .load(imageUrl)
+                    .placeholder(R.drawable.background2)
+                    .error(R.drawable.background2)
+                    .centerCrop()
+                    .into(holder.pic);
+        } else {
+            holder.pic.setImageResource(R.drawable.background2);
+        }
 
         holder.button.setOnClickListener(v -> listener.onClubClick(c));
 

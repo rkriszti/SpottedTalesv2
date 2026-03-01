@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.annotation.Nullable;
@@ -22,6 +23,7 @@ import com.example.stv2.model.Book;
 import com.example.stv2.model.Club;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -108,6 +110,7 @@ public class ClubPageActivity extends MenuActivity {
         //ha clubid-t nem kap leáll!
         if (clubId == null) { finish(); return; }
 
+
         Log.d("ChooseBook", "clubpageben ellenőrzés" );
         if(getIntent().getStringExtra("chosenbook")!=null
                 && !getIntent().getStringExtra("chosenbook").isEmpty()){
@@ -168,27 +171,37 @@ public class ClubPageActivity extends MenuActivity {
         });
 
         members.setOnClickListener(v -> {
+            // 1. Azonnal váltsunk layoutot
             setContentView(R.layout.activity_clubpage_members);
 
-            RecyclerView membersRecycler = findViewById(R.id.members_recycler);
-            ImageView backButton = findViewById(R.id.club_backbutton);
+            // 2. Kérjük meg a rendszert, hogy miután végzett a rajzolással, futtassa ezt:
+            getWindow().getDecorView().post(() -> {
+                RecyclerView membersRecycler = findViewById(R.id.members_recycler);
+                ImageView backButton = findViewById(R.id.club_backbutton);
 
-            membersRecycler.setLayoutManager(new LinearLayoutManager(this));
-            membersRecycler.setVisibility(View.VISIBLE);
+                if (membersRecycler != null) {
+                    membersRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-            if (club != null && club.getMembers() != null) {
-                MembersAdapter adapter = new MembersAdapter(club.getMembers(), listener);
-                membersRecycler.setAdapter(adapter);
-            }
-            backButton.setOnClickListener(b -> {
-                recreate();
+                    if (club != null && club.getMembers() != null) {
+                        // Itt használd az új, 4 paraméteres konstruktorodat!
+                        MembersAdapter adapter = new MembersAdapter(
+                                club.getMembers(),
+                                listener,
+                                club,
+                                userEmail // Ez a bejelentkezett felhasználó emailje
+                        );
+                        membersRecycler.setAdapter(adapter);
+                    }
+                }
+
+                if (backButton != null) {
+                    backButton.setOnClickListener(b -> recreate());
+                }
+
+                // Menük visszaállítása
+                setupBottomMenu(R.id.nav_clubs);
+                setupTopMenu();
             });
-
-            setupBottomMenu(R.id.nav_clubs);
-            setupTopMenu();
-
-
-
         });
 
 
@@ -213,30 +226,11 @@ public class ClubPageActivity extends MenuActivity {
                     clubName.setText(club.getName());
                     club.setId(docc.getId());
 
-                    /*String savedBookId = club.getBookId();
+                    if (!club.getIspublic() && !club.isMember(userEmail)) {
+                        Toast.makeText(this, "Nincs jogosultságod!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
 
-                    if (savedBookId != null && !savedBookId.isEmpty()) {
-                        //ha van neki könyve
-                        FirebaseFirestore.getInstance()
-                                .collection("books")
-                                .document(savedBookId)
-                                .get()
-                                .addOnSuccessListener(doc -> {
-                                    Book b = doc.toObject(Book.class);
-                                    if (b != null) {
-                                        club.setBook(b);
-
-                                        // UI frissítés
-                                        clubBookCover.setImageResource(R.drawable.background2);
-                                        if (b.getCoverpic() != null) {
-                                            Glide.with(this).load(b.getCoverpic()).centerCrop().into(clubBookCover);
-                                        }
-                                        clubBookTitle.setText(b.getTitle());
-                                        clubBookAuthor.setText(b.getAuthor());
-                                    }
-                                })
-                                .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a könyv lekérésénél", e));
-                    }*/
 
                     //státusz beállítás
                     if (club.getIspublic()){
@@ -247,13 +241,39 @@ public class ClubPageActivity extends MenuActivity {
 
 
 
-                    // Admin profilkép
-                    String adminPicUri = null; // TODO: lekérni Firestore-ból
-                    if (adminPicUri != null) {
-                        Glide.with(this).load(adminPicUri).circleCrop().into(clubAdminPic);
-                    } else {
-                        clubAdminPic.setImageResource(R.drawable.ic_default_avatar);
-                    }
+                    String adminEmail = club.getAdmin();
+
+                    FirebaseFirestore.getInstance()
+                            .collection("users")
+                            .whereEqualTo("email", adminEmail)
+                            .limit(1)
+                            .get()
+                            .addOnSuccessListener(query -> {
+
+                                if (!query.isEmpty()) {
+
+                                    DocumentSnapshot doc = query.getDocuments().get(0);
+                                    String picUrl = doc.getString("profilepicurl");
+
+                                    if (picUrl != null && !picUrl.isEmpty()) {
+                                        Glide.with(this)
+                                                .load(picUrl)
+                                                .circleCrop()
+                                                .placeholder(R.drawable.ic_default_avatar)
+                                                .error(R.drawable.ic_default_avatar)
+                                                .into(clubAdminPic);
+                                    } else {
+                                        clubAdminPic.setImageResource(R.drawable.ic_default_avatar);
+                                    }
+
+                                } else {
+                                    clubAdminPic.setImageResource(R.drawable.ic_default_avatar);
+                                }
+                            })
+                            .addOnFailureListener(e ->
+                                    clubAdminPic.setImageResource(R.drawable.ic_default_avatar)
+                            );
+
 
                     // Status icon
                     clubStatusIcon.setImageResource(club.getIspublic() ? R.drawable.ic_lock_open : R.drawable.ic_lock);
@@ -283,7 +303,6 @@ public class ClubPageActivity extends MenuActivity {
                     }
 
 
-                    String adminEmail = club.getAdmin();
                     isAdmin = userEmail != null && userEmail.equals(adminEmail);
 
                     // RecyclerView-ok
