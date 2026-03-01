@@ -43,12 +43,16 @@ public class ClubPageActivity extends MenuActivity {
     private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton, club_book_edit;
     private ToggleButton statusChange;
 
+    private List<String> pendingUserIds = new ArrayList<>();
+ //   private com.google.firebase.database.ValueEventListener pendingListener;
+
     //elhelyezés
     private RecyclerView chaptersRecycler, customsRecycler;
     private LinearLayout chaptersHeader, customsHeader;
 
     private Boolean settingIsOn = false, choosingHappened = false;
     private Boolean isAdmin;
+
 
     //saját listener
     public interface OnDeleteCustomClickListener {
@@ -186,11 +190,13 @@ public class ClubPageActivity extends MenuActivity {
                         // Itt használd az új, 4 paraméteres konstruktorodat!
                         MembersAdapter adapter = new MembersAdapter(
                                 club.getMembers(),
+                                pendingUserIds,
                                 listener,
                                 club,
-                                userEmail // Ez a bejelentkezett felhasználó emailje
+                                userEmail
                         );
                         membersRecycler.setAdapter(adapter);
+                        loadPendingRequests(club.getId(), adapter);
                     }
                 }
 
@@ -575,6 +581,30 @@ public class ClubPageActivity extends MenuActivity {
                                 .update("bookId", bookId)
                                 .addOnSuccessListener(aVoid -> Log.d("ClubPage", "Club könyv frissítve Firestore-ban"))
                                 .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a club könyv frissítésénél", e));
+                    }
+                });
+    }
+
+    private void loadPendingRequests(String clubId, MembersAdapter adapter) {
+        com.google.firebase.database.FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
+                .getReference("pending_requests")
+                .child(clubId)
+                .addValueEventListener(new com.google.firebase.database.ValueEventListener() {
+                    @Override
+                    public void onDataChange(@androidx.annotation.NonNull com.google.firebase.database.DataSnapshot snapshot) {
+                        pendingUserIds.clear();
+                        for (com.google.firebase.database.DataSnapshot ds : snapshot.getChildren()) {
+                            pendingUserIds.add(ds.getKey()); // Csak a User ID-kat gyűjtjük ki
+                        }
+                        // Ha az adapter már létezik, frissítjük a nézetet
+                        if (adapter != null) {
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@androidx.annotation.NonNull com.google.firebase.database.DatabaseError error) {
+                        Log.e("ClubPage", "Hiba a pending lekérésénél", error.toException());
                     }
                 });
     }
