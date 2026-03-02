@@ -44,7 +44,7 @@ public class ClubChatAdapter extends RecyclerView.Adapter<ClubChatAdapter.VH> {
             holder.user.setText(m.getUseremail());
 
             holder.user.setTextColor(Color.parseColor("#888888"));
-            // Szürke buborék, fekete szöveg másoknak
+
             holder.msg.getBackground().setTint(Color.parseColor("#E8E8E8"));
             holder.msg.setTextColor(Color.BLACK);
         }

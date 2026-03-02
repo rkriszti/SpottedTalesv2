@@ -5,14 +5,17 @@ public class Message {
     private String message;
     private String useremail;
     private long timestamp; // long egyszerűbb a Firebase-nek
+    private String roomPath;
 
     public Message() {} // Üres konstruktor kell a Firebase-nek!
 
-    public Message(String id, String message, String useremail, long timestamp) {
+    public Message(String id, String message, String useremail, long timestamp, String roomPath) {
         this.id = id;
         this.message = message;
         this.useremail = useremail;
         this.timestamp = timestamp;
+        this.timestamp = timestamp;
+        this.roomPath = roomPath;
     }
 
 
@@ -25,4 +28,6 @@ public class Message {
     public void setUseremail(String useremail) { this.useremail = useremail; }
     public long getTimestamp() { return timestamp; }
     public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
+    public String getRoomPath() { return roomPath; }
+    public void setRoomPath(String roomPath) { this.roomPath = roomPath; }
 }
