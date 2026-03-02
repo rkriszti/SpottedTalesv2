@@ -1,6 +1,5 @@
 package com.example.stv2.adapters;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,7 +48,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // Alaphelyzetbe állítás (RecyclerView újrahasznosítás miatt fontos!)
+        // Alaphelyzetbe állítás a RecyclerView újrahasznosítás miatt
         holder.delete.setVisibility(View.GONE);
         holder.accept.setVisibility(View.GONE);
         holder.refuse.setVisibility(View.GONE);
@@ -78,25 +77,22 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
                                 holder.refuse.setVisibility(View.VISIBLE);
                             }
 
-                            // ELFOGADÁS (Pipa)
                             holder.accept.setOnClickListener(v -> {
-                                // 1. RTDB pending törlés
                                 FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
                                         .getReference("pending_requests").child(club.getId()).child(userId).removeValue();
 
-                                // 2. Firestore members hozzáadás
                                 FirebaseFirestore.getInstance().collection("club").document(club.getId())
                                         .update("members", FieldValue.arrayUnion(email));
 
-                                // 3. RTDB connections hozzáadás
                                 FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
                                         .getReference("connections").child(userId).child("clubs").child(club.getId()).setValue(true);
 
-                                // Lokális modell frissítése, hogy azonnal látszódjon
-                                if (!memberEmails.contains(email)) memberEmails.add(email);
+                                if (!memberEmails.contains(email)) {
+                                    memberEmails.add(email);
+                                    notifyDataSetChanged();
+                                }
                             });
 
-                            // ELUTASÍTÁS (X)
                             holder.refuse.setOnClickListener(v -> {
                                 FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
                                         .getReference("pending_requests").child(club.getId()).child(userId).removeValue();
@@ -107,6 +103,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
         } else {
             // --- BENT LÉVŐ TAG LOGIKA ---
             int memberPos = position - pendingUserIds.size();
+            if (memberPos < 0 || memberPos >= memberEmails.size()) return;
             String memberEmail = memberEmails.get(memberPos);
 
             FirebaseFirestore.getInstance().collection("users").whereEqualTo("email", memberEmail).get()
@@ -124,43 +121,46 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
 
                             holder.userButton.setOnClickListener(v -> listener.onChoose(id));
 
-                            // Törlés gomb láthatósága
-                            if (isAdmin && !memberEmail.equals(currentemail)) {
-                                holder.delete.setVisibility(View.VISIBLE);
-                            } else if (!isAdmin && memberEmail.equals(currentemail)) {
+                            if ((isAdmin && !memberEmail.equals(currentemail)) || (!isAdmin && memberEmail.equals(currentemail))) {
                                 holder.delete.setVisibility(View.VISIBLE);
                             }
 
-                            holder.delete.setOnClickListener(v -> {
-                                handleMemberDelete(v, memberEmail, id, memberPos);
-                            });
+                            holder.delete.setOnClickListener(v -> handleMemberDelete(v, memberEmail, id));
                         }
                     });
         }
     }
 
-    private void handleMemberDelete(View v, String email, String userId, int pos) {
+    private void handleMemberDelete(View v, String email, String userId) {
+        // 1. Törlés a lokális listákból
+        if (memberEmails.contains(email)) {
+            memberEmails.remove(email);
+        }
         club.deleteMember(email);
 
+        // 2. Firestore törlés (arrayRemove a legbiztosabb)
         FirebaseFirestore.getInstance().collection("club").document(club.getId())
-                .update("members", club.getMembers());
+                .update("members", FieldValue.arrayRemove(email))
+                .addOnSuccessListener(aVoid -> Log.d("MembersAdapter", "Tag törölve a klubból"))
+                .addOnFailureListener(e -> Log.e("MembersAdapter", "Firestore hiba", e));
 
+        // 3. RTDB törlés
         FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
                 .getReference("connections").child(userId).child("clubs").child(club.getId()).removeValue();
 
+        // 4. UI frissítés vagy navigáció
         if (email.equals(currentemail)) {
             Intent intent = new Intent(v.getContext(), HomeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             v.getContext().startActivity(intent);
         } else {
-            memberEmails.remove(pos);
             notifyDataSetChanged();
         }
     }
 
     @Override
     public int getItemCount() {
-        return pendingUserIds.size() + memberEmails.size();
+        return (pendingUserIds != null ? pendingUserIds.size() : 0) + (memberEmails != null ? memberEmails.size() : 0);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
