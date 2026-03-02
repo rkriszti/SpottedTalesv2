@@ -17,8 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.stv2.adapters.ClubRoomAdapter;
 import com.example.stv2.adapters.MembersAdapter;
-import com.example.stv2.adapters.RoomAdapter;
+import com.example.stv2.adapters.ClubChatAdapter;
 import com.example.stv2.model.Book;
 import com.example.stv2.model.Club;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,7 +30,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class ClubPageActivity extends MenuActivity {
     //globálisan kell
@@ -492,11 +492,8 @@ public class ClubPageActivity extends MenuActivity {
 
     private void setupRecycler(RecyclerView recyclerView, Map<String, List<String>> data) {
         List<String> titles = new ArrayList<>(data.keySet());
-        RecyclerView.Adapter adapter = new RoomAdapter(titles, data, title -> {
-            Intent i = new Intent(ClubPageActivity.this, ChatActivity.class);
-            i.putExtra("roomTitle", title); ///TODOO
-            startActivity(i);
-        }, isAdmin, settingIsOn, false, deleteListener);
+        RecyclerView.Adapter adapter = new ClubRoomAdapter(titles, data, isAdmin, settingIsOn, false, deleteListener, club.getId());
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
@@ -504,11 +501,7 @@ public class ClubPageActivity extends MenuActivity {
     private void setupRecycleruniq(RecyclerView recyclerView, Map<String, List<String>> data) {
         List<String> titles = new ArrayList<>(data.keySet());
 
-        RecyclerView.Adapter adapter = new RoomAdapter(titles, data, title -> {
-            Intent i = new Intent(ClubPageActivity.this, ChatActivity.class);
-            i.putExtra("roomTitle", title); ///TODOO
-            startActivity(i);
-        }, isAdmin, settingIsOn, true, deleteListener);
+        RecyclerView.Adapter adapter = new ClubRoomAdapter(titles, data, isAdmin, settingIsOn, true, deleteListener, club.getId());
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }

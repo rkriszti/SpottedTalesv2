@@ -1,5 +1,7 @@
 package com.example.stv2.adapters;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -21,25 +23,26 @@ import com.example.stv2.R;
 import java.util.List;
 import java.util.Map;
 
-public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
+public class ClubRoomAdapter extends RecyclerView.Adapter<ClubRoomAdapter.ViewHolder> {
 
+    private String clubid;
     private List<String> titles;
     private Map<String, List<String>> data;
-    private OnItemClickListener listener;
     private Boolean isAdmin, isSettingon, isUniqueChapters;
     private  ClubPageActivity.OnDeleteCustomClickListener deletelistener;
 
     public interface OnItemClickListener { void onClick(String title); }
 
-    public RoomAdapter(List<String> titles, Map<String, List<String>> data, OnItemClickListener listener,
-                       Boolean admin, Boolean setting, Boolean isUniqueChapters, ClubPageActivity.OnDeleteCustomClickListener listenerr) {
+    public ClubRoomAdapter(List<String> titles, Map<String, List<String>> data,
+                           Boolean admin, Boolean setting, Boolean isUniqueChapters,
+                           ClubPageActivity.OnDeleteCustomClickListener listenerr, String clubid) {
         this.titles = titles;
         this.data = data;
-        this.listener = listener;
         this.isAdmin = admin;
         this.isSettingon = setting;
         this.isUniqueChapters = isUniqueChapters;
         this.deletelistener = listenerr;
+        this.clubid = clubid;
     }
 
     @NonNull
@@ -50,11 +53,19 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
         return new ViewHolder(v);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String title = titles.get(position);
         holder.titleText.setText(title);
 
+        holder.titleText.setOnClickListener( k -> {
+            Context context = k.getContext();
+            Intent i = new Intent(context, ChatActivity.class);
+            i.putExtra("clubId", clubid);
+            i.putExtra("roomName", title);
+            context.startActivity(i);
+        });
 
         if (isAdmin && isSettingon && isUniqueChapters) {
             holder.deleteChapter.setVisibility(View.VISIBLE);

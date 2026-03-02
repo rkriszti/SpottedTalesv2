@@ -31,6 +31,7 @@
         <activity android:name=".NewBookActivity" />
         <activity android:name=".ClubsActivity" />
         <activity android:name=".RecommendActivity" />
+        <activity android:name=".ChatActivity" />
 
 
     </application>
