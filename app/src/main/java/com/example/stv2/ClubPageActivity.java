@@ -1,5 +1,6 @@
 package com.example.stv2;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,7 +36,7 @@ public class ClubPageActivity extends MenuActivity {
     //globálisan kell
     private Club club;
     private String userEmail, bookid;
-    private Button members;
+    private Button members, club_delete;
 
     //xml részek
     private TextView clubName, clubBookTitle, statusText, clubBookAuthor;
@@ -127,6 +128,7 @@ public class ClubPageActivity extends MenuActivity {
         //button
         Settingbutton = findViewById(R.id.clubsettingon);
         members = findViewById(R.id.club_members);
+        club_delete = findViewById(R.id.club_delete);
 
         //edittext
         clubNameEdit = findViewById(R.id.club_name_edittext);
@@ -372,9 +374,59 @@ public class ClubPageActivity extends MenuActivity {
                                 .addOnFailureListener(e -> Log.e("ClubPage", "Mentési hiba", e));
                     });
 
+                    club_delete.setOnClickListener(l -> {
+                        new AlertDialog.Builder(ClubPageActivity.this)
+                                .setTitle("Klub törlése")
+                                .setMessage("Biztosan törölni szeretnéd a klubot? Minden üzenet és tartalom véglegesen megsemmisül!")
+                                .setPositiveButton("Igen, törlöm", (dialog, which) -> {
+
+                                    String clubId = club.getId();
+                                    FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                                    com.google.firebase.database.DatabaseReference rtdb = com.google.firebase.database.FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+
+                                    firestore.collection("club").document(clubId).delete()
+                                            .addOnSuccessListener(aVoid -> {
+                                                Log.d("DeleteClub", "Firestore dokumentum törölve");
+
+                                                rtdb.child("messages").child(clubId).removeValue();
+                                                rtdb.child("pending_requests").child(clubId).removeValue();
+                                                rtdb.child("club_members").child(clubId).removeValue();
+
+                                                 if (club.getMembers() != null) {
+                                                    for (String memberEmail : club.getMembers()) {
+                                                         firestore.collection("users")
+                                                                .whereEqualTo("email", memberEmail)
+                                                                .get()
+                                                                .addOnSuccessListener(querySnapshot -> {
+                                                                    for (DocumentSnapshot userDoc : querySnapshot) {
+                                                                        String memberUid = userDoc.getId();
+                                                                        rtdb.child("connections").child(memberUid).child("clubs").child(clubId).removeValue();
+                                                                    }
+                                                                });
+                                                    }
+                                                }
+
+                                                Toast.makeText(ClubPageActivity.this, "Klub sikeresen törölve!", Toast.LENGTH_SHORT).show();
+
+                                                 Intent intent = new Intent(ClubPageActivity.this, HomeActivity.class);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                startActivity(intent);
+                                                finish();
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Log.e("DeleteClub", "Hiba a törlésnél", e);
+                                                Toast.makeText(ClubPageActivity.this, "Hiba a törlés során!", Toast.LENGTH_SHORT).show();
+                                            });
+                                })
+                                .setNegativeButton("Mégse", null)
+                                .show();
+                    });
+
                     //fejezetek módosítása
                     addcustomEdit.setVisibility(View.VISIBLE);
                     chaptersEdit.setVisibility(View.VISIBLE);
+
+                    club_delete.setVisibility(View.VISIBLE);
 
                     //név edittext megjelent
                     clubName.setVisibility(View.GONE);
@@ -471,6 +523,8 @@ public class ClubPageActivity extends MenuActivity {
                     clubNameEdit.setVisibility(View.GONE);
                     chaptersEdit.setVisibility(View.GONE);
                     addcustomEdit.setVisibility(View.GONE);
+
+                    club_delete.setVisibility(View.GONE);
 
                     //újra setting gomb lesz
                     Settingbutton.setImageResource(R.drawable.ic_setting);

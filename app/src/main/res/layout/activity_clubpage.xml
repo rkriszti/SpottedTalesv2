@@ -306,6 +306,15 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+            <Button
+                android:id="@+id/club_delete"
+                android:backgroundTint="#F44336"
+                android:gravity="center"
+                android:text="Klub Törlése"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
         </LinearLayout>
     </ScrollView>
 
