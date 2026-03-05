@@ -32,6 +32,7 @@ import java.util.List;
 public class ClubsActivity extends MenuActivity{
     //saját klubbok listája
 
+
     private ProgressBar progressBar;
     private RecyclerView recyclerView; //activity_clubs-ban van
     private ClubAdapter clubAdapter;
@@ -58,6 +59,8 @@ public class ClubsActivity extends MenuActivity{
         setContentView(R.layout.activity_clubs);
         setupBottomMenu(R.id.nav_clubs);
         setupTopMenu();
+
+
 
         //1. példányok létrehozása
         recyclerView = findViewById(R.id.recyclerClubs);

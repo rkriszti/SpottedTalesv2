@@ -7,6 +7,7 @@ import android.credentials.CredentialManager;
 import android.net.Uri;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue; // Ez kell a tagság törléséhez
 import android.os.Bundle;
 import android.widget.Button;
@@ -58,11 +59,12 @@ public class ProfileActivity extends MenuActivity {
     private int deletehappened = -1;
     private String userid, favbookid, bookid;
     private Boolean ownprofile = false;
+    private Boolean ismoderator = false;
     private Boolean favchosen = false;
     private List<String> favs;
 
     private ShapeableImageView profilepic;
-    private Button deleteprofile;
+    private Button deleteprofile, profile_moderator;
     private CardView profile_delete_card;
     private ImageView  book1, book2, book3, profile_edit, profile_save, delete_first, delete_second, delete_third;
     private TextView profileusername, book1title, book2title, book3title;
@@ -87,17 +89,51 @@ public class ProfileActivity extends MenuActivity {
         setupBottomMenu(R.id.nav_profile);
         setupTopMenu();
 
+        String currentUid = FirebaseAuth.getInstance().getUid();
         //van e id
         if(getIntent()!=null && getIntent().getStringExtra("userid")!=null &&
                 !getIntent().getStringExtra("userid").isEmpty()){
             userid = getIntent().getStringExtra("userid");
         } else {
-            finish();
+            userid = currentUid;
+            Log.d("profil", "nem talál átadott userid");
         }
+
+        String uid = FirebaseAuth.getInstance().getUid();
         //saját profil oldal
-        if (FirebaseAuth.getInstance().getUid()== null || userid.equals( FirebaseAuth.getInstance().getUid())) {
+        if (currentUid == null || currentUid.equals(userid)) {
             ownprofile = true;
         }
+       /* if (FirebaseAuth.getInstance().getUid()== null || userid.equals( FirebaseAuth.getInstance().getUid())) {
+            ownprofile = true;
+        }*/
+
+        //moderator e
+        if (uid != null) {
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(uid)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            Boolean moderator = documentSnapshot.getBoolean("admin");
+                            ismoderator = (moderator != null && moderator);
+
+                            if(ownprofile || ismoderator){
+                                profile_edit.setVisibility(View.VISIBLE);
+                                Log.d("AdminCheck", "Szerkesztés engedélyezve (Saját vagy Admin)");
+                            }
+
+                            if (moderator != null && moderator) {
+                                Log.d("AdminCheck", "A felhasználó admin.");
+                            } else {
+                                Log.d("AdminCheck", "A felhasználó nem admin.");
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e("AdminCheck", "Hiba a lekéréskor", e));
+        }
+
 
         //kedvenc változás
         if(getIntent()!=null &&
@@ -110,6 +146,7 @@ public class ProfileActivity extends MenuActivity {
         profilepic = findViewById(R.id.profile_pic);
         profileusername = findViewById(R.id.profile_username);
         deleteprofile = findViewById(R.id.deleteprofile);
+        profile_moderator = findViewById(R.id.profile_moderator);
 
         book1 = findViewById(R.id.bookFirst);
         book2 = findViewById(R.id.bookSecond);
@@ -127,8 +164,11 @@ public class ProfileActivity extends MenuActivity {
         delete_third = findViewById(R.id.delete_third);
         profile_delete_card = findViewById(R.id.profile_delete_card);
 
-        if(ownprofile){
+        if(ownprofile || ismoderator){
             profile_edit.setVisibility(View.VISIBLE);
+        }
+        if(ismoderator){
+            profile_moderator.setVisibility(View.VISIBLE);
         }
 
         Button importbutton = findViewById(R.id.buttonimport);
@@ -155,34 +195,47 @@ public class ProfileActivity extends MenuActivity {
         });
 
         deleteprofile.setOnClickListener(v -> {
-            final EditText passwordInput = new EditText(this);
-            passwordInput.setHint("Jelszó");
-            passwordInput.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
-            new AlertDialog.Builder(this)
-                    .setTitle("Fiók törlése")
-                    .setMessage("A törléshez kérlek add meg a jelszavad a megerősítéshez!")
-                    .setView(passwordInput)
-                    .setPositiveButton("Törlés", (dialog, whichButton) -> {
-                        String currentPassword = passwordInput.getText().toString();
-                        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (ownprofile){
+                final EditText passwordInput = new EditText(this);
+                passwordInput.setHint("Jelszó");
+                passwordInput.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
-                        if (fUser != null && !currentPassword.isEmpty()) {
-                            // Itt hívjuk meg az osztályt és a statikus metódusát
-                            AuthCredential credential = EmailAuthProvider.getCredential(fUser.getEmail(), currentPassword);
+                new AlertDialog.Builder(this)
+                        .setTitle("Fiók törlése")
+                        .setMessage("A törléshez kérlek add meg a jelszavad a megerősítéshez!")
+                        .setView(passwordInput)
+                        .setPositiveButton("Törlés", (dialog, whichButton) -> {
+                            String currentPassword = passwordInput.getText().toString();
+                            FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
 
-                            fUser.reauthenticate(credential).addOnCompleteListener(reAuthTask -> {
-                                if (reAuthTask.isSuccessful()) {
-                                    // Ha sikerült, meghívjuk a saját metódusunkat
-                                    startFullDeletionProcess(fUser);
-                                } else {
-                                    Toast.makeText(this, "Hibás jelszó!", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    })
-                    .setNegativeButton("Mégse", null)
-                    .show();
+                            if (fUser != null && !currentPassword.isEmpty()) {
+                                // Itt hívjuk meg az osztályt és a statikus metódusát
+                                AuthCredential credential = EmailAuthProvider.getCredential(fUser.getEmail(), currentPassword);
+
+                                fUser.reauthenticate(credential).addOnCompleteListener(reAuthTask -> {
+                                    if (reAuthTask.isSuccessful()) {
+                                        // Ha sikerült, meghívjuk a saját metódusunkat
+                                        startFullDeletionProcess(fUser);
+                                    } else {
+                                        Toast.makeText(this, "Hibás jelszó!", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                        })
+                        .setNegativeButton("Mégse", null)
+                        .show();
+            } else if (ismoderator){
+                new AlertDialog.Builder(this)
+                        .setTitle("Felhasználó moderátori törlése")
+                        .setMessage("Biztosan törölni akarod ezt a felhasználót? Az Auth fiókja megmarad, de minden adata és klubtagsága megszűnik.")
+                        .setPositiveButton("Igen, törlöm", (dialog, whichButton) -> {
+                            startModeratorDeletion();
+                        })
+                        .setNegativeButton("Mégse", null)
+                        .show();
+            }
+
         });
 
         loadUser();
@@ -313,6 +366,7 @@ public class ProfileActivity extends MenuActivity {
             if(isEditing){
                 Intent i = new Intent(ProfileActivity.this, SearchActivity.class);
                 i.putExtra("favchange", 1);
+                i.putExtra("userid", userid);
                 startActivity(i);
             }
         });
@@ -321,6 +375,7 @@ public class ProfileActivity extends MenuActivity {
             if(isEditing){
                 Intent i = new Intent(ProfileActivity.this, SearchActivity.class);
                 i.putExtra("favchange", 2);
+                i.putExtra("userid", userid);
                 startActivity(i);
             }
         });
@@ -329,6 +384,7 @@ public class ProfileActivity extends MenuActivity {
             if(isEditing){
                 Intent i = new Intent(ProfileActivity.this, SearchActivity.class);
                 i.putExtra("favchange", 3);
+                i.putExtra("userid", userid);
                 startActivity(i);
             }
         });
@@ -655,5 +711,48 @@ public class ProfileActivity extends MenuActivity {
                     });
                 })
                 .addOnFailureListener(e -> Log.e("DeleteProcess", "Firestore keresési hiba", e));
+    }
+
+    private void startModeratorDeletion() {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DatabaseReference rtdb = FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+
+        Log.d("ModeratorDelete", "Moderátori takarítás indul a következőre: " + userid);
+
+        FirebaseStorage.getInstance().getReference().child("profiles/" + userid + ".jpg").delete()
+                .addOnFailureListener(e -> Log.d("Delete", "Nincs törlendő kép."));
+
+        if (user == null || user.getEmail() == null) {
+            Toast.makeText(this, "Hiba: Felhasználói adatok nem elérhetőek!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String targetEmail = user.getEmail();
+
+        firestore.collection("club")
+                .whereArrayContains("members", targetEmail)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        String clubId = doc.getId();
+                        String adminEmail = doc.getString("admin");
+
+                        if (targetEmail.equals(adminEmail)) {
+                            firestore.collection("club").document(clubId).delete();
+                            rtdb.child("messages").child(clubId).removeValue();
+                            rtdb.child("club_members").child(clubId).removeValue();
+                        } else {
+                            firestore.collection("club").document(clubId)
+                                    .update("members", FieldValue.arrayRemove(targetEmail));
+                            rtdb.child("club_members").child(clubId).child(userid).removeValue();
+                        }
+                    }
+
+                    // 3. Célpont profiljának és kapcsolatainak törlése
+                    rtdb.child("connections").child(userid).removeValue();
+                    firestore.collection("users").document(userid).delete().addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Felhasználó sikeresen eltávolítva!", Toast.LENGTH_SHORT).show();
+                        finish(); // Csak bezárjuk az oldalt, nem léptetünk ki senkit
+                    });
+                });
     }
 }

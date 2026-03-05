@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.stv2.R;
 import com.example.stv2.ProfileActivity;
 import com.example.stv2.model.User;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +44,18 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.VH
         h.pic.setImageResource(R.drawable.background2);
 
         h.button.setOnClickListener(v -> {
-            Intent i = new Intent(v.getContext(), ProfileActivity.class);
-            ///i.putExtra("userId", u.getId());
-            v.getContext().startActivity(i);
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .whereEqualTo("username", u.getUsername())
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        if (!querySnapshot.isEmpty()) {
+                            String realId = querySnapshot.getDocuments().get(0).getId();
+                            Intent i = new Intent(v.getContext(), ProfileActivity.class);
+                            i.putExtra("userid", realId);
+                            v.getContext().startActivity(i);
+                        }
+                    });
         });
     }
 

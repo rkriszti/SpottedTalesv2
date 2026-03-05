@@ -38,33 +38,49 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/menu_clubpic"
-            app:layout_constraintTop_toTopOf="@id/menu_clubpic" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/menu_clubtags"
             android:layout_width="23dp"
             android:layout_height="26dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginStart="20dp"
             android:textColor="#666666"
             android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/menu_clubname"
-            app:layout_constraintTop_toBottomOf="@id/menu_clubname" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/menu_clubpic"
+            app:layout_constraintTop_toBottomOf="@+id/menu_clubname"
+            app:layout_constraintVertical_bias="0.6" />
 
         <TextView
             android:id="@+id/menu_tagfelirat"
-            android:layout_width="83dp"
-            android:layout_height="34dp"
+            android:layout_width="42dp"
+            android:layout_height="38dp"
             android:layout_marginStart="4dp"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
             android:text="tag"
             android:textColor="#666666"
             android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.051"
             app:layout_constraintStart_toEndOf="@+id/menu_clubtags"
-            tools:ignore="MissingConstraints"
-            tools:layout_editor_absoluteY="41dp" />
+            app:layout_constraintTop_toBottomOf="@+id/menu_clubname"
+            app:layout_constraintVertical_bias="0.0"
+            tools:ignore="MissingConstraints" />
+
+        <ImageView
+            android:id="@+id/moderator_deleteclub"
+            android:layout_width="43dp"
+            android:layout_height="43dp"
+            android:visibility="gone"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/ic_delete"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/clubs_button"
+            app:layout_constraintStart_toEndOf="@+id/menu_tagfelirat"
+            app:layout_constraintTop_toBottomOf="@+id/menu_clubname"/>
 
         <Button
             android:id="@+id/clubs_button"

@@ -54,6 +54,21 @@
                 app:strokeColor="@color/white"
                 app:strokeWidth="2dp" />
 
+            <Button
+                android:id="@+id/profile_moderator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#801F67"
+                android:text="MODERÁTOR"
+                android:textSize="10sp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/profile_username"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.445"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
             <TextView
                 android:id="@+id/profile_username"
                 android:layout_width="206dp"

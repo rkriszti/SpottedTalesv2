@@ -1,5 +1,6 @@
 package com.example.stv2.adapters;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,11 +28,13 @@ public class SearchClubAdapter extends RecyclerView.Adapter<SearchClubAdapter.VH
 
     private List<Club> clubs = new ArrayList<>();
     private String useremail;
+    private boolean ismoderator = false;
     private boolean isUserMember = false, isClubPublic = false;
 
-    public void setClubs(List<Club> list, String email) {
+    public void setClubs(List<Club> list, String email, boolean moderator) {
         clubs = list;
         useremail = email;
+        this.ismoderator = moderator;
         notifyDataSetChanged();
     }
 
@@ -57,6 +60,48 @@ public class SearchClubAdapter extends RecyclerView.Adapter<SearchClubAdapter.VH
 
         isClubPublic = c.getIspublic();
         isUserMember = c.isMember(useremail);
+
+        if(ismoderator){
+            h.moderator_deleteclub.setVisibility(View.VISIBLE);
+        }
+
+        h.moderator_deleteclub.setOnClickListener(v -> {
+            new AlertDialog.Builder(v.getContext())
+                    .setTitle("Klub végleges törlése")
+                    .setMessage("Moderátorként biztosan törölni akarod a(z) " + c.getName() + " klubot?")
+                    .setPositiveButton("Igen", (dialog, which) -> {
+
+                        String clubId = c.getId();
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        com.google.firebase.database.DatabaseReference rtdb = com.google.firebase.database.FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+
+                        db.collection("club").document(clubId).delete().addOnSuccessListener(aVoid -> {
+
+                            rtdb.child("messages").child(clubId).removeValue();
+                            rtdb.child("pending_requests").child(clubId).removeValue();
+                            rtdb.child("club_members").child(clubId).removeValue();
+
+                            // 3. Tagok kapcsolatainak (connections) megszüntetése
+                            if (c.getMembers() != null) {
+                                for (String mEmail : c.getMembers()) {
+                                    db.collection("users").whereEqualTo("email", mEmail).get()
+                                            .addOnSuccessListener(querySnapshot -> {
+                                                for (com.google.firebase.firestore.DocumentSnapshot userDoc : querySnapshot) {
+                                                    rtdb.child("connections").child(userDoc.getId()).child("clubs").child(clubId).removeValue();
+                                                }
+                                            });
+                                }
+                            }
+
+                            clubs.remove(pos);
+                            notifyItemRemoved(pos);
+                            android.widget.Toast.makeText(v.getContext(), "Klub sikeresen törölve!", android.widget.Toast.LENGTH_SHORT).show();
+
+                        }).addOnFailureListener(e -> android.util.Log.e("ModeratorDelete", "Hiba a törlésnél", e));
+                    })
+                    .setNegativeButton("Mégse", null)
+                    .show();
+        });
 
         int type;
         if (isUserMember){
@@ -145,7 +190,7 @@ public class SearchClubAdapter extends RecyclerView.Adapter<SearchClubAdapter.VH
 
     static class VH extends RecyclerView.ViewHolder {
         TextView name, members;
-        ImageView pic;
+        ImageView pic, moderator_deleteclub;
         Button button;
 
         VH(View v) {
@@ -153,6 +198,7 @@ public class SearchClubAdapter extends RecyclerView.Adapter<SearchClubAdapter.VH
             name = v.findViewById(R.id.menu_clubname);
             members = v.findViewById(R.id.menu_clubtags);
             pic = v.findViewById(R.id.menu_clubpic);
+            moderator_deleteclub = v.findViewById(R.id.moderator_deleteclub);
             button = v.findViewById(R.id.clubs_button);
         }
     }

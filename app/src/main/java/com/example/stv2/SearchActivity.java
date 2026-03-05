@@ -41,6 +41,8 @@ public class SearchActivity extends MenuActivity {
     private EditText etSearch;
     private RecyclerView recyclerSearch;
     private CheckBox sameinterest;
+    private String targetUserId;
+    private Boolean ismoderator = false;
     private List<String> currentUserFavorites = new ArrayList<>();
 
     private SearchBookAdapter bookAdapter;
@@ -82,7 +84,7 @@ public class SearchActivity extends MenuActivity {
 
                 i.putExtra("whichbook", which);
                 i.putExtra("bookid", bookid);
-                i.putExtra("userid", FirebaseAuth.getInstance().getUid());
+                i.putExtra("userid", targetUserId);
                 startActivity(i);
             }
 
@@ -121,6 +123,34 @@ public class SearchActivity extends MenuActivity {
             clubidbeforechoosing = getIntent().getStringExtra("clubid");
             Log.d("ChooseBook", "search átjött a clubid:" + clubidbeforechoosing );
         }
+
+        String uid = FirebaseAuth.getInstance().getUid();
+
+        if (getIntent() != null) {
+            targetUserId = getIntent().getStringExtra("userid");
+        }
+
+        //moderator e
+        if (uid != null) {
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(uid)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            Boolean moderator = documentSnapshot.getBoolean("admin");
+                            ismoderator = (moderator != null && moderator);
+
+                            if (moderator != null && moderator) {
+                                Log.d("AdminCheck", "A felhasználó admin.");
+                            } else {
+                                Log.d("AdminCheck", "A felhasználó nem admin.");
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e("AdminCheck", "Hiba a lekéréskor", e));
+        }
+
 
         //profilról hív--------------------------------------------------------------
         chooseFav = false;
@@ -220,16 +250,6 @@ public class SearchActivity extends MenuActivity {
         filter(etSearch.getText().toString());
     }
 
-    private void loadBooksOLD() {
-        FirebaseFirestore.getInstance()
-                .collection("books")
-                .get()
-                .addOnSuccessListener(qs -> {
-                    allBooks = qs.toObjects(Book.class);
-                    if (bookAdapter != null) bookAdapter.setBooks(allBooks);
-                });
-    }
-
     private void loadBooks() {
         FirebaseFirestore.getInstance()
                 .collection("books")
@@ -240,7 +260,7 @@ public class SearchActivity extends MenuActivity {
                     }
                     if (snapshot != null) {
                         allBooks = snapshot.toObjects(Book.class);
-                        if (bookAdapter != null) bookAdapter.setBooks(allBooks);
+                        if (bookAdapter != null) bookAdapter.setBooks(allBooks, ismoderator);
                     }
                 });
     }
@@ -252,7 +272,7 @@ public class SearchActivity extends MenuActivity {
                 .get()
                 .addOnSuccessListener(qs -> {
                     allClubs = qs.toObjects(Club.class);
-                    clubAdapter.setClubs(allClubs, email);
+                    clubAdapter.setClubs(allClubs, email, ismoderator);
                 });
     }
 
@@ -271,12 +291,12 @@ public class SearchActivity extends MenuActivity {
         if (optionBook && bookAdapter != null) {
             List<Book> filtered = new ArrayList<>();
             for (Book b : allBooks) if (b.getTitle().toLowerCase().contains(text)) filtered.add(b);
-            bookAdapter.setBooks(filtered);
+            bookAdapter.setBooks(filtered, ismoderator);
         }
         if (optionClub) {
             List<Club> filtered = new ArrayList<>();
             for (Club c : allClubs) if (c.getName().toLowerCase().contains(text)) filtered.add(c);
-            clubAdapter.setClubs(filtered, email);
+            clubAdapter.setClubs(filtered, email, ismoderator);
         }
         if (optionUser) {
             List<User> filtered = new ArrayList<>();
@@ -316,7 +336,7 @@ public class SearchActivity extends MenuActivity {
 
                 // Adapter létrehozása a betöltött adminBooks után
                 Log.d("ChooseBook", "search choose átadása adapternek"  );
-                bookAdapter = new SearchBookAdapter(adminBooks, pickImageLauncher, chooseForClub, listener, chooseFav);
+                bookAdapter = new SearchBookAdapter(adminBooks, pickImageLauncher, chooseForClub, listener, chooseFav, ismoderator);
 
                 // Cover click listener beállítása
                 bookAdapter.setOnCoverClickListener(pos -> {

@@ -37,6 +37,8 @@ public class ClubPageActivity extends MenuActivity {
     private Club club;
     private String userEmail, bookid;
     private Button members, club_delete;
+    private Boolean ismoderator = false;
+    String adminEmail;
 
     //xml részek
     private TextView clubName, clubBookTitle, statusText, clubBookAuthor;
@@ -111,9 +113,33 @@ public class ClubPageActivity extends MenuActivity {
         userEmail = user != null ? user.getEmail() : null;
         bookid = "";
 
+
         String clubId = getIntent().getStringExtra("clubId");
         //ha clubid-t nem kap leáll!
         if (clubId == null) { finish(); return; }
+
+        String uid = FirebaseAuth.getInstance().getUid();
+
+        //moderator e
+        if (uid != null) {
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(uid)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            ismoderator = documentSnapshot.getBoolean("admin") != null && documentSnapshot.getBoolean("admin");
+                            if (ismoderator && club != null) {
+                                isAdmin = true;
+                                admin();
+
+                                setupRecycler(chaptersRecycler, club.getChapters());
+                                setupRecycleruniq(customsRecycler, club.getCustoms());
+                                Log.d("AdminCheck", "Moderátor jog utólag aktiválva.");
+                            }
+                        }
+                    });
+        }
 
 
         Log.d("ChooseBook", "clubpageben ellenőrzés" );
@@ -231,6 +257,19 @@ public class ClubPageActivity extends MenuActivity {
                     club = docc.toObject(Club.class);
                     if (club == null) return;
 
+                    club.setId(docc.getId());
+                    adminEmail = club.getAdmin();
+
+                    isAdmin = (userEmail != null && userEmail.equals(adminEmail)) || ismoderator;
+
+
+                    if (isAdmin) {
+                        admin();
+                    }
+
+                    setupRecycler(chaptersRecycler, club.getChapters());
+                    setupRecycleruniq(customsRecycler, club.getCustoms());
+
                     clubName.setText(club.getName());
                     club.setId(docc.getId());
 
@@ -249,7 +288,7 @@ public class ClubPageActivity extends MenuActivity {
 
 
 
-                    String adminEmail = club.getAdmin();
+
 
                     FirebaseFirestore.getInstance()
                             .collection("users")
@@ -311,11 +350,7 @@ public class ClubPageActivity extends MenuActivity {
                     }
 
 
-                    isAdmin = userEmail != null && userEmail.equals(adminEmail);
 
-                    // RecyclerView-ok
-                    setupRecycler(chaptersRecycler, club.getChapters()); //ide már kell admin
-                    setupRecycleruniq(customsRecycler, club.getCustoms());
 
 
                     //ADMIN----------------------------------------------------------------------
