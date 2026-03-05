@@ -7,7 +7,9 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -38,6 +40,8 @@ public class SearchActivity extends MenuActivity {
 
     private EditText etSearch;
     private RecyclerView recyclerSearch;
+    private CheckBox sameinterest;
+    private List<String> currentUserFavorites = new ArrayList<>();
 
     private SearchBookAdapter bookAdapter;
     private SearchClubAdapter clubAdapter;
@@ -97,6 +101,7 @@ public class SearchActivity extends MenuActivity {
         buttonClub = findViewById(R.id.buttonclub);
         buttonUser = findViewById(R.id.buttonuser);
         etSearch = findViewById(R.id.etSearch);
+        sameinterest = findViewById(R.id.sameinterest);
         recyclerSearch = findViewById(R.id.recyclerSearch);
         recyclerSearch.setLayoutManager(new LinearLayoutManager(this));
 
@@ -156,6 +161,20 @@ public class SearchActivity extends MenuActivity {
                     }
                 });
 
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(userId)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        username = doc.getString("username");
+                        email = doc.getString("email");
+                        currentUserFavorites = (List<String>) doc.get("favorites");
+                        if (currentUserFavorites == null) currentUserFavorites = new ArrayList<>();
+                        filter(etSearch.getText().toString());
+                    }
+                });
+
         loadClubs();
         loadUsers();
 
@@ -179,6 +198,8 @@ public class SearchActivity extends MenuActivity {
                 filter(s.toString());
             }
         });
+
+        sameinterest.setOnClickListener(v -> filter(etSearch.getText().toString()));
     }
 
     private void select(boolean book, boolean club, boolean user) {
@@ -186,6 +207,7 @@ public class SearchActivity extends MenuActivity {
         optionClub = club;
         optionUser = user;
 
+        sameinterest.setVisibility(user ? View.VISIBLE : View.GONE);
         buttonBook.setBackgroundResource(book ? R.drawable.background2 : R.drawable.grey_background);
         buttonClub.setBackgroundResource(club ? R.drawable.background2 : R.drawable.grey_background);
         buttonUser.setBackgroundResource(user ? R.drawable.background2 : R.drawable.grey_background);
@@ -193,6 +215,7 @@ public class SearchActivity extends MenuActivity {
         if (book && bookAdapter != null) recyclerSearch.setAdapter(bookAdapter);
         if (club && clubAdapter != null) recyclerSearch.setAdapter(clubAdapter);
         if (user && userAdapter != null) recyclerSearch.setAdapter(userAdapter);
+        if (!user) sameinterest.setChecked(false);
 
         filter(etSearch.getText().toString());
     }
@@ -257,7 +280,22 @@ public class SearchActivity extends MenuActivity {
         }
         if (optionUser) {
             List<User> filtered = new ArrayList<>();
-            for (User u : allUsers) if (u.getUsername().toLowerCase().contains(text) && username!=null && !u.getUsername().equals(username)) filtered.add(u);
+            boolean onlySameInterest = sameinterest.isChecked();
+
+            for (User u : allUsers) {
+                boolean matchesName = u.getUsername().toLowerCase().contains(text);
+                boolean isNotMe = username != null && !u.getUsername().equals(username);
+
+                if (matchesName && isNotMe) {
+                    if (onlySameInterest) {
+                        if (hasCommonFavorite(u.getFavorites())) {
+                            filtered.add(u);
+                        }
+                    } else {
+                        filtered.add(u);
+                    }
+                }
+            }
             userAdapter.setUsers(filtered);
         }
     }
@@ -295,6 +333,14 @@ public class SearchActivity extends MenuActivity {
                 Log.e("CONNECTION", "RTDB hiba", error.toException());
             }
         });
+    }
+
+    private boolean hasCommonFavorite(List<String> otherUserFavorites) {
+        if (currentUserFavorites == null || otherUserFavorites == null) return false;
+        for (String fav : currentUserFavorites) {
+            if (otherUserFavorites.contains(fav)) return true;
+        }
+        return false;
     }
 
     // az adapter hívásához a kiválasztott pozíció frissítése

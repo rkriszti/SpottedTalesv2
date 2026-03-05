@@ -128,7 +128,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            >
 
             <TextView
                 android:layout_width="wrap_content"
@@ -167,8 +167,8 @@
 
             <TextView
                 android:id="@+id/bookFirstTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="77dp"
+                android:layout_height="20dp"
                 android:layout_marginTop="16dp"
                 android:text="Válassz!"
                 android:textStyle="bold"
@@ -225,8 +225,8 @@
             <!-- 3. hely -->
             <TextView
                 android:id="@+id/bookSecondTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="59dp"
+                android:layout_height="16dp"
                 android:layout_marginTop="4dp"
                 android:text="Válassz!"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -271,8 +271,8 @@
 
             <TextView
                 android:id="@+id/bookThirdTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="78dp"
+                android:layout_height="20dp"
                 android:text="Válassz!"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@id/bookThird"
@@ -280,6 +280,8 @@
                 app:layout_constraintStart_toStartOf="@id/bookThird"
                 app:layout_constraintTop_toBottomOf="@id/bookThird"
                 app:layout_constraintVertical_bias="0.555" />
+
+
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -359,33 +361,59 @@
 
 
 
+        <androidx.cardview.widget.CardView
+            android:id="@+id/profile_delete_card"
+            android:layout_width="0dp"
+            android:layout_height="77dp"
+            android:layout_margin="16dp"
+            android:visibility="gone"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            app:layout_constraintTop_toBottomOf="@id/goodreads"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- ===== BOTTOM NAV ===== -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/background_nav"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_nav_menu"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    <!-- ===== FAB ===== -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_add_emoji"
-        app:backgroundTint="#3c0c3e"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="-28dp"/>
+                <Button
+                    android:id="@+id/deleteprofile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="#F44336"
+                    android:text="Fiók törlése"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
 
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_nav"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:menu="@menu/bottom_nav_menu"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_emoji"
+            app:backgroundTint="#3c0c3e"
+            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="-28dp"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
@@ -394,3 +422,6 @@
         app:menu="@menu/side_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
+
+
+

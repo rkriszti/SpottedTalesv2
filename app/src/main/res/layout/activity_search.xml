@@ -8,119 +8,130 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
 
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/top_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/background_nav"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/top_nav_menu"
-        app:title="Spotted Tales"
-        app:titleTextColor="@color/white" />
+        android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.AppCompatButton
-        app:layout_constraintTop_toBottomOf="@id/top_toolbar"
-        android:id="@+id/buttonbook"
-        android:layout_width="82dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="48dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/background2"
-        android:text="Könyv"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/etSearch"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.764" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/top_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/background_nav"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/top_nav_menu"
+            app:title="Spotted Tales"
+            app:titleTextColor="@color/white" />
 
-    <!-- RecyclerView -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonbook"
+            android:layout_width="82dp"
+            android:layout_height="43dp"
+            android:layout_marginStart="48dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/background2"
+            android:text="Könyv"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/etSearch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/top_toolbar"
+            app:layout_constraintVertical_bias="0.764" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/buttonclub"
-        android:layout_width="82dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginBottom="8dp"
-        android:textColor="@color/white"
-        android:background="@drawable/grey_background"
-        android:text="Klub"
-        app:layout_constraintBottom_toTopOf="@+id/etSearch"
-        app:layout_constraintStart_toEndOf="@+id/buttonbook"
-        app:layout_constraintTop_toBottomOf="@id/top_toolbar"
-        app:layout_constraintVertical_bias="0.707" />
+        <!-- RecyclerView -->
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/buttonuser"
-        android:layout_width="107dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="22dp"
-        android:layout_marginBottom="12dp"
-        android:background="@drawable/grey_background"
-        android:text="Felhasználó"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@+id/etSearch"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.277"
-        app:layout_constraintStart_toEndOf="@+id/buttonclub"
-        app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
-        app:layout_constraintVertical_bias="1.0" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonclub"
+            android:layout_width="82dp"
+            android:layout_height="43dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/grey_background"
+            android:text="Klub"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/etSearch"
+            app:layout_constraintStart_toEndOf="@+id/buttonbook"
+            app:layout_constraintTop_toBottomOf="@id/top_toolbar"
+            app:layout_constraintVertical_bias="0.707" />
 
-    <EditText
-        android:id="@+id/etSearch"
-        android:layout_width="379dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:hint="Keresés név alapján"
-        android:padding="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/top_toolbar" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/buttonuser"
+            android:layout_width="107dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/grey_background"
+            android:text="Felhasználó"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/etSearch"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.277"
+            app:layout_constraintStart_toEndOf="@+id/buttonclub"
+            app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="379dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:hint="Keresés név alapján"
+            android:padding="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/top_toolbar" />
+
+        <CheckBox
+            android:id="@+id/sameinterest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Hasonló érdeklődési kör"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/recyclerSearch"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.053"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etSearch"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerSearch"
+            android:layout_width="407dp"
+            android:layout_height="508dp"
+            android:layout_marginTop="52dp"
+            app:layout_constraintBottom_toTopOf="@+id/fab"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sameinterest" />
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_nav"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:labelVisibilityMode="labeled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:menu="@menu/bottom_nav_menu" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-28dp"
+            android:contentDescription="Új"
+            android:src="@drawable/ic_add_emoji"
+            app:backgroundTint="#3c0c3e"
+            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="@android:color/white" />
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerSearch"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/etSearch"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/background_nav"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
-        app:labelVisibilityMode="labeled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_nav_menu" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="-28dp"
-        android:contentDescription="Új"
-        android:src="@drawable/ic_add_emoji"
-        app:backgroundTint="#3c0c3e"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:tint="@android:color/white" />
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"

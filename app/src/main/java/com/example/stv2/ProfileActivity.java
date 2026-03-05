@@ -3,7 +3,11 @@ package com.example.stv2;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.credentials.CredentialManager;
 import android.net.Uri;
+import com.google.firebase.auth.EmailAuthProvider;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.firestore.FieldValue; // Ez kell a tagság törléséhez
 import android.os.Bundle;
 import android.widget.Button;
 import android.util.Log;
@@ -11,18 +15,29 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.stv2.model.User;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -47,6 +62,8 @@ public class ProfileActivity extends MenuActivity {
     private List<String> favs;
 
     private ShapeableImageView profilepic;
+    private Button deleteprofile;
+    private CardView profile_delete_card;
     private ImageView  book1, book2, book3, profile_edit, profile_save, delete_first, delete_second, delete_third;
     private TextView profileusername, book1title, book2title, book3title;
     private EditText username_edittext;
@@ -92,6 +109,7 @@ public class ProfileActivity extends MenuActivity {
 
         profilepic = findViewById(R.id.profile_pic);
         profileusername = findViewById(R.id.profile_username);
+        deleteprofile = findViewById(R.id.deleteprofile);
 
         book1 = findViewById(R.id.bookFirst);
         book2 = findViewById(R.id.bookSecond);
@@ -107,6 +125,7 @@ public class ProfileActivity extends MenuActivity {
         delete_first = findViewById(R.id.delete_first);
         delete_second = findViewById(R.id.delete_second);
         delete_third = findViewById(R.id.delete_third);
+        profile_delete_card = findViewById(R.id.profile_delete_card);
 
         if(ownprofile){
             profile_edit.setVisibility(View.VISIBLE);
@@ -133,6 +152,37 @@ public class ProfileActivity extends MenuActivity {
                 showHelpDialog();
                 helpButton.setChecked(false);
             }
+        });
+
+        deleteprofile.setOnClickListener(v -> {
+            final EditText passwordInput = new EditText(this);
+            passwordInput.setHint("Jelszó");
+            passwordInput.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Fiók törlése")
+                    .setMessage("A törléshez kérlek add meg a jelszavad a megerősítéshez!")
+                    .setView(passwordInput)
+                    .setPositiveButton("Törlés", (dialog, whichButton) -> {
+                        String currentPassword = passwordInput.getText().toString();
+                        FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
+
+                        if (fUser != null && !currentPassword.isEmpty()) {
+                            // Itt hívjuk meg az osztályt és a statikus metódusát
+                            AuthCredential credential = EmailAuthProvider.getCredential(fUser.getEmail(), currentPassword);
+
+                            fUser.reauthenticate(credential).addOnCompleteListener(reAuthTask -> {
+                                if (reAuthTask.isSuccessful()) {
+                                    // Ha sikerült, meghívjuk a saját metódusunkat
+                                    startFullDeletionProcess(fUser);
+                                } else {
+                                    Toast.makeText(this, "Hibás jelszó!", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    })
+                    .setNegativeButton("Mégse", null)
+                    .show();
         });
 
         loadUser();
@@ -230,6 +280,7 @@ public class ProfileActivity extends MenuActivity {
             isEditing = true;
             profile_save.setVisibility(View.VISIBLE);
             profile_edit.setVisibility(View.GONE);
+            profile_delete_card.setVisibility(View.VISIBLE);
 
             profileusername.setVisibility(View.GONE);
             username_edittext.setVisibility(View.VISIBLE);
@@ -354,6 +405,7 @@ public class ProfileActivity extends MenuActivity {
 
 
     }
+
     private void save(){
         isEditing = false;
         profile_save.setVisibility(View.GONE);
@@ -365,6 +417,7 @@ public class ProfileActivity extends MenuActivity {
         delete_first.setVisibility(View.GONE);
         delete_second.setVisibility(View.GONE);
         delete_third.setVisibility(View.GONE);
+        profile_delete_card.setVisibility(View.GONE);
 
         if(!user.getUsername().equals(username_edittext.getText())){
             profileusername.setText(username_edittext.getText());
@@ -545,5 +598,62 @@ public class ProfileActivity extends MenuActivity {
                 .setPositiveButton("Értem", (dialog, which) -> dialog.dismiss())
                 .create()
                 .show();
+    }
+    private void startFullDeletionProcess(FirebaseUser fUser) {
+        String uid = fUser.getUid();
+        String userEmail = fUser.getEmail();
+
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DatabaseReference rtdb = FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+
+        Log.d("DeleteProcess", "Takarítás indul: " + uid);
+
+        FirebaseStorage.getInstance().getReference().child("profiles/" + uid + ".jpg").delete()
+                .addOnFailureListener(e -> Log.d("DeleteProcess", "Nincs profilkép a Storage-ban."));
+
+        firestore.collection("club")
+                .whereArrayContains("members", userEmail)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot) {
+                        String clubId = doc.getId();
+                        String adminEmail = doc.getString("admin");
+
+                        if (userEmail != null && userEmail.equals(adminEmail)) {
+                            // Admin vagy: Klub + Üzenetek törlése
+                            firestore.collection("club").document(clubId).delete();
+                            rtdb.child("messages").child(clubId).removeValue();
+                            rtdb.child("club_members").child(clubId).removeValue();
+                            Log.d("DeleteProcess", "Adminisztrált klub törölve: " + clubId);
+                        } else {
+                            // Csak tag vagy: Kiléptetés
+                            firestore.collection("club").document(clubId)
+                                    .update("members", com.google.firebase.firestore.FieldValue.arrayRemove(userEmail));
+                            rtdb.child("club_members").child(clubId).child(uid).removeValue();
+                            Log.d("DeleteProcess", "Kilépés klubból: " + clubId);
+                        }
+                    }
+
+                    // 3. User profil és kapcsolatok törlése
+                    rtdb.child("connections").child(uid).removeValue();
+                    firestore.collection("users").document(uid).delete().addOnSuccessListener(aVoid -> {
+
+                        // 4. Firebase Auth fiók végleges törlése
+                        fUser.delete().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.i("DeleteProcess", "Minden adat törölve, viszlát!");
+                                getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().clear().apply();
+
+                                Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Log.e("DeleteProcess", "Hiba a végleges törlésnél", task.getException());
+                            }
+                        });
+                    });
+                })
+                .addOnFailureListener(e -> Log.e("DeleteProcess", "Firestore keresési hiba", e));
     }
 }

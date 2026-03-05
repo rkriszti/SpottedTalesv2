@@ -16,140 +16,128 @@ import com.example.stv2.model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-//import com.google.android.gms.auth.api.signin.GoogleSignIn;
-//import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class RegistActivity extends AppCompatActivity {
 
-    //regisztrációhoz-------------------------------------------------
-    private FirebaseAuth auth= FirebaseAuth.getInstance(); //ezen keresztül érjük a fb függvényeket
-    FirebaseFirestore store = FirebaseFirestore.getInstance(); //doksi írás, olvasás
-    FirebaseUser fuser; //regisztrélt user obj
+    private static final String TAG = "STV2_DEBUG"; // Egységes tag a kereséshez
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
+    private FirebaseFirestore store = FirebaseFirestore.getInstance();
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_regist);
+        Log.d(TAG, "onCreate: Kezdődik");
 
-       /*  //kollekció tesztelés
-       store.collection("debug_test").document("testdoc2")
-                .set(new HashMap<String, Object>() {{ put("hello", "world"); }})
-                .addOnCompleteListener(task -> {
-                    if(task.isSuccessful()) Log.d("Firestore", "Debug doc létrejött");
-                    else Log.e("Firestore", "Debug doc hiba", task.getException());
-                });*/
+        try {
+            setContentView(R.layout.activity_regist);
+            Log.d(TAG, "onCreate: Layout betöltve");
+        } catch (Exception e) {
+            Log.e(TAG, "onCreate: HIBA a setContentView során!", e);
+        }
 
-        //Van már fiókom gomb
         TextView skip = findViewById(R.id.registtologin);
-        skip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(RegistActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
+        // Helyes változat:
+        skip.setOnClickListener(v -> {
+            Log.d(TAG, "Váltás LoginActivity-re");
+            Intent intent = new Intent(RegistActivity.this, LoginActivity.class); // Itt hiányzott az 'Intent' típus
+            startActivity(intent);
         });
 
-        //----------------------------------------------------------------------------------
-        //Regist oldalon Regisztráció gombra kattintva a Openapp oldalra dob
         Button registbutton = findViewById(R.id.registbutton);
-
         registbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "--- Regisztráció gomb megnyomva ---");
 
-                ImageView giraffe = findViewById(R.id.giraffestart2);
-                Animation anim = AnimationUtils.loadAnimation(RegistActivity.this, R.anim.giraffe_move);
-                giraffe.startAnimation(anim);
-                //Log.d("Firestore", "ProjectID: " + FirebaseFirestore.getInstance().getApp().getOptions().getProjectId());
-                //Log.d("RegistActivity", "Regist gombra nyomtak");
+                // 1. Animáció teszt
+                try {
+                    ImageView giraffe = findViewById(R.id.giraffestart);
+                    if (giraffe != null) {
+                        Animation anim = AnimationUtils.loadAnimation(RegistActivity.this, R.anim.giraffe_move);
+                        giraffe.startAnimation(anim);
+                        Log.d(TAG, "Animáció elindítva");
+                    } else {
+                        Log.w(TAG, "A giraffe ImageView nem található (null)!");
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Hiba az animáció során!", e);
+                }
 
-                //Regisztráció gombra nyomva
-                //beadott adatok
+                // 2. Adatok begyűjtése
                 EditText usernameE = findViewById(R.id.registusername);
                 EditText passwordE = findViewById(R.id.registpassword);
                 EditText passwordagainE = findViewById(R.id.registpasswordagain);
                 EditText emailE = findViewById(R.id.registemail);
 
-                //hogy tudjunk dolgozni velük
-                String username = usernameE.getText().toString();
-                String password= passwordE.getText().toString();
-                String passwordagain= passwordagainE.getText().toString();
-                String email= emailE.getText().toString();
+                String username = usernameE.getText().toString().trim();
+                String password = passwordE.getText().toString().trim();
+                String passwordagain = passwordagainE.getText().toString().trim();
+                String email = emailE.getText().toString().trim();
 
-                //ellenőrzések
+                Log.d(TAG, "Begyűjtött adatok: Email: " + email + ", User: " + username);
 
-                if (email.isEmpty() || password.isEmpty() || username.isEmpty() || passwordagain.isEmpty()){
-                    Toast.makeText(
-                            RegistActivity.this,
-                            "Tölts ki minden mezőt!",
-                            Toast.LENGTH_LONG
-                    ).show();
+                // 3. Ellenőrzések
+                if (email.isEmpty() || password.isEmpty() || username.isEmpty() || passwordagain.isEmpty()) {
+                    Log.w(TAG, "Hiba: Üres mezők");
+                    Toast.makeText(RegistActivity.this, "Tölts ki minden mezőt!", Toast.LENGTH_LONG).show();
+                    return;
                 }
 
                 if (!password.equals(passwordagain)) {
-                    Toast.makeText(RegistActivity.this, "A jelszavak nem egyeznek!",  Toast.LENGTH_LONG).show();
+                    Log.w(TAG, "Hiba: A jelszavak nem egyeznek");
+                    Toast.makeText(RegistActivity.this, "A jelszavak nem egyeznek!", Toast.LENGTH_LONG).show();
                     return;
-
                 }
 
                 if (password.length() < 6) {
-                    Toast.makeText(RegistActivity.this, "A jelszónak legalább 6 karakter hosszúnak kell lennie!", Toast.LENGTH_LONG).show();
+                    Log.w(TAG, "Hiba: Rövid jelszó");
+                    Toast.makeText(RegistActivity.this, "A jelszó legalább 6 karakter legyen!", Toast.LENGTH_LONG).show();
                     return;
                 }
 
-                //firebase regisztráció
+                // 4. Firebase Auth indítása
+                Log.d(TAG, "Firebase createUser indítása...");
                 auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(RegistActivity.this, task -> {
                             if (task.isSuccessful()) {
-                                Log.d("RegistActivity", "FirebaseAuth regisztráció sikeres");
+                                Log.i(TAG, "FirebaseAuth regisztráció SIKERES");
 
                                 FirebaseUser fuser = auth.getCurrentUser();
                                 if (fuser == null) {
-                                    Toast.makeText(RegistActivity.this, "Hiba: nincs bejelentkezett felhasználó", Toast.LENGTH_SHORT).show();
+                                    Log.e(TAG, "Fuser null a sikeres regisztráció után!");
                                     return;
                                 }
-                                Log.d("RegistActivity", "fuser nem üres");
 
                                 String uid = fuser.getUid();
-                                User user = new User(username, email);
+                                Log.d(TAG, "User UID: " + uid);
 
-                                //feltöltés későbbre (3 elem)
+                                User user = new User(username, email);
                                 for (int i = 0; i < 3; i++) {
                                     user.getFavorites().add("");
                                 }
 
+                                Log.d(TAG, "Firestore mentés indítása...");
                                 user.saveToFirestore(uid,
                                         () -> { // onSuccess
+                                            Log.i(TAG, "Firestore mentés SIKERES");
                                             Toast.makeText(RegistActivity.this, "Sikeres regisztráció!", Toast.LENGTH_SHORT).show();
-
-                                                  Intent intent = new Intent(RegistActivity.this, HomeActivity.class);
-                                                    startActivity(intent);
-
-
-                                            //startActivity(new Intent(RegistActivity.this, OpenAppActivity.class));
+                                            startActivity(new Intent(RegistActivity.this, HomeActivity.class));
+                                            finish();
                                         },
                                         () -> { // onFailure
+                                            Log.e(TAG, "Firestore mentés SIKERTELEN");
                                             Toast.makeText(RegistActivity.this, "Hiba a Firestore mentéskor", Toast.LENGTH_SHORT).show();
                                         }
                                 );
 
                             } else {
-                                Log.e("RegistActivity", "Auth regisztráció sikertelen", task.getException());
-                                Toast.makeText(RegistActivity.this, "Regisztráció sikertelen: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                Log.e(TAG, "FirebaseAuth HIBA!", task.getException());
+                                Toast.makeText(RegistActivity.this, "Hiba: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                             }
                         });
-
-
             }
-
         });
-
-
-    }  //oncreate vége
-
-
-
-}//registact vége
-
+    }
+}
