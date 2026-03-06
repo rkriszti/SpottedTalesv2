@@ -38,11 +38,10 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         listener = l;
     }
 
-
     //frissítés
     public void setClubs(List<Club> list) {
-        aktualis_clubs = list; //mindig hozzáad egyet az activity
-        notifyDataSetChanged(); //frissíti az oldalon
+        aktualis_clubs = list;
+        notifyDataSetChanged();
     }
 
     //ha új elem kell
@@ -64,13 +63,11 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         holder.name.setText(c.getName());
         holder.members.setText(String.valueOf(c.getMembers().size()));
 
-        // kép alaphelyzetbe állítása (fontos a görgetés miatt!)
         holder.pic.setImageResource(R.drawable.background2);
 
         String bookId = c.getBookId();
 
         if (bookId != null && !bookId.isEmpty()) {
-            // Realtime DB helyett FIRESTORE lekérés
             com.google.firebase.firestore.FirebaseFirestore.getInstance()
                     .collection("books")
                     .document(bookId)
