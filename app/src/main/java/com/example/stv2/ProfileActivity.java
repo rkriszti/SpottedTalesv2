@@ -64,7 +64,7 @@ public class ProfileActivity extends MenuActivity {
     private List<String> favs;
 
     private ShapeableImageView profilepic;
-    private Button deleteprofile, profile_moderator;
+    private Button deleteprofile, profile_moderator, makemoderator;
     private CardView profile_delete_card;
     private ImageView  book1, book2, book3, profile_edit, profile_save, delete_first, delete_second, delete_third;
     private TextView profileusername, book1title, book2title, book3title;
@@ -104,9 +104,6 @@ public class ProfileActivity extends MenuActivity {
         if (currentUid == null || currentUid.equals(userid)) {
             ownprofile = true;
         }
-       /* if (FirebaseAuth.getInstance().getUid()== null || userid.equals( FirebaseAuth.getInstance().getUid())) {
-            ownprofile = true;
-        }*/
 
         //moderator e
         if (uid != null) {
@@ -122,6 +119,9 @@ public class ProfileActivity extends MenuActivity {
                             if(ownprofile || ismoderator){
                                 profile_edit.setVisibility(View.VISIBLE);
                                 Log.d("AdminCheck", "Szerkesztés engedélyezve (Saját vagy Admin)");
+                            }
+                            if(ismoderator){
+                                profile_moderator.setVisibility(View.VISIBLE);
                             }
 
                             if (moderator != null && moderator) {
@@ -147,6 +147,7 @@ public class ProfileActivity extends MenuActivity {
         profileusername = findViewById(R.id.profile_username);
         deleteprofile = findViewById(R.id.deleteprofile);
         profile_moderator = findViewById(R.id.profile_moderator);
+        makemoderator = findViewById(R.id.makemoderator);
 
         book1 = findViewById(R.id.bookFirst);
         book2 = findViewById(R.id.bookSecond);
@@ -342,6 +343,45 @@ public class ProfileActivity extends MenuActivity {
             delete_second.setVisibility(View.VISIBLE);
             delete_third.setVisibility(View.VISIBLE);
 
+            if(ismoderator){
+                if (user.getAdmin() != null && user.getAdmin()) {
+                    makemoderator.setText("Admin jog megvonása");
+                } else {
+                    makemoderator.setText("Moderátorrá tétel");
+                }
+
+                makemoderator.setVisibility(View.VISIBLE);
+
+                makemoderator.setOnClickListener(k -> {
+                    if (userid == null || userid.equals(FirebaseAuth.getInstance().getUid())) return;
+
+                    boolean isTargetAdmin = (user.getAdmin() != null && user.getAdmin());
+                    String title = isTargetAdmin ? "Jog megvonása" : "Moderátor kinevezése";
+                    String message = isTargetAdmin ? "Biztosan elveszed az admin jogot tőle?" : "Biztosan admin jogot adsz neki?";
+
+                    new AlertDialog.Builder(this)
+                            .setTitle(title)
+                            .setMessage(message)
+                            .setPositiveButton("Igen", (dialog, which) -> {
+                                boolean newState = !isTargetAdmin; // megfordítjuk az állapotot
+
+                                FirebaseFirestore.getInstance()
+                                        .collection("users")
+                                        .document(userid)
+                                        .update("admin", newState)
+                                        .addOnSuccessListener(aVoid -> {
+                                            user.setAdmin(newState); // lokális frissítés
+                                            makemoderator.setText(newState ? "Admin jog megvonása" : "Moderátorrá tétel");
+                                            profile_moderator.setVisibility(newState ? View.VISIBLE : View.GONE);
+                                            Toast.makeText(this, "Sikeres módosítás!", Toast.LENGTH_SHORT).show();
+                                        })
+                                        .addOnFailureListener(e -> Toast.makeText(this, "Hiba történt!", Toast.LENGTH_SHORT).show());
+                            })
+                            .setNegativeButton("Mégse", null)
+                            .show();
+                });
+            }
+
         });
 
         //edit off - save
@@ -464,8 +504,14 @@ public class ProfileActivity extends MenuActivity {
 
     private void save(){
         isEditing = false;
+
+        if (user != null && user.getAdmin() != null && user.getAdmin()) {
+            profile_moderator.setVisibility(View.VISIBLE);
+        }
+
         profile_save.setVisibility(View.GONE);
         profile_edit.setVisibility(View.VISIBLE);
+        makemoderator.setVisibility(View.GONE);
 
         profileusername.setVisibility(View.VISIBLE);
         username_edittext.setVisibility(View.GONE);

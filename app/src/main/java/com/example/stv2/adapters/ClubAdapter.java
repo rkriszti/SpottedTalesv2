@@ -4,6 +4,7 @@ import static androidx.core.content.ContextCompat.startActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import com.example.stv2.HomeActivity;
 import com.example.stv2.R;
 import com.example.stv2.RegistActivity;
 import com.example.stv2.model.Club;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 import java.util.ArrayList;
@@ -61,24 +64,37 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         holder.name.setText(c.getName());
         holder.members.setText(String.valueOf(c.getMembers().size()));
 
-        String imageUrl = null;
-        if (c.getBook() != null) {
-            imageUrl = c.getBook().getCoverpic();
-        }
+        // kép alaphelyzetbe állítása (fontos a görgetés miatt!)
+        holder.pic.setImageResource(R.drawable.background2);
 
-        if (imageUrl != null && !imageUrl.isEmpty()) {
-            Glide.with(holder.itemView.getContext())
-                    .load(imageUrl)
-                    .placeholder(R.drawable.background2)
-                    .error(R.drawable.background2)
-                    .centerCrop()
-                    .into(holder.pic);
-        } else {
-            holder.pic.setImageResource(R.drawable.background2);
+        String bookId = c.getBookId();
+
+        if (bookId != null && !bookId.isEmpty()) {
+            // Realtime DB helyett FIRESTORE lekérés
+            com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("books")
+                    .document(bookId)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String imageUrl = documentSnapshot.getString("coverpic");
+
+                            if (imageUrl != null && !imageUrl.isEmpty()) {
+                                Glide.with(holder.itemView.getContext())
+                                        .load(imageUrl)
+                                        .placeholder(R.drawable.background2)
+                                        .error(R.drawable.background2)
+                                        .centerCrop()
+                                        .into(holder.pic);
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("FirestoreError", "Hiba a könyv lekérésekor: " + e.getMessage());
+                    });
         }
 
         holder.button.setOnClickListener(v -> listener.onClubClick(c));
-
     }
 
     @Override
