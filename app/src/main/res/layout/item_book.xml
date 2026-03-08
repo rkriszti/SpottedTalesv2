@@ -98,14 +98,16 @@
         android:id="@+id/book_delete"
         android:layout_width="38dp"
         android:layout_height="28dp"
+        android:layout_marginStart="293dp"
+        android:layout_marginBottom="7dp"
         android:background="@drawable/ic_delete"
         android:visibility="gone"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/book_save"
-        app:layout_constraintHorizontal_bias="0.968"
+        app:layout_constraintBottom_toTopOf="@+id/club_active"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/book_cover"
-        app:layout_constraintTop_toTopOf="parent"></ImageView>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"></ImageView>
 
     <ImageView
         android:id="@+id/book_chooseforclub"
@@ -128,6 +130,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/book_title"
         app:layout_constraintTop_toTopOf="parent"></ImageView>
+
+    <Button
+        android:id="@+id/club_active"
+        android:layout_width="81dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="#2D8507"
+        android:text="Aktív"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/book_author"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.695" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

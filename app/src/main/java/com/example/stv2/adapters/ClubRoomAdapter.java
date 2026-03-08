@@ -25,10 +25,10 @@ import java.util.Map;
 
 public class ClubRoomAdapter extends RecyclerView.Adapter<ClubRoomAdapter.ViewHolder> {
 
-    private String clubid;
+    private String clubid, oldclubid;
     private List<String> titles;
     private Map<String, List<String>> data;
-    private Boolean isAdmin, isSettingon, isUniqueChapters;
+    private Boolean isAdmin, isSettingon, isUniqueChapters, oldhappened;
     private  ClubPageActivity.OnDeleteCustomClickListener deletelistener;
 
     public interface OnItemClickListener { void onClick(String title); }
@@ -43,6 +43,22 @@ public class ClubRoomAdapter extends RecyclerView.Adapter<ClubRoomAdapter.ViewHo
         this.isUniqueChapters = isUniqueChapters;
         this.deletelistener = listenerr;
         this.clubid = clubid;
+        oldclubid = "";
+        this.oldhappened = false;
+    }
+
+    public ClubRoomAdapter(List<String> titles, Map<String, List<String>> data,
+                           Boolean admin, Boolean setting, Boolean isUniqueChapters,
+                           ClubPageActivity.OnDeleteCustomClickListener listenerr, String clubid, String oldclubid) {
+        this.titles = titles;
+        this.data = data;
+        this.isAdmin = admin;
+        this.isSettingon = setting;
+        this.isUniqueChapters = isUniqueChapters;
+        this.deletelistener = listenerr;
+        this.clubid = clubid;
+        this.oldclubid = oldclubid;
+        this.oldhappened = true;
     }
 
     @NonNull
@@ -62,8 +78,17 @@ public class ClubRoomAdapter extends RecyclerView.Adapter<ClubRoomAdapter.ViewHo
         holder.titleText.setOnClickListener( k -> {
             Context context = k.getContext();
             Intent i = new Intent(context, ChatActivity.class);
-            i.putExtra("clubId", clubid);
-            i.putExtra("roomName", title);
+
+            if (oldhappened && oldclubid != null && !oldclubid.isEmpty()) {
+                i.putExtra("clubId", oldclubid);
+                i.putExtra("isOldChat", "true");
+                i.putExtra("roomName", title);
+            } else {
+                i.putExtra("clubId", clubid);
+                i.putExtra("isOldChat", "false");
+                i.putExtra("roomName", title);
+            }
+
             context.startActivity(i);
         });
 
@@ -114,7 +139,7 @@ public class ClubRoomAdapter extends RecyclerView.Adapter<ClubRoomAdapter.ViewHo
 
                             deleteIcon.setOnClickListener(d -> {
                                 if (deletelistener != null) {
-                                    deletelistener.onDeleteClick(title);
+                                    deletelistener.onDeleteClick(title, oldhappened);
                                 }
 
                                 //frissítés lokál

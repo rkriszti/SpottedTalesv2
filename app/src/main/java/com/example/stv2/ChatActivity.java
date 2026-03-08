@@ -25,6 +25,7 @@ public class ChatActivity extends MenuActivity {
     private List<Message> messages = new ArrayList<>();
     private EditText messageInput;
     private ImageButton sendButton;
+    private boolean oldhappened;
     private ImageView chat_backbutton;
     private FirebaseFirestore db;
 
@@ -39,6 +40,7 @@ public class ChatActivity extends MenuActivity {
         db = FirebaseFirestore.getInstance();
         clubId = getIntent().getStringExtra("clubId");
         roomName = getIntent().getStringExtra("roomName");
+        oldhappened = getIntent().getStringExtra("isOldChat").equals("true");
         currentUserEmail = FirebaseAuth.getInstance().getCurrentUser().getEmail();
 
         recyclerView = findViewById(R.id.chat_recycler);
@@ -50,7 +52,9 @@ public class ChatActivity extends MenuActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+
         loadMessages();
+
 
         sendButton.setOnClickListener(v -> {
             String text = messageInput.getText().toString().trim();
@@ -63,23 +67,27 @@ public class ChatActivity extends MenuActivity {
     }
 
     private void loadMessages() {
-        db.collection("club").document(clubId)
+        String collectionPath = oldhappened ? "oldclub" : "club";
+
+        db.collection(collectionPath).document(clubId)
                 .addSnapshotListener((snapshot, e) -> {
                     if (e != null || snapshot == null || !snapshot.exists()) return;
 
-                    Map<String, Object> chaptersMap = (Map<String, Object>) snapshot.get("chapters");
 
-                    if (chaptersMap != null && chaptersMap.containsKey(roomName)) {
-                        List<String> messageIds = (List<String>) chaptersMap.get(roomName);
+                    Map<String, Object> roomsMap = (Map<String, Object>) snapshot.get("chapters");
+                    if (roomsMap == null || !roomsMap.containsKey(roomName)) {
+                        roomsMap = (Map<String, Object>) snapshot.get("customs");
+                    }
+
+                    if (roomsMap != null && roomsMap.containsKey(roomName)) {
+                        List<String> messageIds = (List<String>) roomsMap.get(roomName);
 
                         if (messageIds != null && !messageIds.isEmpty()) {
-                            // Közvetlen lekérés az ID lista alapján
                             db.collection("messages")
                                     .whereIn("id", messageIds)
                                     .get()
                                     .addOnSuccessListener(queryDocumentSnapshots -> {
                                         List<Message> fetched = queryDocumentSnapshots.toObjects(Message.class);
-                                        // Sorbarendezés idő szerint (mert a whereIn összevissza adja vissza)
                                         fetched.sort((m1, m2) -> Long.compare(m1.getTimestamp(), m2.getTimestamp()));
 
                                         messages.clear();
@@ -87,10 +95,14 @@ public class ChatActivity extends MenuActivity {
                                         adapter.notifyDataSetChanged();
                                         if (!messages.isEmpty()) recyclerView.scrollToPosition(messages.size() - 1);
                                     });
+                        } else {
+                            messages.clear();
+                            adapter.notifyDataSetChanged();
                         }
                     }
                 });
     }
+
 
     private void sendMessage(String text) {
         String msgId = db.collection("messages").document().getId();
@@ -101,11 +113,26 @@ public class ChatActivity extends MenuActivity {
 
         db.collection("messages").document(msgId).set(msg)
                 .addOnSuccessListener(aVoid -> {
-                    // FieldPath használata, hogy a pont ne okozzon beágyazott Map-et
-                    db.collection("club").document(clubId)
-                            .update(FieldPath.of("chapters", roomName), FieldValue.arrayUnion(msgId));
 
-                    messageInput.setText("");
+                    String collectionPath = oldhappened ? "oldclub" : "club";
+
+                    db.collection(collectionPath).document(clubId).get().addOnSuccessListener(doc -> {
+                        if (!doc.exists()) return;
+
+                        String targetMap = "chapters";
+                        Map<String, Object> chapters = (Map<String, Object>) doc.get("chapters");
+
+                        if (chapters == null || !chapters.containsKey(roomName)) {
+                            targetMap = "customs";
+                        }
+
+                        db.collection(collectionPath).document(clubId)
+                                .update(FieldPath.of(targetMap, roomName), FieldValue.arrayUnion(msgId))
+                                .addOnSuccessListener(v -> messageInput.setText(""))
+                                .addOnFailureListener(e -> Log.e("Chat", "Hiba az ID mentésénél", e));
+                    });
                 });
     }
+
+
 }

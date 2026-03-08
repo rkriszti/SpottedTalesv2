@@ -57,7 +57,6 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
         boolean isAdmin = currentemail.equals(club.getAdmin());
 
         if (position < pendingUserIds.size()) {
-            // --- PENDING USER LOGIKA ---
             String userId = pendingUserIds.get(position);
 
             FirebaseFirestore.getInstance().collection("users").document(userId).get()

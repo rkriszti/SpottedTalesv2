@@ -193,6 +193,13 @@ public class Club {
         } return false;
     }
 
+    public void setAllCustom(Map<String, List<String>> c){
+        this.customs = c;
+    }
+
+    public void setAllChapters(Map<String, List<String>> c){
+        this.chapters = c;
+    }
 
 
 }
