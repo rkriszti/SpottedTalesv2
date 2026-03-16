@@ -100,7 +100,8 @@
             android:layout_width="407dp"
             android:layout_height="508dp"
             android:layout_marginTop="52dp"
-            app:layout_constraintBottom_toTopOf="@+id/fab"
+            android:layout_marginBottom="22dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sameinterest" />
 

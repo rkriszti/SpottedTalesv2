@@ -259,16 +259,12 @@ public class ProfileActivity extends MenuActivity {
                     user = doc.toObject(User.class);
                     if (user == null) return;
 
-                   /* while(user.getFavorites().size() < which-1){
-                        Log.d("Profile", "Which túl nagy --");
-                        which--;
-                    }*/
 
                     //adatok betöltése
                     Glide.with(this).load(user.getProfilepicurl())
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .placeholder(R.drawable.ic_default_avatar)
-                            .error(R.drawable.ic_default_avatar)
+                            .placeholder(R.drawable.default_profile)
+                            .error(R.drawable.default_profile)
                             .into(profilepic)
                           ;
                     profileusername.setText(user.getUsername());

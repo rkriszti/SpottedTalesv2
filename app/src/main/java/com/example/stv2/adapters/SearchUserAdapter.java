@@ -41,7 +41,7 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.VH
         User u = users.get(pos);
 
         h.username.setText(u.getUsername());
-        h.pic.setImageResource(R.drawable.background2);
+        h.pic.setImageResource(R.drawable.default_profile);
 
         h.button.setOnClickListener(v -> {
             FirebaseFirestore.getInstance()

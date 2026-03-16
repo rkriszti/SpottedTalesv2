@@ -56,7 +56,7 @@ public class SearchClubAdapter extends RecyclerView.Adapter<SearchClubAdapter.VH
 
         h.name.setText(c.getName());
         h.members.setText(String.valueOf(c.getMembers().size()));
-        h.pic.setImageResource(R.drawable.background2);
+        h.pic.setImageResource(R.drawable.default_book);
 
         isClubPublic = c.getIspublic();
         isUserMember = c.isMember(useremail);

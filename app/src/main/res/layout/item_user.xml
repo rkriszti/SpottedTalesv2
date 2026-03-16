@@ -18,7 +18,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/background2" />
+            android:src="@drawable/default_profile" />
 
         <LinearLayout
             android:layout_width="0dp"

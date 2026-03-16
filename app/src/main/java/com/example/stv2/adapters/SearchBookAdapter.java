@@ -142,10 +142,10 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
             Glide.with(h.itemView.getContext())
                     .load(b.getCoverpic())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.background2)
+                    .placeholder(R.drawable.default_book)
                     .into(h.cover);
         } else {
-            h.cover.setImageResource(R.drawable.background2);
+            h.cover.setImageResource(R.drawable.default_book);
         }
     }
 

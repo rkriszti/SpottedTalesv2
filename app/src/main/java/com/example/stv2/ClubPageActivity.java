@@ -408,19 +408,19 @@ public class ClubPageActivity extends MenuActivity {
                                         Glide.with(this)
                                                 .load(picUrl)
                                                 .circleCrop()
-                                                .placeholder(R.drawable.ic_default_avatar)
-                                                .error(R.drawable.ic_default_avatar)
+                                                .placeholder(R.drawable.default_profile)
+                                                .error(R.drawable.default_profile)
                                                 .into(clubAdminPic);
                                     } else {
-                                        clubAdminPic.setImageResource(R.drawable.ic_default_avatar);
+                                        clubAdminPic.setImageResource(R.drawable.default_profile);
                                     }
 
                                 } else {
-                                    clubAdminPic.setImageResource(R.drawable.ic_default_avatar);
+                                    clubAdminPic.setImageResource(R.drawable.default_profile);
                                 }
                             })
                             .addOnFailureListener(e ->
-                                    clubAdminPic.setImageResource(R.drawable.ic_default_avatar)
+                                    clubAdminPic.setImageResource(R.drawable.default_profile)
                             );
                     if(isAdmin){
                         admin();
@@ -466,7 +466,7 @@ public class ClubPageActivity extends MenuActivity {
                                                     Book b = dd.toObject(Book.class);
                                                     if(b != null) {
                                                         oldclub.setBook(b);
-                                                        clubBookCover.setImageResource(R.drawable.background2);
+                                                        clubBookCover.setImageResource(R.drawable.default_book);
                                                         if(b.getCoverpic() != null)
                                                             Glide.with(this).load(b.getCoverpic()).centerCrop().into(clubBookCover);
                                                         clubBookTitle.setText(b.getTitle());
@@ -474,7 +474,7 @@ public class ClubPageActivity extends MenuActivity {
                                                     }
                                                 });
                                     } else {
-                                        clubBookCover.setImageResource(R.drawable.background2);
+                                        clubBookCover.setImageResource(R.drawable.default_book);
                                         clubBookTitle.setText("nincs még könyv");
                                         clubBookAuthor.setText("");
                                     }
@@ -519,7 +519,7 @@ public class ClubPageActivity extends MenuActivity {
                                         Book b = doc.toObject(Book.class);
                                         if(b != null) {
                                             club.setBook(b);
-                                            clubBookCover.setImageResource(R.drawable.background2);
+                                            clubBookCover.setImageResource(R.drawable.default_book);
                                             if(b.getCoverpic() != null)
                                                 Glide.with(this).load(b.getCoverpic()).centerCrop().into(clubBookCover);
                                             clubBookTitle.setText(b.getTitle());
@@ -527,7 +527,7 @@ public class ClubPageActivity extends MenuActivity {
                                         }
                                     });
                         } else {
-                            clubBookCover.setImageResource(R.drawable.background2);
+                            clubBookCover.setImageResource(R.drawable.default_book);
                             clubBookTitle.setText("nincs még könyv");
                             clubBookAuthor.setText("");
                         }
@@ -923,7 +923,7 @@ public class ClubPageActivity extends MenuActivity {
                         club.setAllCustom(new HashMap<>());   //ürít
 
                         // UI frissítés
-                        clubBookCover.setImageResource(R.drawable.background2);
+                        clubBookCover.setImageResource(R.drawable.default_book);
                         if(b.getCoverpic()!=null)
                             Glide.with(this).load(b.getCoverpic()).centerCrop().into(clubBookCover);
                         clubBookTitle.setText(b.getTitle());

@@ -23,7 +23,7 @@
             android:layout_width="61dp"
             android:layout_height="75dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/background2"
+            android:src="@drawable/default_book"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

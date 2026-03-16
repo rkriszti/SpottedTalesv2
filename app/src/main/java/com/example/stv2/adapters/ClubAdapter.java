@@ -63,7 +63,7 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         holder.name.setText(c.getName());
         holder.members.setText(String.valueOf(c.getMembers().size()));
 
-        holder.pic.setImageResource(R.drawable.background2);
+        holder.pic.setImageResource(R.drawable.default_book);
 
         String bookId = c.getBookId();
 
@@ -79,8 +79,8 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
                             if (imageUrl != null && !imageUrl.isEmpty()) {
                                 Glide.with(holder.itemView.getContext())
                                         .load(imageUrl)
-                                        .placeholder(R.drawable.background2)
-                                        .error(R.drawable.background2)
+                                        .placeholder(R.drawable.default_book)
+                                        .error(R.drawable.default_book)
                                         .centerCrop()
                                         .into(holder.pic);
                             }
