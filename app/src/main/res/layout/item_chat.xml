@@ -49,12 +49,7 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:alpha="0.2"
-            android:src="@android:drawable/ic_media_play"
-            app:tint="#3c0c3e" />
+
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

@@ -48,7 +48,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // Alaphelyzetbe állítás a RecyclerView újrahasznosítás miatt
+
         holder.delete.setVisibility(View.GONE);
         holder.accept.setVisibility(View.GONE);
         holder.refuse.setVisibility(View.GONE);
@@ -100,7 +100,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
                     });
 
         } else {
-            // --- BENT LÉVŐ TAG LOGIKA ---
+
             int memberPos = position - pendingUserIds.size();
             if (memberPos < 0 || memberPos >= memberEmails.size()) return;
             String memberEmail = memberEmails.get(memberPos);
@@ -131,23 +131,23 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
     }
 
     private void handleMemberDelete(View v, String email, String userId) {
-        // 1. Törlés a lokális listákból
+
         if (memberEmails.contains(email)) {
             memberEmails.remove(email);
         }
         club.deleteMember(email);
 
-        // 2. Firestore törlés (arrayRemove a legbiztosabb)
+
         FirebaseFirestore.getInstance().collection("club").document(club.getId())
                 .update("members", FieldValue.arrayRemove(email))
                 .addOnSuccessListener(aVoid -> Log.d("MembersAdapter", "Tag törölve a klubból"))
                 .addOnFailureListener(e -> Log.e("MembersAdapter", "Firestore hiba", e));
 
-        // 3. RTDB törlés
+
         FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
                 .getReference("connections").child(userId).child("clubs").child(club.getId()).removeValue();
 
-        // 4. UI frissítés vagy navigáció
+
         if (email.equals(currentemail)) {
             Intent intent = new Intent(v.getContext(), HomeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
