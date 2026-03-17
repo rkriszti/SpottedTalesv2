@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.drawerlayout.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,7 +8,6 @@
     android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -29,52 +27,43 @@
             android:layout_width="82dp"
             android:layout_height="43dp"
             android:layout_marginStart="48dp"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/background2"
             android:text="Könyv"
             android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@+id/etSearch"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/top_toolbar"
-            app:layout_constraintVertical_bias="0.764" />
-
-        <!-- RecyclerView -->
+            app:layout_constraintTop_toBottomOf="@id/top_toolbar" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonclub"
             android:layout_width="82dp"
             android:layout_height="43dp"
             android:layout_marginStart="20dp"
-            android:layout_marginBottom="8dp"
             android:background="@drawable/grey_background"
             android:text="Klub"
             android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@+id/etSearch"
             app:layout_constraintStart_toEndOf="@+id/buttonbook"
-            app:layout_constraintTop_toBottomOf="@id/top_toolbar"
-            app:layout_constraintVertical_bias="0.707" />
+            app:layout_constraintTop_toBottomOf="@id/top_toolbar" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/buttonuser"
             android:layout_width="107dp"
             android:layout_height="46dp"
-            android:layout_marginTop="22dp"
-            android:layout_marginBottom="12dp"
             android:background="@drawable/grey_background"
             android:text="Felhasználó"
             android:textColor="@color/white"
             app:layout_constraintBottom_toTopOf="@+id/etSearch"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.277"
             app:layout_constraintStart_toEndOf="@+id/buttonclub"
-            app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
 
         <EditText
             android:id="@+id/etSearch"
-            android:layout_width="379dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="80dp"
+            android:layout_marginHorizontal="16dp"
             android:hint="Keresés név alapján"
             android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -85,25 +74,20 @@
             android:id="@+id/sameinterest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
             android:text="Hasonló érdeklődési kör"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/recyclerSearch"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.053"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etSearch"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/etSearch" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerSearch"
-            android:layout_width="407dp"
-            android:layout_height="508dp"
-            android:layout_marginTop="52dp"
-            android:layout_marginBottom="22dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sameinterest" />
+            app:layout_constraintTop_toBottomOf="@+id/etSearch" /> //közvetlenül a kereső alá kötve
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_navigation"
@@ -112,27 +96,22 @@
             android:background="@drawable/background_nav"
             app:itemIconTint="@color/white"
             app:itemTextColor="@color/white"
-            app:labelVisibilityMode="labeled"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:menu="@menu/bottom_nav_menu" />
+            app:menu="@menu/bottom_nav_menu"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="-28dp"
-            android:contentDescription="Új"
             android:src="@drawable/ic_add_emoji"
             app:backgroundTint="#3c0c3e"
             app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:tint="@android:color/white" />
-
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="-28dp"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
