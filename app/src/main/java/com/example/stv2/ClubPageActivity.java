@@ -2,9 +2,12 @@ package com.example.stv2;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,12 +43,16 @@ import java.util.List;
 import java.util.Map;
 
 public class ClubPageActivity extends MenuActivity {
+    private AutoCompleteTextView clubThemeDropdown;
+    private com.google.android.material.textfield.TextInputLayout clubThemeLayout;
+    private DatabaseReference rtdb;
     //globálisan kell
     private Club club, oldclub;
     private String userEmail, bookid, bookbeforechange;
     private Button members, club_delete, club_history, club_active;
     private Boolean ismoderator = false, oldhappened = false;
     String adminEmail, oldbookid, oldclubid;
+    private String currentSavedTheme = "";
 
     //xml részek
     private TextView clubName, clubBookTitle, statusText, clubBookAuthor;
@@ -242,6 +249,18 @@ public class ClubPageActivity extends MenuActivity {
                 customsRecycler.setVisibility(View.GONE);
             }
         });
+
+        rtdb = FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/").getReference();
+
+        clubThemeDropdown = findViewById(R.id.club_theme);
+        clubThemeLayout = findViewById(R.id.club_theme_layout);
+
+
+        String[] themes = getResources().getStringArray(R.array.club_themes_array);
+        ArrayAdapter<String> adaptere = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, themes);
+        clubThemeDropdown.setAdapter(adaptere);
+
+        clubThemeLayout.setVisibility(View.GONE);
 
         club_history.setOnClickListener( k ->{
             Log.d("clubpage", "Rányomtak az előzmény gombra");
@@ -643,6 +662,7 @@ public class ClubPageActivity extends MenuActivity {
                                                     rtdb.child("messages").child(clubId).removeValue();
                                                     rtdb.child("pending_requests").child(clubId).removeValue();
                                                     rtdb.child("club_members").child(clubId).removeValue();
+                                                    rtdb.child("club_settings").child(clubId).removeValue();
 
                                                     if (club.getMembers() != null) {
                                                         for (String memberEmail : club.getMembers()) {
@@ -682,6 +702,18 @@ public class ClubPageActivity extends MenuActivity {
 
                     club_delete.setVisibility(View.VISIBLE);
 
+                    clubThemeLayout.setVisibility(View.VISIBLE);
+
+                    rtdb.child("club_settings").child(club.getId()).child("theme").get().addOnSuccessListener(snapshot -> {
+                        if (snapshot.exists()) {
+                            currentSavedTheme = snapshot.getValue(String.class);
+                            clubThemeDropdown.setText(currentSavedTheme, false);
+                        } else {
+                            currentSavedTheme = "";
+                            clubThemeDropdown.setText("", false);
+                        }
+                    });
+
                     //név edittext megjelent
                     clubName.setVisibility(View.GONE);
                     clubNameEdit.setVisibility(View.VISIBLE);
@@ -720,6 +752,21 @@ public class ClubPageActivity extends MenuActivity {
 
                 } else {
                     //MENTENEK
+                    String selectedTheme = clubThemeDropdown.getText().toString();
+
+                    if (!selectedTheme.isEmpty() &&
+                            !selectedTheme.equals("Válassz egy témát...") &&
+                            !selectedTheme.equals(currentSavedTheme)) {
+
+                        rtdb.child("club_settings").child(club.getId()).child("theme")
+                                .setValue(selectedTheme)
+                                .addOnSuccessListener(aVoid -> {
+                                    currentSavedTheme = selectedTheme;
+                                    Log.d("RTDB", "Új téma mentve: " + selectedTheme);
+                                });
+                    }
+
+                    clubThemeLayout.setVisibility(View.GONE); // elrejtés mentés után
 
                     //klub cím változás mentése
                     if(!clubName.getText().toString().equals(clubNameEdit.getText().toString())){

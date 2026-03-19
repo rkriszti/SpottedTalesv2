@@ -2,6 +2,9 @@ package com.example.stv2;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.firebase.firestore.FirebaseFirestore;
 import android.content.SharedPreferences;
 import android.credentials.CredentialManager;
 import android.net.Uri;
@@ -331,7 +334,7 @@ public class ProfileActivity extends MenuActivity {
             profile_save.setVisibility(View.VISIBLE);
             profile_edit.setVisibility(View.GONE);
             profile_delete_card.setVisibility(View.VISIBLE);
-
+            makemoderator.setVisibility(View.GONE);
             profileusername.setVisibility(View.GONE);
             username_edittext.setVisibility(View.VISIBLE);
 

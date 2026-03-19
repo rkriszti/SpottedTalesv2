@@ -321,10 +321,33 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_width="match_parent"
+                android:id="@+id/club_theme_layout"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:visibility="gone"
+                android:hint="Téma Választása"
+                app:boxStrokeColor="#3c0c3e"
+                app:hintTextColor="#3c0c3e">
+
+                <AutoCompleteTextView
+                    android:id="@+id/club_theme"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:padding="16dp"
+                    android:text="Válassz egy témát..." />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
             <Button
                 android:id="@+id/club_delete"
                 android:backgroundTint="#F44336"
                 android:gravity="center"
+                android:layout_marginTop="40dp"
                 android:text="Klub Törlése"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
