@@ -16,9 +16,9 @@
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/top_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/background_nav"
+        android:layout_width="wrap_content"
+        android:layout_height="88dp"
+        android:background="@drawable/background2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/top_nav_menu"

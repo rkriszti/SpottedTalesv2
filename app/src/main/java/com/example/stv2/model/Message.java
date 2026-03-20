@@ -4,10 +4,11 @@ public class Message {
     private String id;
     private String message;
     private String useremail;
-    private long timestamp; // long egyszerűbb a Firebase-nek
+    private long timestamp;
     private String roomPath;
+    private String imageUrl;
 
-    public Message() {} // Üres konstruktor kell a Firebase-nek!
+    public Message() {}
 
     public Message(String id, String message, String useremail, long timestamp, String roomPath) {
         this.id = id;
@@ -16,11 +17,14 @@ public class Message {
         this.timestamp = timestamp;
         this.timestamp = timestamp;
         this.roomPath = roomPath;
+        this.imageUrl = null;
     }
 
 
     // Getterek / Setterek
     public String getId() { return id; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public void setId(String id) { this.id = id; }
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }

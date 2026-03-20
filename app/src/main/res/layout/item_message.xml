@@ -40,32 +40,51 @@
         android:textSize="16sp" />
 
     <ImageView
-        android:id="@+id/chat_delete"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:id="@+id/chat_message_image"
+        android:layout_width="172dp"
+        android:layout_height="219dp"
+        android:layout_below="@+id/text_message"
+        android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="159dp"
+        android:adjustViewBounds="true"
+
+        android:maxWidth="250dp"
+        android:maxHeight="350dp"
+        android:scaleType="fitCenter"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/chat_delete"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp"
         android:clickable="true"
         android:src="@drawable/ic_delete"
         android:visibility="gone" />
 
     <ImageView
         android:id="@+id/chat_egyeb_start"
-        android:layout_width="54dp"
-        android:layout_marginTop="15dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="3dp"
-        android:layout_toEndOf="@id/text_message"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="-259dp"
+        android:layout_toEndOf="@+id/text_message"
         app:srcCompat="@drawable/ic_egyeb" />
 
     <ImageView
         android:id="@+id/chat_egyeb_hide"
-        android:layout_width="54dp"
-        android:layout_marginTop="15dp"
-        android:layout_height="51dp"
-        android:layout_marginStart="3dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="-259dp"
+        android:layout_toEndOf="@+id/text_message"
         android:visibility="gone"
-        android:layout_toEndOf="@id/text_message"
         app:srcCompat="@drawable/ic_egyeb" />
 
 </RelativeLayout>
