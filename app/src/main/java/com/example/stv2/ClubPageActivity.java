@@ -36,6 +36,7 @@ import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,45 +81,48 @@ public class ClubPageActivity extends MenuActivity {
     private OnDeleteCustomClickListener deleteListener = new OnDeleteCustomClickListener() {
         @Override
         public void onDeleteClick(String customKey, boolean oldh) {
-                if(oldh){
-                    if (oldclub != null && oldclub.getCustoms() != null) {
+            String targetClubId = oldh ? oldclubid : club.getId();
+            String fullRoomPath = targetClubId + "_" + customKey;
 
-                        oldclub.deleteCustom(customKey);
+            FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+            FirebaseStorage storage = FirebaseStorage.getInstance();
 
-                        FirebaseFirestore.getInstance()
-                                .collection("oldclub")
-                                .document(oldclubid)
-                                .update("customs", oldclub.getCustoms())
-                                .addOnSuccessListener(aVoid -> {
-                                    Log.d("ClubPage", "Sikeres törlés: " + customKey);
+            firestore.collection("messages")
+                    .whereEqualTo("roomPath", fullRoomPath)
+                    .get()
+                    .addOnSuccessListener(querySnapshot -> {
+                        for (DocumentSnapshot doc : querySnapshot) {
+                            String imageUrl = doc.getString("imageUrl");
+                            if (imageUrl != null && !imageUrl.isEmpty()) {
+                                storage.getReferenceFromUrl(imageUrl).delete();
+                            }
+                            doc.getReference().delete();
+                        }
+                        Log.d("Delete", "Üzenetek és képek takarítása kész.");
+                    });
 
-                                    setupRecycleruniq(customsRecycler, oldclub.getCustoms());
-                                })
-                                .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a törlésnél", e));
+            firestore.collection(oldh ? "oldclub" : "club").document(targetClubId)
+                    .get()
+                    .addOnSuccessListener(snapshot -> {
+                        if (!snapshot.exists()) return;
 
+                        Map<String, Object> data = snapshot.getData();
+                        if (data != null && data.containsKey("customs")) {
+                            Map<String, List<String>> allCustoms = (Map<String, List<String>>) data.get("customs");
+                            allCustoms.remove(customKey);
 
-                    }
-
-                } else {
-                    if (club != null && club.getCustoms() != null) {
-                        club.deleteCustom(customKey);
-
-                        FirebaseFirestore.getInstance()
-                                .collection("club")
-                                .document(club.getId())
-                                .update("customs", club.getCustoms())
-                                .addOnSuccessListener(aVoid -> {
-                                    Log.d("ClubPage", "Sikeres törlés: " + customKey);
-
-                                    setupRecycleruniq(customsRecycler, club.getCustoms());
-                                })
-                                .addOnFailureListener(e -> Log.e("ClubPage", "Hiba a törlésnél", e));
-                    }
-                }
+                            firestore.collection(oldh ? "oldclub" : "club").document(targetClubId)
+                                    .update("customs", allCustoms)
+                                    .addOnSuccessListener(aVoid -> {
+                                        if (oldh) oldclub.setAllCustom(allCustoms);
+                                        else club.setAllCustom(allCustoms);
+                                        setupRecycleruniq(customsRecycler, allCustoms);
+                                    });
+                        }
+                    });
         }
     };
 
-    //saját listener
     public interface OnChooseBookListener {
         void onChoose(String email);
         //CLUB/PROFILE

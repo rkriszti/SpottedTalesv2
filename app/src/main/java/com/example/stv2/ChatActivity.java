@@ -264,12 +264,12 @@ public class ChatActivity extends MenuActivity {
         String fileName = "messages/" + System.currentTimeMillis() + ".gif";
         StorageReference ref = FirebaseStorage.getInstance().getReference().child(fileName);
 
-        // Jelezzük, hogy dolgozunk (opcionális: ProgressBar)
+
         sendButton.setEnabled(false);
 
         ref.putFile(uri).addOnSuccessListener(taskSnapshot -> {
             ref.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                // Megvan a URL, most küldjük el a Firestore-ba a szöveggel együtt
+
                 finalizeMessageWithImage(downloadUri.toString(), text);
 
                 // Alaphelyzetbe állítás
