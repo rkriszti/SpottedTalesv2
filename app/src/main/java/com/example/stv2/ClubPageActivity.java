@@ -582,6 +582,9 @@ public class ClubPageActivity extends MenuActivity {
             @Override
             public void onClick(View v) {
                 if (!settingIsOn){
+                    addcustomEdit.setText("");
+                    int currentSize = oldhappened ? oldclub.getChaptersSize() : club.getChaptersSize();
+                    chaptersEdit.setText(String.valueOf(currentSize));
                     if(oldhappened){
                         club_delete.setText("Előzmény törlés");
                     }else {
@@ -790,6 +793,7 @@ public class ClubPageActivity extends MenuActivity {
                                 .addOnFailureListener(e -> Log.e("ClubPage", "Mentési hiba", e));
                     }
 
+                    /*
                     //hány fejezet legyen
                     if(getEditTextNumber(chaptersEdit) > 0 &&
                             getEditTextNumber(chaptersEdit)!= club.getChaptersSize()){
@@ -824,6 +828,41 @@ public class ClubPageActivity extends MenuActivity {
                         }
 
                     }
+                    */
+                    // --- ÜZENET ÉS KÉP TÖRLÉS ELEJE ---
+                    int newCount = getEditTextNumber(chaptersEdit);
+                    int oldCount = oldhappened ? oldclub.getChaptersSize() : club.getChaptersSize();
+                    String targetId = oldhappened ? oldclubid : club.getId();
+
+                    if (newCount < oldCount) {
+                        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                        com.google.firebase.storage.FirebaseStorage storage = com.google.firebase.storage.FirebaseStorage.getInstance();
+
+                        for (int i = newCount + 1; i <= oldCount; i++) {
+                            String fullPath = targetId + "_" + i + ". fejezet";
+
+                            firestore.collection("messages").whereEqualTo("roomPath", fullPath).get()
+                                    .addOnSuccessListener(querySnapshot -> {
+                                        for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot) {
+                                            String url = doc.getString("imageUrl");
+                                            if (url != null && !url.isEmpty()) storage.getReferenceFromUrl(url).delete();
+                                            doc.getReference().delete();
+                                        }
+                                    });
+                        }
+                    }
+
+                    if (oldhappened) oldclub.setChapters(newCount); else club.setChapters(newCount);
+
+                    FirebaseFirestore.getInstance().collection(oldhappened ? "oldclub" : "club")
+                            .document(targetId)
+                            .update("chapters", oldhappened ? oldclub.getChapters() : club.getChapters())
+                            .addOnSuccessListener(aVoid -> {
+                                // Frissítjük a gombokat a képernyőn
+                                setupRecycler(chaptersRecycler, oldhappened ? oldclub.getChapters() : club.getChapters());
+                            });
+
+
 
                     //custom fejezet hozzáadás
                     if(!addcustomEdit.getText().toString().isEmpty()){
@@ -834,6 +873,7 @@ public class ClubPageActivity extends MenuActivity {
                             db.collection("oldclub").document(oldclubid)
                                     .update("customs", oldclub.getCustoms())
                                     .addOnSuccessListener(aVoid -> {
+
                                         Log.d("ClubPage", "Custom száma sikeresen frissítve Firestore-ban!");
                                     })
                                     .addOnFailureListener(e -> {
@@ -890,6 +930,10 @@ public class ClubPageActivity extends MenuActivity {
                     statusText.setVisibility(View.GONE);
 
                     club_book_edit.setVisibility(View.GONE);
+                    addcustomEdit.setText("");
+                    int currentSize = oldhappened ? oldclub.getChaptersSize() : club.getChaptersSize();
+                    chaptersEdit.setText(String.valueOf(currentSize));
+
                     //frissítés
                     setupRecycler(chaptersRecycler, club.getChapters());
                     setupRecycleruniq(customsRecycler, club.getCustoms());
