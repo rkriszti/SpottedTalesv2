@@ -22,11 +22,13 @@ public class ClubChatAdapter extends RecyclerView.Adapter<ClubChatAdapter.VH> {
     private List<Message> list;
     private String myEmail;
     private String currentTheme;
+    private Boolean ismoderator = false;
 
-    public ClubChatAdapter(List<Message> list, String email, String clubTheme) {
+    public ClubChatAdapter(List<Message> list, String email, String clubTheme, Boolean ismoderator) {
         this.list = list;
         this.myEmail = email;
         this.currentTheme = clubTheme;
+        this.ismoderator = ismoderator;
     }
 
 
@@ -44,9 +46,10 @@ public class ClubChatAdapter extends RecyclerView.Adapter<ClubChatAdapter.VH> {
 
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
+
         Message m = list.get(position);
         holder.msg.setText(m.getMessage());
-
+        boolean isown = m.getUseremail() != null && m.getUseremail().equals(myEmail);;
 
         if (m.getUseremail() != null) {
             FirebaseFirestore.getInstance()
@@ -77,22 +80,34 @@ public class ClubChatAdapter extends RecyclerView.Adapter<ClubChatAdapter.VH> {
             }
         }
 
-Log.d("Chat", themeColor);
+            Log.d("Chat", themeColor);
         if (m.getUseremail() != null && m.getUseremail().equals(myEmail)) {
             holder.user.setText("Én");
             holder.user.setTextColor(Color.parseColor("#d9a9db"));
             holder.msg.getBackground().setTint(Color.parseColor(themeColor));
             holder.msg.setTextColor(Color.WHITE);
-            holder.delete.setVisibility(View.VISIBLE);
+            //holder.delete.setVisibility(View.VISIBLE);
         } else {
             holder.user.setText(m.getUseremail());
             holder.user.setTextColor(Color.parseColor("#d9a9db"));
             holder.msg.getBackground().setTint(Color.parseColor(themeColor));
-            holder.msg.setTextColor(Color.BLACK);
+            holder.msg.setTextColor(Color.WHITE);
             holder.delete.setVisibility(View.GONE);
         }
+        holder.egyeb.setOnClickListener( l -> {
+            if (isown ||ismoderator){
+                holder.delete.setVisibility(View.VISIBLE);
+            }
+            holder.egyeb.setVisibility(View.GONE);
+            holder.egyebhide.setVisibility(View.VISIBLE);
+        });
+        holder.egyebhide.setOnClickListener( ll->{
+            holder.delete.setVisibility(View.GONE);
+            holder.egyeb.setVisibility(View.VISIBLE);
+            holder.egyebhide.setVisibility(View.GONE);
+        });
 
-        // Törlés logika
+
         holder.delete.setOnClickListener(k -> {
             int pos = holder.getBindingAdapterPosition();
             if (pos == RecyclerView.NO_POSITION) return;
@@ -117,13 +132,15 @@ Log.d("Chat", themeColor);
 
     static class VH extends RecyclerView.ViewHolder {
         TextView msg, user;
-        ImageView delete, profilepic;
+        ImageView delete, profilepic, egyeb, egyebhide;
         VH(View v) {
             super(v);
             msg = v.findViewById(R.id.text_message);
             user = v.findViewById(R.id.text_user);
             delete = v.findViewById(R.id.chat_delete);
             profilepic = v.findViewById(R.id.chat_profilpic);
+            egyeb = v.findViewById((R.id.chat_egyeb_start));
+            egyebhide = v.findViewById((R.id.chat_egyeb_hide));
         }
     }
 }

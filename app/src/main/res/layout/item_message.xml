@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="8dp">
@@ -46,6 +47,25 @@
         android:layout_centerVertical="true"
         android:clickable="true"
         android:src="@drawable/ic_delete"
-        android:visibility="visible" />
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/chat_egyeb_start"
+        android:layout_width="54dp"
+        android:layout_marginTop="15dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="3dp"
+        android:layout_toEndOf="@id/text_message"
+        app:srcCompat="@drawable/ic_egyeb" />
+
+    <ImageView
+        android:id="@+id/chat_egyeb_hide"
+        android:layout_width="54dp"
+        android:layout_marginTop="15dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="3dp"
+        android:visibility="gone"
+        android:layout_toEndOf="@id/text_message"
+        app:srcCompat="@drawable/ic_egyeb" />
 
 </RelativeLayout>

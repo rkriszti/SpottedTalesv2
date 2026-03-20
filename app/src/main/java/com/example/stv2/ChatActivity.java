@@ -2,6 +2,7 @@ package com.example.stv2;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -28,6 +29,7 @@ public class ChatActivity extends MenuActivity {
     private ClubChatAdapter adapter;
     private List<Message> messages = new ArrayList<>();
     private EditText messageInput;
+    private Boolean ismoderator = false;
     private ImageButton sendButton;
     private boolean oldhappened;
     private DatabaseReference rtdb;
@@ -57,9 +59,36 @@ public class ChatActivity extends MenuActivity {
         chat_backbutton = findViewById(R.id.chat_backbutton);
         chat_background = findViewById(R.id.chat_background_image);
 
-        adapter = new ClubChatAdapter(messages, currentUserEmail, clubTheme);
+        adapter = new ClubChatAdapter(messages, currentUserEmail, clubTheme, ismoderator);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
+        String uid = FirebaseAuth.getInstance().getCurrentUser() != null ?
+                FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
+        if (uid != null) {
+            FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(uid)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            Boolean moderator = documentSnapshot.getBoolean("admin");
+                            ismoderator = (moderator != null && moderator);
+
+                            if (moderator != null && moderator) {
+                                Log.d("AdminCheck", "A felhasználó admin.");
+                            } else {
+                                Log.d("AdminCheck", "A felhasználó nem admin.");
+                            }
+                            adapter = new ClubChatAdapter(messages, currentUserEmail, clubTheme, ismoderator);
+                            recyclerView.setAdapter(adapter);
+
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e("AdminCheck", "Hiba a lekéréskor", e));
+        }
+
+
 
         loadMessages();
 
