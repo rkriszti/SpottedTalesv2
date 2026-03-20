@@ -56,35 +56,6 @@
         android:scaleType="fitCenter"
         android:visibility="gone" />
 
-    <ImageView
-        android:id="@+id/chat_delete"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp"
-        android:clickable="true"
-        android:src="@drawable/ic_delete"
-        android:visibility="gone" />
 
-    <ImageView
-        android:id="@+id/chat_egyeb_start"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="21dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="-259dp"
-        android:layout_toEndOf="@+id/text_message"
-        app:srcCompat="@drawable/ic_egyeb" />
-
-    <ImageView
-        android:id="@+id/chat_egyeb_hide"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="21dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="-259dp"
-        android:layout_toEndOf="@+id/text_message"
-        android:visibility="gone"
-        app:srcCompat="@drawable/ic_egyeb" />
 
 </RelativeLayout>
