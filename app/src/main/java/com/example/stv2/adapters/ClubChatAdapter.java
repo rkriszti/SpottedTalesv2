@@ -51,26 +51,6 @@ public class ClubChatAdapter extends RecyclerView.Adapter<ClubChatAdapter.VH> {
         holder.msg.setText(m.getMessage());
         boolean isown = m.getUseremail() != null && m.getUseremail().equals(myEmail);;
 
-        if (m.getUseremail() != null) {
-            FirebaseFirestore.getInstance()
-                    .collection("users")
-                    .whereEqualTo("email", m.getUseremail())
-                    .get()
-                    .addOnSuccessListener(queryDocumentSnapshots -> {
-                        if (!queryDocumentSnapshots.isEmpty()) {
-                            String url = queryDocumentSnapshots.getDocuments().get(0).getString("profilepicurl");
-                            Glide.with(holder.itemView.getContext())
-                                    .load(url)
-                                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                    .placeholder(R.drawable.default_profile)
-                                    .circleCrop()
-                                    .into(holder.profilepic);
-                        } else {
-                            holder.profilepic.setImageResource(R.drawable.default_profile);
-                        }
-                    });
-        }
-
         String themeColor = "#3c0c3e";
         if (currentTheme != null) {
             if (currentTheme.trim().equals("Romantasy")) {
@@ -79,6 +59,30 @@ public class ClubChatAdapter extends RecyclerView.Adapter<ClubChatAdapter.VH> {
                 themeColor = "#69216e";
             }
         }
+        holder.user.setText("...");
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .whereEqualTo("email", m.getUseremail())
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    if (!queryDocumentSnapshots.isEmpty()) {
+                        if (!isown) {
+                            String username = queryDocumentSnapshots.getDocuments().get(0).getString("username");
+                            holder.user.setText(username != null ? username : m.getUseremail());
+                        }
+
+                        String url = queryDocumentSnapshots.getDocuments().get(0).getString("profilepicurl");
+                        Glide.with(holder.itemView.getContext())
+                                .load(url)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .placeholder(R.drawable.default_profile)
+                                .circleCrop()
+                                .into(holder.profilepic);
+                    } else {
+                        if (!isown) holder.user.setText(m.getUseremail());
+                        holder.profilepic.setImageResource(R.drawable.default_profile);
+                    }
+                });
 
             Log.d("Chat", themeColor);
         if (m.getUseremail() != null && m.getUseremail().equals(myEmail)) {
@@ -86,9 +90,7 @@ public class ClubChatAdapter extends RecyclerView.Adapter<ClubChatAdapter.VH> {
             holder.user.setTextColor(Color.parseColor("#d9a9db"));
             holder.msg.getBackground().setTint(Color.parseColor(themeColor));
             holder.msg.setTextColor(Color.WHITE);
-            //holder.delete.setVisibility(View.VISIBLE);
         } else {
-            holder.user.setText(m.getUseremail());
             holder.user.setTextColor(Color.parseColor("#d9a9db"));
             holder.msg.getBackground().setTint(Color.parseColor(themeColor));
             holder.msg.setTextColor(Color.WHITE);

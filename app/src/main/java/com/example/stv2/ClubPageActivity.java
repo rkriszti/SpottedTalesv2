@@ -57,7 +57,7 @@ public class ClubPageActivity extends MenuActivity {
     //xml részek
     private TextView clubName, clubBookTitle, statusText, clubBookAuthor;
     private EditText clubNameEdit, chaptersEdit,addcustomEdit ;
-    private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton, club_book_edit;
+    private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton, club_book_edit, chat_backbutton;
     private ToggleButton statusChange;
     private FirebaseFirestore db;
 
@@ -232,6 +232,10 @@ public class ClubPageActivity extends MenuActivity {
         //csak ha rányomunk, alapvetően rejtett
         chaptersRecycler.setVisibility(View.GONE);
         customsRecycler.setVisibility(View.GONE);
+
+        chat_backbutton = findViewById(R.id.club_backbutton);
+        chat_backbutton.setOnClickListener(k -> finish());
+
 
         //recycler megjelenítés
         chaptersHeader.setOnClickListener(v -> {

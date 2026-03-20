@@ -46,14 +46,12 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <Button
-                    android:id="@+id/club_active"
-                    android:layout_width="wrap_content"
+                <ImageView
+                    android:id="@+id/club_backbutton"
+                    android:layout_width="44dp"
                     android:layout_height="match_parent"
-                    android:textSize="12sp"
-                    android:backgroundTint="#2D8507"
-                    android:text="Aktív" />
-
+                    android:background="@drawable/ic_back_purple"
+/>
                 <TextView
                     android:id="@+id/club_name"
                     android:layout_width="0dp"
@@ -158,6 +156,14 @@
             </LinearLayout>
 
             <!-- KÖNYV -->
+            <Button
+                android:id="@+id/club_active"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:backgroundTint="#2D8507"
+                android:text="Aktív"
+                android:textSize="12sp" />
+
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
