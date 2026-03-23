@@ -434,6 +434,7 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_add_emoji"
             app:backgroundTint="#3c0c3e"
+            app:tint="@android:color/white"
             app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

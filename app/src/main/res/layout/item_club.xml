@@ -30,22 +30,36 @@
 
         <TextView
             android:id="@+id/menu_clubname"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="191dp"
+            android:layout_height="31dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="4dp"
             android:textColor="#111111"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/menu_clubpic"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/menu_public"
+            android:layout_width="39dp"
+            android:layout_height="38dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/ic_lock"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/clubs_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/menu_clubname"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
         <TextView
             android:id="@+id/menu_clubtags"
-            android:layout_width="23dp"
-            android:layout_height="26dp"
+            android:layout_width="48dp"
+            android:layout_height="28dp"
             android:layout_marginStart="20dp"
             android:textColor="#666666"
             android:textSize="14sp"
@@ -54,40 +68,24 @@
             app:layout_constraintTop_toBottomOf="@+id/menu_clubname"
             app:layout_constraintVertical_bias="0.6" />
 
-        <TextView
-            android:id="@+id/menu_tagfelirat"
-            android:layout_width="42dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="12dp"
-            android:gravity="center"
-            android:text="tag"
-            android:textColor="#666666"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.051"
-            app:layout_constraintStart_toEndOf="@+id/menu_clubtags"
-            app:layout_constraintTop_toBottomOf="@+id/menu_clubname"
-            app:layout_constraintVertical_bias="0.0"
-            tools:ignore="MissingConstraints" />
-
         <ImageView
             android:id="@+id/moderator_deleteclub"
-            android:layout_width="43dp"
-            android:layout_height="43dp"
-            android:visibility="gone"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/ic_delete"
+            android:scaleType="fitCenter"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/clubs_button"
-            app:layout_constraintStart_toEndOf="@+id/menu_tagfelirat"
-            app:layout_constraintTop_toBottomOf="@+id/menu_clubname"/>
+            app:layout_constraintTop_toBottomOf="@+id/menu_clubname"
+            app:layout_constraintVertical_bias="1.0" />
 
         <Button
             android:id="@+id/clubs_button"
-            android:layout_width="116dp"
-            android:layout_height="36dp"
+            android:layout_width="106dp"
+            android:layout_height="39dp"
             android:layout_marginTop="16dp"
             android:backgroundTint="#6F195D"
             android:radius="40dp"
@@ -95,11 +93,8 @@
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/menu_tagfelirat"
             app:layout_constraintTop_toBottomOf="@+id/menu_clubname"
-            app:layout_constraintVertical_bias="0.0" />
-
+            app:layout_constraintVertical_bias="1.0" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

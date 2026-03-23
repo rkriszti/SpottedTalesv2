@@ -7,6 +7,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -239,6 +240,12 @@ public class SearchActivity extends MenuActivity {
         optionClub = club;
         optionUser = user;
 
+        if (user) {
+            setRecyclerMargin(50);
+        } else {
+            setRecyclerMargin(15);
+        }
+
         sameinterest.setVisibility(user ? View.VISIBLE : View.GONE);
         buttonBook.setBackgroundResource(book ? R.drawable.background2 : R.drawable.grey_background);
         buttonClub.setBackgroundResource(club ? R.drawable.background2 : R.drawable.grey_background);
@@ -367,4 +374,12 @@ public class SearchActivity extends MenuActivity {
 
     // az adapter hívásához a kiválasztott pozíció frissítése
     public void setSelectedPosition(int pos) { selectedPosition = pos; }
+
+    private void setRecyclerMargin(int dp) {
+        if (recyclerSearch.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) recyclerSearch.getLayoutParams();
+            params.topMargin = (int) (dp * getResources().getDisplayMetrics().density);
+            recyclerSearch.setLayoutParams(params);
+        }
+    }
 }

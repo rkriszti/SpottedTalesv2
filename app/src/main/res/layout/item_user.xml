@@ -15,8 +15,8 @@
 
         <ImageView
             android:id="@+id/menu_userpic"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="52dp"
+            android:layout_height="71dp"
             android:scaleType="centerCrop"
             android:src="@drawable/default_profile" />
 
@@ -63,7 +63,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="visible"
-            android:text="Megnyitás" />
+            android:text="Megnyitás"
+            android:backgroundTint="#9A1556"/>
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

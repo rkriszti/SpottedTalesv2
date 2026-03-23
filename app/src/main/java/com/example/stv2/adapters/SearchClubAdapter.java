@@ -13,6 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.stv2.ClubPageActivity;
 import com.example.stv2.R;
 import com.example.stv2.model.Club;
@@ -55,10 +57,40 @@ public class SearchClubAdapter extends RecyclerView.Adapter<SearchClubAdapter.VH
         Club c = clubs.get(pos);
 
         h.name.setText(c.getName());
-        h.members.setText(String.valueOf(c.getMembers().size()));
-        h.pic.setImageResource(R.drawable.default_book);
+        h.members.setText((c.getMembers().size()) + " tag");
+
+       // h.pic.setImageResource(R.drawable.default_book);
+        if (c.getBookId() != null && !c.getBookId().isEmpty()) {
+            FirebaseFirestore.getInstance()
+                    .collection("books")
+                    .document(c.getBookId())
+                    .get()
+                    .addOnSuccessListener(doc -> {
+                        if (doc.exists()) {
+                            String coverUrl = doc.getString("coverpic");
+
+                            if (coverUrl != null && !coverUrl.isEmpty()) {
+                                Glide.with(h.itemView.getContext())
+                                        .load(coverUrl)
+                                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                        .placeholder(R.drawable.default_book)
+                                        .error(R.drawable.default_book)
+                                        .into(h.pic);
+                            }
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e("SearchClubAdapter", "Hiba a könyv lekérésekor", e));
+        }
 
         isClubPublic = c.getIspublic();
+
+        h.menu_public.setVisibility(View.VISIBLE);
+        if(isClubPublic){
+            h.menu_public.setBackgroundResource(R.drawable.ic_lock_open);
+        } else {
+            h.menu_public.setBackgroundResource(R.drawable.ic_lock);
+        }
+
         isUserMember = c.isMember(useremail);
 
         if(ismoderator){
@@ -190,7 +222,7 @@ public class SearchClubAdapter extends RecyclerView.Adapter<SearchClubAdapter.VH
 
     static class VH extends RecyclerView.ViewHolder {
         TextView name, members;
-        ImageView pic, moderator_deleteclub;
+        ImageView pic, moderator_deleteclub, menu_public;
         Button button;
 
         VH(View v) {
@@ -200,6 +232,7 @@ public class SearchClubAdapter extends RecyclerView.Adapter<SearchClubAdapter.VH
             pic = v.findViewById(R.id.menu_clubpic);
             moderator_deleteclub = v.findViewById(R.id.moderator_deleteclub);
             button = v.findViewById(R.id.clubs_button);
+            menu_public = v.findViewById(R.id.menu_public);
         }
     }
 }

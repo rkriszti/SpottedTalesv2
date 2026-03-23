@@ -43,6 +43,15 @@ public class SearchUserAdapter extends RecyclerView.Adapter<SearchUserAdapter.VH
         h.username.setText(u.getUsername());
         h.pic.setImageResource(R.drawable.default_profile);
 
+        if (u.getProfilepicurl() != null && !u.getProfilepicurl().isEmpty()) {
+            com.bumptech.glide.Glide.with(h.itemView.getContext())
+                    .load(u.getProfilepicurl())
+                    .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.default_profile)
+                    .error(R.drawable.default_profile)
+                    .into(h.pic);
+        }
+
         h.button.setOnClickListener(v -> {
             FirebaseFirestore.getInstance()
                     .collection("users")
