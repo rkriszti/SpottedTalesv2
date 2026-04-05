@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,12 +27,18 @@ import com.example.stv2.adapters.ClubRoomAdapter;
 import com.example.stv2.adapters.HistoryAdapter;
 import com.example.stv2.adapters.MembersAdapter;
 import com.example.stv2.adapters.ClubChatAdapter;
+import com.example.stv2.adapters.VoteAdapter;
 import com.example.stv2.model.Book;
 import com.example.stv2.model.Club;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
@@ -39,9 +47,12 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ClubPageActivity extends MenuActivity {
     private AutoCompleteTextView clubThemeDropdown;
@@ -49,11 +60,30 @@ public class ClubPageActivity extends MenuActivity {
     private DatabaseReference rtdb;
     //globálisan kell
     private Club club, oldclub;
+    private List<String> voteTitles = new ArrayList<>();
+    private Map<String, Long> voteCounts = new HashMap<>();
+    private List<Map<String,Object>> voteBooks;
+
+    ArrayList<String> bookList ;
+    private VoteAdapter voteAdapter;
+    private EditText bookTitleEdit;
+    private Button newBookSave;
+    private Set<String> votedUsers;
     private String userEmail, bookid, bookbeforechange;
     private Button members, club_delete, club_history, club_active;
     private Boolean ismoderator = false, oldhappened = false;
     String adminEmail, oldbookid, oldclubid;
+    private DatabaseReference voteRef;
     private String currentSavedTheme = "";
+
+    RecyclerView voteRecycler;
+    LinearLayout voteCard;
+    TextView voteCountdown ;
+    Button addBookButton ;
+    LinearLayout adminVoteButtons ;
+    Button setBookButton ;
+    Button deleteVoteButton ;
+    Button voteStart;
 
     //xml részek
     private TextView clubName, clubBookTitle, statusText, clubBookAuthor;
@@ -70,7 +100,7 @@ public class ClubPageActivity extends MenuActivity {
     private LinearLayout chaptersHeader, customsHeader;
 
     private Boolean settingIsOn = false, choosingHappened = false;
-    private Boolean isAdmin;
+    private boolean isAdmin = false;
 
 
     //saját listener
@@ -178,7 +208,9 @@ public class ClubPageActivity extends MenuActivity {
                     .get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
-                            ismoderator = documentSnapshot.getBoolean("admin") != null && documentSnapshot.getBoolean("admin");
+                            Boolean adminField = documentSnapshot.getBoolean("admin");
+                            ismoderator = Boolean.TRUE.equals(adminField);
+                            //  ismoderator = documentSnapshot.getBoolean("admin") != null && documentSnapshot.getBoolean("admin");
                             if (ismoderator && club != null) {
                                 isAdmin = true;
                                 admin();
@@ -190,6 +222,7 @@ public class ClubPageActivity extends MenuActivity {
                         }
                     });
         }
+        Log.d("ADMIN_DEBUG", "isAdmin value = " + isAdmin);
 
         Log.d("ChooseBook", "clubpageben ellenőrzés" );
         if(getIntent().getStringExtra("chosenbook")!=null
@@ -232,6 +265,7 @@ public class ClubPageActivity extends MenuActivity {
         //erre nyomva csukódik le a recycler
         chaptersHeader = findViewById(R.id.chapters_title_parent);
         customsHeader = findViewById(R.id.customs_title_parent);
+       voteBooks = new ArrayList<>();
 
         //csak ha rányomunk, alapvetően rejtett
         chaptersRecycler.setVisibility(View.GONE);
@@ -239,6 +273,18 @@ public class ClubPageActivity extends MenuActivity {
 
         chat_backbutton = findViewById(R.id.club_backbutton);
         chat_backbutton.setOnClickListener(k -> finish());
+
+         voteRecycler = findViewById(R.id.voteRecycler);
+         voteCard = findViewById(R.id.voteCard);
+         voteCountdown = findViewById(R.id.voteCountdown);
+        votedUsers = new HashSet<>();
+         addBookButton = findViewById(R.id.addBookButton);
+         adminVoteButtons = findViewById(R.id.adminVoteButtons);
+         setBookButton = findViewById(R.id.setBookButton);
+         deleteVoteButton = findViewById(R.id.deleteVoteButton);
+        voteStart = findViewById(R.id.votestart);
+
+
 
 
         //recycler megjelenítés
@@ -316,11 +362,273 @@ public class ClubPageActivity extends MenuActivity {
                 setupTopMenu();
             });
         });
-
-
+        // UI elemek
+         bookTitleEdit = findViewById(R.id.bookTitleedit);
+         newBookSave = findViewById(R.id.newbooksave);
+        RecyclerView voteRecycler = findViewById(R.id.voteRecycler);
 
         loadClub(clubId);
         //is choosing happened -> update book -> loadclub végén (aszinkron)
+    }
+
+
+
+    // Adjunk hozzá egy osztályszintű változót a user szavazatainak tárolására
+    private Set<String> userVotes = new HashSet<>();
+
+    private void initVotingSystem() {
+        // A pontot (.) le kell cserélni, mert az RTDB kulcs nem tartalmazhatja
+        String safeEmail = userEmail != null ? userEmail.replace(".", ",") : "anonymous";
+
+        // 1. Adapter inicializálása
+        voteAdapter = new VoteAdapter(voteTitles, voteCounts, userVotes, title -> {
+            // Szavazás/Visszavonás logika Transaction-nel
+            DatabaseReference bookRef = voteRef.child("books").child(title);
+
+            bookRef.runTransaction(new Transaction.Handler() {
+                @NonNull @Override
+                public Transaction.Result doTransaction(@NonNull MutableData currentData) {
+                    Map<String, Object> voters = (Map<String, Object>) currentData.child("voters").getValue();
+                    if (voters == null) voters = new HashMap<>();
+
+                    Long currentVotes = currentData.child("votes").getValue(Long.class);
+                    if (currentVotes == null) currentVotes = 0L;
+
+                    if (voters.containsKey(safeEmail)) {
+                        // Már szavazott -> Visszavonás
+                        voters.remove(safeEmail);
+                        currentData.child("votes").setValue(Math.max(0, currentVotes - 1));
+                    } else {
+                        // Még nem szavazott -> Szavazás
+                        voters.put(safeEmail, true);
+                        currentData.child("votes").setValue(currentVotes + 1);
+                    }
+
+                    currentData.child("voters").setValue(voters);
+                    return Transaction.success(currentData);
+                }
+
+                @Override
+                public void onComplete(DatabaseError e, boolean b, DataSnapshot s) {
+                    if (e != null) Log.e("VOTE_ERROR", e.getMessage());
+                }
+            });
+        });
+
+        voteRecycler.setLayoutManager(new LinearLayoutManager(this));
+        voteRecycler.setAdapter(voteAdapter);
+
+        // 2. Realtime Database Figyelő (Élő frissítés)
+        voteRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    voteCard.setVisibility(View.VISIBLE);
+                    voteStart.setVisibility(View.GONE);
+
+                    // Megnézzük, van-e már elmentett győztes
+                    String savedWinner = snapshot.child("winner").getValue(String.class);
+
+                    if (savedWinner != null) {
+                        // --- SZAVAZÁS LEZÁRVA ---
+                        voteCountdown.setText("GYŐZTES: " + savedWinner);
+                        voteCountdown.setTextColor(android.graphics.Color.parseColor("#6E1A5D"));
+                        voteRecycler.setVisibility(View.GONE);
+                        addBookButton.setVisibility(View.GONE);
+                        adminVoteButtons.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+                        setBookButton.setVisibility(View.GONE); // Már van eredmény, nem kell a lezáró gomb
+                    } else {
+                        // --- SZAVAZÁS FOLYAMATBAN ---
+                        voteRecycler.setVisibility(View.VISIBLE);
+                        addBookButton.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+                        adminVoteButtons.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+                        setBookButton.setVisibility(View.VISIBLE);
+
+                        // Időzítő kezelése
+                        Long startTime = snapshot.child("startTime").getValue(Long.class);
+                        if (startTime != null) startVoteCountdown(startTime);
+
+                        // Listák ürítése és újratöltése a snapshotból
+                        voteTitles.clear();
+                        voteCounts.clear();
+                        userVotes.clear();
+
+                        DataSnapshot booksSnap = snapshot.child("books");
+                        for (DataSnapshot s : booksSnap.getChildren()) {
+                            String title = s.getKey();
+                            voteTitles.add(title);
+
+                            Long count = s.child("votes").getValue(Long.class);
+                            voteCounts.put(title, count != null ? count : 0L);
+
+                            if (s.child("voters").hasChild(safeEmail)) {
+                                userVotes.add(title);
+                            }
+                        }
+                        voteAdapter.updateData(voteTitles, voteCounts, userVotes);
+                    }
+                } else {
+                    // --- NINCS SZAVAZÁS ---
+                    voteCard.setVisibility(View.GONE);
+                    voteStart.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
+        });
+
+        // 3. Gombok eseménykezelői
+
+        // Szavazás indítása
+        voteStart.setOnClickListener(v -> {
+            Map<String, Object> startData = new HashMap<>();
+            startData.put("active", true);
+            startData.put("startTime", System.currentTimeMillis());
+            voteRef.setValue(startData);
+        });
+
+        // Szavazás manuális lezárása (Győztes hirdetés)
+        setBookButton.setOnClickListener(v -> {
+            if (voteTitles.isEmpty() || voteCounts.isEmpty()) {
+                Toast.makeText(this, "Nincs könyv a listában!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Győztes kiszámítása
+            long maxVotes = -1;
+            List<String> winners = new ArrayList<>();
+            for (Map.Entry<String, Long> entry : voteCounts.entrySet()) {
+                if (entry.getValue() > maxVotes) {
+                    maxVotes = entry.getValue();
+                    winners.clear();
+                    winners.add(entry.getKey());
+                } else if (entry.getValue() == maxVotes) {
+                    winners.add(entry.getKey());
+                }
+            }
+
+            if (winners.isEmpty()) return;
+            if (winners.size() > 1) Collections.shuffle(winners);
+            String finalWinner = winners.get(0);
+
+            // Lezárás mentése: idő eltolása + winner beírása
+            long twentyFourHoursMillis = 24 * 60 * 60 * 1000;
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("startTime", System.currentTimeMillis() - twentyFourHoursMillis);
+            updates.put("winner", finalWinner);
+
+            voteRef.updateChildren(updates).addOnSuccessListener(aVoid -> {
+                Toast.makeText(this, "Szavazás lezárva: " + finalWinner, Toast.LENGTH_SHORT).show();
+            });
+        });
+
+        // Új könyv hozzáadása (input mező megjelenítése)
+        addBookButton.setOnClickListener(v -> {
+            bookTitleEdit.setVisibility(View.VISIBLE);
+            newBookSave.setVisibility(View.VISIBLE);
+        });
+
+        // Új könyv mentése
+        newBookSave.setOnClickListener(v -> {
+            String title = bookTitleEdit.getText().toString().trim().replace(".", ",");
+            if (!title.isEmpty()) {
+                Map<String, Object> newBook = new HashMap<>();
+                newBook.put("votes", 0);
+                voteRef.child("books").child(title).setValue(newBook);
+
+                bookTitleEdit.setText("");
+                bookTitleEdit.setVisibility(View.GONE);
+                newBookSave.setVisibility(View.GONE);
+            }
+        });
+
+        // Teljes törlés (Reset)
+        deleteVoteButton.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Szavazás törlése")
+                    .setMessage("Biztosan törölni szeretnéd a szavazást? Minden adat elveszik.")
+                    .setPositiveButton("Igen", (dialog, which) -> {
+                        voteRef.removeValue();
+                    })
+                    .setNegativeButton("Mégse", null)
+                    .show();
+        });
+    }
+
+    private void processWinner() {
+        if (voteCounts.isEmpty()) return;
+
+        long maxVotes = -1;
+        List<String> winners = new ArrayList<>();
+
+        // 1. Legmagasabb szavazatszám megkeresése
+        for (Map.Entry<String, Long> entry : voteCounts.entrySet()) {
+            if (entry.getValue() > maxVotes) {
+                maxVotes = entry.getValue();
+                winners.clear();
+                winners.add(entry.getKey());
+            } else if (entry.getValue() == maxVotes) {
+                winners.add(entry.getKey());
+            }
+        }
+
+        // 2. Random választás, ha döntetlen van
+        String finalWinner;
+        if (winners.size() > 1) {
+            Collections.shuffle(winners); // megkeverjük
+        }
+        finalWinner = winners.get(0);
+
+        showWinnerAnimation(finalWinner);
+    }
+
+    private void showWinnerAnimation(String winnerTitle) {
+        // Egyszerű animáció: elhalványítjuk a listát, és beúsztatjuk a győztest
+        voteRecycler.animate().alpha(0f).setDuration(500).withEndAction(() -> {
+            voteRecycler.setVisibility(View.GONE);
+            addBookButton.setVisibility(View.GONE);
+
+            // A visszaszámláló helyére kiírjuk a győztest
+            voteCountdown.setText("GYŐZTES: " + winnerTitle);
+            voteCountdown.setTextColor(android.graphics.Color.RED);
+            voteCountdown.setTextSize(20);
+
+            // Itt opcionálisan elindíthatsz egy konfetti effektet vagy skálázó animációt
+            voteCountdown.setScaleX(0.5f);
+            voteCountdown.setScaleY(0.5f);
+            voteCountdown.animate().scaleX(1.2f).scaleY(1.2f).setDuration(500).start();
+
+            // Logika: Itt hívhatnád meg az updateBook(winnerTitle)-t,
+            // hogy ténylegesen ez legyen a klub könyve
+        }).start();
+    }
+    //számláló
+    private void startVoteCountdown(long startTime) {
+        long twentyFourHours = 24 * 60 * 60 * 1000;
+        long currentTime = System.currentTimeMillis();
+        long endTime = startTime + twentyFourHours;
+        long timeLeft = (startTime + twentyFourHours) - System.currentTimeMillis();
+
+        if (timeLeft <= 0) {
+            voteCountdown.setText("00:00:00");
+            processWinner();
+            return;
+        }
+
+        new CountDownTimer(timeLeft, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long h = millisUntilFinished / 3600000;
+                long m = (millisUntilFinished % 3600000) / 60000;
+                long s = (millisUntilFinished % 60000) / 1000;
+                voteCountdown.setText(String.format("%02d:%02d:%02d", h, m, s));
+            }
+
+            @Override
+            public void onFinish() {
+                voteCountdown.setText("Vége a szavazásnak!");
+            }
+        }.start();
     }
 
     private void loadClub(String clubId) {
@@ -360,6 +668,18 @@ public class ClubPageActivity extends MenuActivity {
                     isAdmin = (userEmail != null && userEmail.equals(adminEmail)) || ismoderator;
                     clubName.setText(club.getName());
                     club.setId(docc.getId());
+
+                    voteRef = rtdb.child("votes").child(club.getId());
+                    /*
+
+                    listenVotingChanges();
+
+                    setupVotingButton();
+
+
+
+                    loadVotingState();
+*/                  initVotingSystem();
 
                     if (choosingHappened) {
                         if (bookid.equals(club.getBookId())) {
@@ -1141,4 +1461,8 @@ public class ClubPageActivity extends MenuActivity {
 
             recreate();
         }
+
+
+
+
     }

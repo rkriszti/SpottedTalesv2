@@ -349,6 +349,132 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#FBE0FF"
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:id="@+id/voteCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_marginTop="40dp"
+                    android:visibility="gone"
+                    >
+
+                    <Button
+                        android:id="@+id/votestart"
+                        android:backgroundTint="#6E1A5D"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Szavazás indítása"
+                        />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        >
+                        <EditText
+                            android:id="@+id/bookTitleedit"
+                            android:layout_width="100dp"
+                            android:visibility="gone"
+                            android:layout_marginTop="30dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="Könyv címe"
+                            android:textSize="16sp"
+                            android:layout_height="wrap_content"/>
+
+                        <Button
+                            android:id="@+id/newbooksave"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:backgroundTint="#6E1A5D"
+                            android:visibility="gone"
+                            android:text="Mentés" />
+
+
+                    </LinearLayout>
+
+
+
+
+
+                    <TextView
+                        android:id="@+id/voteTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Következő könyv szavazás"
+                        android:textSize="18sp"
+                        android:textStyle="bold"/>
+
+
+                    <TextView
+                        android:id="@+id/voteCountdown"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="24:00:00"
+                        android:paddingTop="4dp"/>
+
+
+
+
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/voteRecycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingTop="8dp"/>
+
+                    <Button
+                        android:id="@+id/addBookButton"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:gravity="center"
+                        android:text="+ Könyv hozzáadása"
+                        android:background="@drawable/ic_edit"
+                        android:visibility="visible"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="8dp"
+                        android:backgroundTint="#F3E5F5"
+                        android:visibility="visible"
+                        android:id="@+id/adminVoteButtons">
+
+                        <Button
+                            android:id="@+id/setBookButton"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:text="Szavazás vége"
+                            android:backgroundTint="#6E1A5D"
+                            android:layout_height="wrap_content"/>
+
+                        <Button
+                            android:id="@+id/deleteVoteButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:backgroundTint="#6E1A5D"
+                            android:text="Törlés"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+
+
+
+
             <Button
                 android:id="@+id/club_delete"
                 android:backgroundTint="#F44336"
@@ -361,8 +487,6 @@
 
         </LinearLayout>
     </ScrollView>
-
-    <!-- FAB -->
 
     <!-- MENÜSÁV -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
