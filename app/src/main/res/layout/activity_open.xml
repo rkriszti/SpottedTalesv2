@@ -47,7 +47,7 @@
         android:layout_gravity="bottom"
 
         android:background="@drawable/background_nav"
-        app:itemIconTint="@color/white"
+        app:itemIconTint="#B675D4"
         app:itemTextColor="@color/white"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"

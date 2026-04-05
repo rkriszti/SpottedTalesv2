@@ -61,7 +61,7 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
     public void onBindViewHolder(@NonNull ClubViewHolder holder, int position) {
         Club c = aktualis_clubs.get(position);
         holder.name.setText(c.getName());
-        holder.members.setText(String.valueOf(c.getMembers().size()));
+        holder.members.setText((c.getMembers().size()) + " tag");
 
         holder.pic.setImageResource(R.drawable.default_book);
 
