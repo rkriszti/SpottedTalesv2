@@ -15,7 +15,7 @@ public class User {
     String email;
     String profilepicurl;
     Boolean admin;
-    List<String> favorites; //könyvid??
+    List<String> favorites;
 
     public User() {
         this.favorites = new ArrayList<>();
@@ -27,13 +27,11 @@ public class User {
     username = u;
     email = e;
     favorites = new ArrayList<>();
-    //res/drawable alatti erőforrásokat nem fájlútvonallal, hanem resource ID-val kell hivatkozni.
     profilepicurl = "";
     admin = false;
     }
 
 
-    // ---------------- ÚJ: Mentés Firestore-ba ----------------
     public void saveToFirestore(String uid, Runnable onSuccess, Runnable onFailure) {
         FirebaseFirestore store = FirebaseFirestore.getInstance();
 

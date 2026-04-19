@@ -38,8 +38,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this); //teljes képrenyős nézet
-        FirebaseApp.initializeApp(this); //firebase sdk, elég app elején elindítani
+        EdgeToEdge.enable(this);
+        FirebaseApp.initializeApp(this);
         setContentView(R.layout.activity_login);
 
 
@@ -51,14 +51,14 @@ public class LoginActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.loginbutton);
         TextView skipToRegist = findViewById(R.id.logintoregist);
 
-        // teljes képrenyő
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        //Nincs még fiókom gomb
+
         skipToRegist.setOnClickListener(v -> {
             Intent intent = new Intent(LoginActivity.this, RegistActivity.class);
             startActivity(intent);

@@ -23,7 +23,6 @@ public class RegistActivity extends AppCompatActivity {
 
     private static final String TAG = "STV2_DEBUG"; // Egységes tag a kereséshez
     private FirebaseAuth auth = FirebaseAuth.getInstance();
-    private FirebaseFirestore store = FirebaseFirestore.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +37,10 @@ public class RegistActivity extends AppCompatActivity {
         }
 
         TextView skip = findViewById(R.id.registtologin);
-        // Helyes változat:
+
         skip.setOnClickListener(v -> {
             Log.d(TAG, "Váltás LoginActivity-re");
-            Intent intent = new Intent(RegistActivity.this, LoginActivity.class); // Itt hiányzott az 'Intent' típus
+            Intent intent = new Intent(RegistActivity.this, LoginActivity.class);
             startActivity(intent);
         });
 

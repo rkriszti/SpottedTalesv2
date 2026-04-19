@@ -41,7 +41,8 @@ public class ChatActivity extends MenuActivity {
     private DatabaseReference rtdb;
     private Uri selectedImageUri = null;
     private String clubTheme = "";
-    private ImageView chat_backbutton, chat_background, chat_image_button;
+    private ImageView chat_backbutton, chat_background;
+    private ImageView chat_image_button;
     private FirebaseFirestore db;
 
     @Override

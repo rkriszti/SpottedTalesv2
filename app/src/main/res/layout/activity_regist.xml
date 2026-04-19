@@ -27,7 +27,6 @@
         android:id="@+id/registemail"
         android:layout_width="209dp"
         android:layout_height="45dp"
-
         android:layout_marginBottom="10dp"
         android:backgroundTint="@color/lightbordo"
         android:hint="Email cím"
