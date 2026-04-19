@@ -50,7 +50,7 @@ public class ChatActivity extends MenuActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        setupBottomMenu();
+        setupBottomMenu(null);
         setupTopMenu();
 
         db = FirebaseFirestore.getInstance();

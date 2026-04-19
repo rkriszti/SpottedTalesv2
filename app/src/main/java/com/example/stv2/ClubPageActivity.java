@@ -175,7 +175,8 @@ public class ClubPageActivity extends MenuActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clubpage);
 
-        setupBottomMenu(R.id.nav_clubs);
+        //setupBottomMenu(R.id.nav_clubs);
+        setupBottomMenu(null);
         setupTopMenu();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

@@ -58,7 +58,7 @@ public class NewBookActivity extends MenuActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new);
 
-        setupBottomMenu(R.id.nav_search);
+        setupBottomMenu(null);
         setupTopMenu();
 
         Switch kapcsolo = findViewById(R.id.switchForm);

@@ -38,7 +38,7 @@ public class RecommendActivity extends MenuActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recommend);
         setupTopMenu();
-        setupBottomMenu();
+        setupBottomMenu(null);
 
         listSpinner = findViewById(R.id.listSpinner);
         chooseButton = findViewById(R.id.chooseButton);

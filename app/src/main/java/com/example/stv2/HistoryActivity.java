@@ -23,7 +23,7 @@ public class HistoryActivity extends MenuActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clubpage_members);
 
-        setupBottomMenu(R.id.nav_clubs);
+        setupBottomMenu(null);
         setupTopMenu();
 
         Log.d("history", "Megnyílt az előzmény oldal");
