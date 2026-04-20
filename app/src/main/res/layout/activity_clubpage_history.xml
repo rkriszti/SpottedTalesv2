@@ -16,6 +16,8 @@
             android:id="@+id/top_toolbar"
             android:layout_width="wrap_content"
             android:layout_height="88dp"
+            android:minHeight="88dp"
+            android:gravity="center_vertical"
             android:background="@drawable/background2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

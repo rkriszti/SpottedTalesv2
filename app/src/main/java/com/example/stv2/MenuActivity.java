@@ -14,7 +14,6 @@ public abstract class MenuActivity extends AppCompatActivity {
     //ezt a settup függvényt fogjuk csak meghívni
     protected void setupBottomMenu(Integer selectedItemId) {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        //bottomNavigationView.setSelectedItemId(selectedItemId);
 
         if (selectedItemId != null) {
             bottomNavigationView.setSelectedItemId(selectedItemId);
@@ -97,7 +96,7 @@ public abstract class MenuActivity extends AppCompatActivity {
             navigationView.setNavigationItemSelectedListener(item -> {
                 int id = item.getItemId();
 
-                if (id == R.id.action_logout_actual) { // A side_menu.xml-ben lévő logout ID
+                if (id == R.id.action_logout_actual) {
                     FirebaseAuth.getInstance().signOut();
                     Intent intent = new Intent(this, LoginActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
