@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white"
+        android:background="@drawable/pink_background"
         app:menu="@menu/bottom_nav_menu"
         tools:context=".HomeActivity">
 
@@ -18,9 +18,9 @@
             android:id="@+id/top_toolbar"
             android:layout_width="wrap_content"
             android:layout_height="88dp"
-            android:minHeight="88dp"
-            android:gravity="center_vertical"
             android:background="@drawable/background2"
+            android:gravity="center_vertical"
+            android:minHeight="88dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:menu="@menu/top_nav_menu"
@@ -30,25 +30,28 @@
 
         <ImageView
             android:id="@+id/imageView2"
-            android:layout_width="341dp"
-            android:layout_height="540dp"
-            android:layout_marginBottom="16dp"
+            android:layout_width="0dp"
+            android:layout_height="594dp"
+            android:layout_marginBottom="8dp"
             app:layout_constraintBottom_toTopOf="@+id/fab"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:srcCompat="@drawable/book_outline" />
+            app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
+            app:layout_constraintVertical_bias="0.336"
+            app:srcCompat="@drawable/book_outline_cover" />
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="32dp"
             android:text="A Nap Könyve"
-            android:textColor="#6A195B"
+            android:textColor="#FFB3E7"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="@+id/imageView2"
-            app:layout_constraintHorizontal_bias="0.497"
+            app:layout_constraintHorizontal_bias="0.501"
             app:layout_constraintStart_toStartOf="@+id/imageView2"
             app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
 
@@ -65,21 +68,22 @@
             app:layout_constraintEnd_toEndOf="@+id/imageView2"
             app:layout_constraintHorizontal_bias="0.716"
             app:layout_constraintStart_toStartOf="@+id/imageView2"
-            app:layout_constraintTop_toBottomOf="@+id/textView"
-            app:layout_constraintVertical_bias="0.431" />
-
+            app:layout_constraintTop_toTopOf="@+id/imageView2"
+            app:layout_constraintVertical_bias="0.362" />
 
         <ImageView
             android:id="@+id/daycover"
-            android:layout_width="80dp"
-            android:layout_height="110dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/textView"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.543"
-            app:layout_constraintStart_toEndOf="@+id/textView"
-            app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
-            app:layout_constraintVertical_bias="0.0"
+            android:layout_width="91dp"
+            android:layout_height="141dp"
+            android:rotation="-3"
+            android:scaleType="fitCenter"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+            app:layout_constraintEnd_toEndOf="@+id/imageView2"
+            app:layout_constraintHorizontal_bias="0.618"
+            app:layout_constraintStart_toStartOf="@+id/imageView2"
+            app:layout_constraintTop_toBottomOf="@+id/bookOfTheDayTitle"
+            app:layout_constraintVertical_bias="0.393"
             app:srcCompat="@drawable/default_book" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
