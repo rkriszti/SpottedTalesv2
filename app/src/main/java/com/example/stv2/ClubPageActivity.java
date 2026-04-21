@@ -24,9 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.stv2.adapters.ClubRoomAdapter;
-import com.example.stv2.adapters.HistoryAdapter;
 import com.example.stv2.adapters.MembersAdapter;
-import com.example.stv2.adapters.ClubChatAdapter;
 import com.example.stv2.adapters.VoteAdapter;
 import com.example.stv2.model.Book;
 import com.example.stv2.model.Club;
@@ -40,8 +38,6 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -60,6 +56,7 @@ public class ClubPageActivity extends MenuActivity {
     private DatabaseReference rtdb;
     //globálisan kell
     private Club club, oldclub;
+    private String realId;
     private List<String> voteTitles = new ArrayList<>();
     private Map<String, Long> voteCounts = new HashMap<>();
     private List<Map<String,Object>> voteBooks;
@@ -669,6 +666,7 @@ public class ClubPageActivity extends MenuActivity {
                     isAdmin = (userEmail != null && userEmail.equals(adminEmail)) || ismoderator;
                     clubName.setText(club.getName());
                     club.setId(docc.getId());
+                    realId = docc.getId();
 
                     voteRef = rtdb.child("votes").child(club.getId());
                     /*
@@ -709,7 +707,7 @@ public class ClubPageActivity extends MenuActivity {
                                         startActivity(intent);
                                         finish();
                                     } else {
-                                        if (club.getBookId().isEmpty()) {
+                                        if (club.getBookId() == null || club.getBookId().isEmpty()) {
                                             updateBook(bookid);
                                         } else {
                                             saveclubhistory(bookid);
@@ -721,6 +719,7 @@ public class ClubPageActivity extends MenuActivity {
                     if(!choosingHappened){
                         bookid = club.getBookId();
                     }
+
                     club.setBookId(bookid);
                     Log.d("LOAD", "beállítás utáni, bookid: " + club.getBookId());
 
@@ -858,12 +857,21 @@ public class ClubPageActivity extends MenuActivity {
 
                         //ha van könyv beállítva
                          currentBookId = (bookid != null && !bookid.isEmpty()) ? bookid : club.getBookId();
+
+
+
                         if(currentBookId != null && !currentBookId.isEmpty()) {
                             FirebaseFirestore.getInstance()
                                     .collection("books")
                                     .document(currentBookId)
                                     .get()
                                     .addOnSuccessListener(doc -> {
+                                        if (!doc.exists()) {
+                                            Log.d("CLUB", "Halott link, takarítás...");
+                                            deleteBookId(bookid, realId);
+                                            return;
+                                        }
+
                                         Book b = doc.toObject(Book.class);
                                         if(b != null) {
                                             club.setBook(b);
@@ -1463,7 +1471,19 @@ public class ClubPageActivity extends MenuActivity {
             recreate();
         }
 
+//könyv id törlése
+
+    private void deleteBookId(String bookId, String clubId) {
+        FirebaseFirestore.getInstance().collection("club").document(clubId)
+                .update("bookId", null)
+                .addOnSuccessListener(unused -> {
+                    Log.d("CLUB", "ID törölve, oldal újraindul");
+                    // Toast.makeText(this, "A könyv már nem elérhető", Toast.LENGTH_SHORT).show();
+                    finish();
+                    startActivity(getIntent());
+                });
 
 
+    }
 
     }
