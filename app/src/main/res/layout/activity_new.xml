@@ -11,7 +11,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:menu="@menu/bottom_nav_menu"
-    android:background="#C8D69FD9">
+    android:background="#FFD6E4">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/top_toolbar"
@@ -66,7 +66,7 @@
             android:textOff="Űrlap 1"
             android:textOn="Űrlap 2"
             app:thumbTint="#6E4AAC"
-            app:trackTint="#C868A5" />
+            app:trackTint="#662557" />
 
 
 
@@ -81,7 +81,7 @@
 
     </LinearLayout>
 
-    <!-- Könyv űrlap -->
+    <!-- Klub űrlap -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/form_club"
         android:layout_width="0dp"
@@ -90,7 +90,7 @@
         android:background="#FFF"
         android:elevation="0dp"
         android:padding="10dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/fab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -274,7 +274,7 @@
         android:padding="20dp"
         android:elevation="0dp"
         android:layout_margin="16dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@id/headerLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">

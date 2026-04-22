@@ -9,7 +9,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E6D4F0"
+    android:background="#CEF4B9DA"
     tools:context=".RecommendActivity">
 
     <com.google.android.material.appbar.MaterialToolbar

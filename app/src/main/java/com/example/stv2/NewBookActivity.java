@@ -45,7 +45,7 @@ public class NewBookActivity extends MenuActivity {
     private String picurl; //= downloadUri.toString(); majd launcherben
     private Uri selectedImageUri; //ActivityResultLauncher-ben használva (egyből visszakapott uri)
     private Book currentBook;
-
+    private int isLoading = 0;
     private EditText customsInput;
     private Button addButton;
     private ChipGroup chipGroup;
@@ -65,8 +65,8 @@ public class NewBookActivity extends MenuActivity {
         LinearLayout form_book = findViewById(R.id.form_book);
         ConstraintLayout form_club = findViewById(R.id.form_club);
 
-       kapcsolo.getThumbDrawable().setTint(Color.parseColor("#6E4AAC")); // rózsaszín
-        kapcsolo.getTrackDrawable().setTint(Color.parseColor("#C868A5")); // lila
+        kapcsolo.getThumbDrawable().setTint(Color.parseColor("#BE499E"));
+        kapcsolo.getTrackDrawable().setTint(Color.parseColor("#7b486d"));
 
 
         //book elemek--------------------------------------
@@ -75,6 +75,7 @@ public class NewBookActivity extends MenuActivity {
         //club elemek--------------------------------------
         /// club elemek
         Button form_club_button = findViewById(R.id.form_club_button);
+
         TooltipCompat.setTooltipText(findViewById(R.id.club_tooltip), "Publikus klubba bárki csatlakozhat, privátba csak engedéllyel." +
                 " Később MÓDOSÍTHATÓ.");
 
@@ -93,9 +94,15 @@ public class NewBookActivity extends MenuActivity {
         //űrlapok közötti nagiválás switchel
         kapcsolo.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
+                //klub nézet
+                kapcsolo.getThumbDrawable().setTint(Color.parseColor("#6E4AAC"));
+                kapcsolo.getTrackDrawable().setTint(Color.parseColor("#7b486d"));
                 form_book.setVisibility(LinearLayout.GONE);
                 form_club.setVisibility(LinearLayout.VISIBLE);
             } else {
+                //könyv nézet
+                kapcsolo.getThumbDrawable().setTint(Color.parseColor("#BE499E"));
+                kapcsolo.getTrackDrawable().setTint(Color.parseColor("#7b486d"));
                 form_book.setVisibility(LinearLayout.VISIBLE);
                 form_club.setVisibility(LinearLayout.GONE);
             }
@@ -118,6 +125,7 @@ public class NewBookActivity extends MenuActivity {
                 new ActivityResultContracts.PickVisualMedia(),
                 uri -> {
                     if (uri != null) {
+                        isLoading = 1;
                         selectedImageUri = uri;
                         form_book_borito.setImageURI(uri); //imagieviewba meg is jelenítjük egyből
 
@@ -133,19 +141,25 @@ public class NewBookActivity extends MenuActivity {
                                             picurl = downloadUri.toString();
                                             Log.d("FirebaseUpload", "Kép 1: " + picurl);
                                             if (currentBook != null) { //ha van könyv
-                                                currentBook.setCoverpic(picurl);
+                                               // currentBook.setCoverpic(picurl);
                                             }
+                                            isLoading = 0;
                                         })
                                 )
-                                .addOnFailureListener(e -> Log.e("FirebaseUpload", "Hiba: " + e.getMessage()));
-                    } else {
+                                .addOnFailureListener(e -> {
+                                    isLoading = 0;
+                                    Toast.makeText(this, "Hiba a kép feltöltésekor!", Toast.LENGTH_SHORT).show();
+                                });                    } else {
                         Log.d("PhotoPicker", "No media selected");
                     }
                 }
         );
 
         //kép választás felugrik
+
+
         form_book_borito.setOnClickListener(v -> pickMedia.launch(
+
                 new PickVisualMediaRequest.Builder()
                         .setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo.INSTANCE)
                         .build()
@@ -252,6 +266,10 @@ public class NewBookActivity extends MenuActivity {
 
         //Könyv feltöltés gomb
         form_book_button.setOnClickListener(v -> {
+            if (isLoading == 1) {
+                Toast.makeText(this, "A kép még feltöltés alatt áll, kérlek várj!", Toast.LENGTH_SHORT).show();
+                return;
+            }
             //beérkezett adatok
             EditText cim = findViewById(R.id.form_book_cim);
             EditText szerzo = findViewById(R.id.form_book_szerzo);
@@ -298,6 +316,7 @@ public class NewBookActivity extends MenuActivity {
 
 
     }//oncreate vége
+
     private void addCustomChip(String label) {
         // ne duplikáljunk
         if (customsList.contains(label)) return;
