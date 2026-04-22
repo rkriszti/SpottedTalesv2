@@ -75,7 +75,7 @@ public class HomeActivity extends MenuActivity {
 
     private void drawNewBook(String date) {
         Log.d("HOME", "új sorsolunk elindul");
-        firestore.collection("books").get().addOnSuccessListener(queryDocumentSnapshots -> {
+        firestore.collection("books").limit(50).get().addOnSuccessListener(queryDocumentSnapshots -> {
             if (!queryDocumentSnapshots.isEmpty()) {
                 List<DocumentSnapshot> books = queryDocumentSnapshots.getDocuments();
                 int randomIndex = new Random().nextInt(books.size());

@@ -11,7 +11,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:menu="@menu/bottom_nav_menu"
-    android:background="@color/darkpurple">
+    android:background="#C8D69FD9">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/top_toolbar"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:text="Könyv"
-            android:textColor="#6A1B9A"
+            android:textColor="#D0BE499E"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -65,7 +65,7 @@
             android:textColor="@android:color/black"
             android:textOff="Űrlap 1"
             android:textOn="Űrlap 2"
-            app:thumbTint="#8C236E"
+            app:thumbTint="#6E4AAC"
             app:trackTint="#C868A5" />
 
 
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:text="Klub"
-            android:textColor="#6A1B9A"
+            android:textColor="#CD9062BE"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -89,8 +89,8 @@
         android:layout_margin="16dp"
         android:background="#FFF"
         android:elevation="0dp"
-        android:padding="20dp"
-        android:visibility="gone"
+        android:padding="10dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/fab"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -102,8 +102,12 @@
             android:id="@+id/club_tooltip"
             android:layout_width="47dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
             android:layout_marginTop="48dp"
-            android:tooltipText="Publikus klubba bárki csatlakozhat, privátba csak meghívásból."
+            android:layout_marginBottom="23dp"
+            android:tooltipText="Publikus klubba bárki csatlakozhat, privátba csak ha engedélyezik.
+             "
+            app:layout_constraintBottom_toTopOf="@+id/club_chapters"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/radioGroup"
             app:layout_constraintTop_toBottomOf="@+id/club_name"
@@ -111,8 +115,8 @@
 
         <RadioGroup
             android:id="@+id/radioGroup"
-            android:layout_width="300dp"
-            android:layout_height="80dp"
+            android:layout_width="282dp"
+            android:layout_height="78dp"
             android:orientation="horizontal"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/club_name"
@@ -120,21 +124,23 @@
 
             <RadioButton
                 android:id="@+id/form_club_private"
-                android:layout_width="128dp"
+                android:layout_width="91dp"
                 android:layout_height="50dp"
                 android:layout_marginTop="28dp"
                 android:layout_marginEnd="60dp"
+                app:buttonTint="#2196F3"
                 android:text="Privát"
                 android:tooltipText="@string/form_club_private_help"
                 tools:ignore="MissingConstraints" />
 
             <RadioButton
                 android:id="@+id/form_club_public"
-                android:layout_width="119dp"
+                android:layout_width="106dp"
                 android:layout_height="51dp"
                 android:layout_marginTop="28dp"
                 android:checked="true"
                 android:text="Publikus"
+                app:buttonTint="#731C60"
                 android:tooltipText="@string/form_club_public_help"
                 app:layout_constraintEnd_toStartOf="@+id/form_club_private"
                 app:layout_constraintHorizontal_bias="0.593" />
@@ -153,13 +159,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
+
+        <ImageView
+            android:id="@+id/club_tooltip2"
+            android:layout_width="47dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="19dp"
+
+            app:layout_constraintBottom_toTopOf="@+id/button_customs"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.673"
+            app:layout_constraintStart_toEndOf="@+id/club_customs"
+            app:layout_constraintTop_toBottomOf="@+id/club_chapters"
+            app:layout_constraintVertical_bias="1.0"
+            app:srcCompat="@android:drawable/ic_menu_help" />
+
         <EditText
             android:id="@+id/club_customs"
             android:layout_width="233dp"
             android:layout_height="56dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="28dp"
             android:backgroundTint="#BA68C8"
-            android:hint="Egyedi chatszobák (nem kötelező)"
+            android:hint="Egyedi chatszobák neve"
             android:inputType="text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.094"
@@ -168,20 +189,36 @@
 
         <Button
             android:id="@+id/button_customs"
-            android:layout_width="89dp"
-            android:layout_height="48dp"
+            android:layout_width="68dp"
+            android:layout_height="49dp"
             android:layout_marginTop="36dp"
-            android:backgroundTint="#741C60"
-            android:text="Hozzáad"
+            android:backgroundTint="#9C4186"
+            android:text="✓"
             android:textAllCaps="false"
             android:textColor="@android:color/white"
+            android:textColorHint="@color/white"
+            android:textSize="20dp"
             app:layout_constraintBottom_toTopOf="@+id/form_club_button"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.678"
             app:layout_constraintStart_toEndOf="@+id/club_customs"
             app:layout_constraintTop_toBottomOf="@+id/club_chapters"
-            app:layout_constraintVertical_bias="0.0"
+            app:layout_constraintVertical_bias="0.01"
             tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="📖 Klub létrehozása"
+            android:textColor="#CD9062BE"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.033"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/club_name"
@@ -192,7 +229,7 @@
             android:backgroundTint="#BA68C8"
             android:hint="Klub név"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/club_customs_container"
@@ -237,7 +274,7 @@
         android:padding="20dp"
         android:elevation="0dp"
         android:layout_margin="16dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/headerLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -246,7 +283,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="📖 Könyv létrehozása"
-            android:textColor="#6A1B9A"
+            android:textColor="#C868A5"
             android:textStyle="bold"
             android:textSize="20sp"
             android:layout_marginBottom="8dp" />
@@ -298,8 +335,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/background_nav"
-        app:itemIconTint="#B675D4"
-        app:itemTextColor="@color/white"
+        app:itemIconTint="#FFC2DC"
+        app:itemTextColor="#B3FFFFFF"
+        app:itemActiveIndicatorStyle="@null"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

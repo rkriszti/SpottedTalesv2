@@ -65,8 +65,8 @@ public class NewBookActivity extends MenuActivity {
         LinearLayout form_book = findViewById(R.id.form_book);
         ConstraintLayout form_club = findViewById(R.id.form_club);
 
-        kapcsolo.getThumbDrawable().setTint(Color.parseColor("#EC407A")); // rózsaszín
-        kapcsolo.getTrackDrawable().setTint(Color.parseColor("#741c60")); // lila
+       kapcsolo.getThumbDrawable().setTint(Color.parseColor("#6E4AAC")); // rózsaszín
+        kapcsolo.getTrackDrawable().setTint(Color.parseColor("#C868A5")); // lila
 
 
         //book elemek--------------------------------------
@@ -75,7 +75,14 @@ public class NewBookActivity extends MenuActivity {
         //club elemek--------------------------------------
         /// club elemek
         Button form_club_button = findViewById(R.id.form_club_button);
-        TooltipCompat.setTooltipText(findViewById(R.id.club_tooltip), "Publikus klubba bárki csatlakozhat, privátba csak meghívásból.");
+        TooltipCompat.setTooltipText(findViewById(R.id.club_tooltip), "Publikus klubba bárki csatlakozhat, privátba csak engedéllyel." +
+                " Később MÓDOSÍTHATÓ.");
+
+        TooltipCompat.setTooltipText(findViewById(R.id.club_tooltip2), "Fejezetek száma 2 -> 1. fejezet, 2. fejezet         " +
+                "Egyedi: 'Karakterek' -> ✓ ");
+
+
+
         EditText chapters = findViewById(R.id.club_chapters);
         //fejezetekhez
          customsInput = findViewById(R.id.club_customs);
@@ -300,7 +307,7 @@ public class NewBookActivity extends MenuActivity {
         Chip chip = new Chip(this);
         chip.setText(label);
         chip.setCloseIconVisible(true);
-        chip.setChipBackgroundColorResource(R.color.purple);
+        chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#821F68"))); // Rózsaszín
         chip.setTextColor(Color.WHITE);
         chip.setCloseIconTint(ColorStateList.valueOf(Color.WHITE));
 
