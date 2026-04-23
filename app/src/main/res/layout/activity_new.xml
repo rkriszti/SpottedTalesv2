@@ -227,7 +227,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
             android:backgroundTint="#BA68C8"
-            android:hint="Klub név"
+            android:hint="Klub név*"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
@@ -272,6 +272,7 @@
         android:orientation="vertical"
         android:background="#FFF"
         android:padding="20dp"
+        app:cardElevation="6dp"
         android:elevation="0dp"
         android:layout_margin="16dp"
         android:visibility="visible"

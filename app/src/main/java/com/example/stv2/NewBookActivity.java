@@ -80,7 +80,7 @@ public class NewBookActivity extends MenuActivity {
                 " Később MÓDOSÍTHATÓ.");
 
         TooltipCompat.setTooltipText(findViewById(R.id.club_tooltip2), "Fejezetek száma 2 -> 1. fejezet, 2. fejezet         " +
-                "Egyedi: 'Karakterek' -> ✓ ");
+                "Egyedi: 'Karakterek' -> ✓          Nem kötelező. Később MÓDOSÍTHATÓ");
 
 
 

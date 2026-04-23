@@ -142,6 +142,9 @@ public class Club {
                 return true;
             }
         }
+        if( number == 0 ){
+            chapters = new HashMap<>();
+        }
         return false;
 
     }
