@@ -182,18 +182,8 @@ public class SearchActivity extends MenuActivity {
 
         loadAdminBooks(userId);
 
-        FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(userId)
-                .get()
-                .addOnSuccessListener(doc -> {
-                    if (doc.exists()) {
-                        username = doc.getString("username");
-                        email = doc.getString("email");
-                        filter(etSearch.getText().toString());
-                    }
-                });
 
+        //felhasználó adatai
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(userId)
@@ -372,7 +362,6 @@ public class SearchActivity extends MenuActivity {
         return false;
     }
 
-    // az adapter hívásához a kiválasztott pozíció frissítése
     public void setSelectedPosition(int pos) { selectedPosition = pos; }
 
     private void setRecyclerMargin(int dp) {
