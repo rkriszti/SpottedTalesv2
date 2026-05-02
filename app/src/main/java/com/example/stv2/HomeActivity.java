@@ -26,14 +26,15 @@ import java.util.Random;
 public class HomeActivity extends MenuActivity {
     private FirebaseFirestore firestore;
     private DatabaseReference rtDb;
-    private TextView bookTitleTv;
-    private ImageView dayCoverIv;
+    private TextView bookTitleTv, textView;
+    private ImageView dayCoverIv, outline;
     private String today;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_open);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Log.d("HOME", "oncreate elindul");
 
         firestore = FirebaseFirestore.getInstance();
@@ -47,6 +48,8 @@ public class HomeActivity extends MenuActivity {
 
         bookTitleTv = findViewById(R.id.bookOfTheDayTitle);
         dayCoverIv = findViewById(R.id.daycover);
+        outline = findViewById(R.id.imageView2);
+        textView  = findViewById(R.id.textView);
        // dayCoverIv.setVisibility(View.GONE);
 
         checkDailyBook();
@@ -95,12 +98,17 @@ public class HomeActivity extends MenuActivity {
     private void loadBookDetails(String bookId) {
         Log.d("HOME", "betöltés elindul");
         firestore.collection("books").document(bookId).get().addOnSuccessListener(doc -> {
+            if (isFinishing() || isDestroyed()) {
+                return;
+            }
             if (doc.exists()) {
                 bookTitleTv.setText(doc.getString("title"));
 
                 String imageUrl = doc.getString("coverpic");
-                if (imageUrl != null && !imageUrl.isEmpty()) {
+                if ((imageUrl != null && !imageUrl.isEmpty() && !imageUrl.contains("default_book"))){
                     dayCoverIv.setVisibility(View.VISIBLE);
+                    outline.setBackground(null);
+                    outline.setBackgroundResource(R.drawable.book_outline_cover2);
 
                     Glide.with(this)
                             .load(imageUrl)
@@ -108,6 +116,11 @@ public class HomeActivity extends MenuActivity {
                             .error(R.drawable.default_book)
                             .centerCrop()
                             .into(dayCoverIv);
+                } else {
+                    dayCoverIv.setVisibility(View.GONE);
+                    Glide.with(this).clear(dayCoverIv);
+                    outline.setBackground(null);
+                    outline.setBackgroundResource(R.drawable.book_outline2);
                 }
             }
         });
@@ -126,9 +139,8 @@ public class HomeActivity extends MenuActivity {
 
                             if(Boolean.TRUE.equals(moderator)){
                                 Log.d("HOME", "igen");
-                                dayCoverIv.setVisibility(View.VISIBLE);
 
-                                dayCoverIv.setOnClickListener(k ->{
+                                textView.setOnClickListener(k ->{
                                     Log.d("HOME", "rányomott");
                                     drawNewBook(today);
                                 });

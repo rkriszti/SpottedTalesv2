@@ -10,6 +10,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -59,6 +60,7 @@ public class ClubsActivity extends MenuActivity{
         setContentView(R.layout.activity_clubs);
         setupBottomMenu(R.id.nav_clubs);
         setupTopMenu();
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
 
 
@@ -147,7 +149,6 @@ public class ClubsActivity extends MenuActivity{
         count[0]++;
         if (count[0] == total) {
             clubAdapter.setClubs(clubs);
-            // 2. Elrejtjük a töltést, ha minden adat beérkezett
             progressBar.setVisibility(View.GONE);
         }
     }

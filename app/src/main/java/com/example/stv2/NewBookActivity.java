@@ -25,6 +25,7 @@ import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.TooltipCompat;
+import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.stv2.model.Book;
@@ -62,8 +63,8 @@ public class NewBookActivity extends MenuActivity {
         setupTopMenu();
 
         Switch kapcsolo = findViewById(R.id.switchForm);
-        LinearLayout form_book = findViewById(R.id.form_book);
-        ConstraintLayout form_club = findViewById(R.id.form_club);
+        CardView form_book = findViewById(R.id.form_book);
+        CardView form_club = findViewById(R.id.form_club);
 
         kapcsolo.getThumbDrawable().setTint(Color.parseColor("#BE499E"));
         kapcsolo.getTrackDrawable().setTint(Color.parseColor("#7b486d"));
@@ -97,14 +98,14 @@ public class NewBookActivity extends MenuActivity {
                 //klub nézet
                 kapcsolo.getThumbDrawable().setTint(Color.parseColor("#6E4AAC"));
                 kapcsolo.getTrackDrawable().setTint(Color.parseColor("#7b486d"));
-                form_book.setVisibility(LinearLayout.GONE);
-                form_club.setVisibility(LinearLayout.VISIBLE);
+                form_book.setVisibility(View.GONE);
+                form_club.setVisibility(View.VISIBLE);
             } else {
                 //könyv nézet
                 kapcsolo.getThumbDrawable().setTint(Color.parseColor("#BE499E"));
                 kapcsolo.getTrackDrawable().setTint(Color.parseColor("#7b486d"));
-                form_book.setVisibility(LinearLayout.VISIBLE);
-                form_club.setVisibility(LinearLayout.GONE);
+                form_book.setVisibility(View.VISIBLE);
+                form_club.setVisibility(View.GONE);
             }
         });
 
@@ -326,10 +327,8 @@ public class NewBookActivity extends MenuActivity {
         Chip chip = new Chip(this);
         chip.setText(label);
         chip.setCloseIconVisible(true);
-        chip.setChipBackgroundColor(ColorStateList.valueOf(Color.parseColor("#821F68"))); // Rózsaszín
-        chip.setTextColor(Color.WHITE);
+        chip.setChipBackgroundColor(ColorStateList.valueOf(0xFF821F68));    chip.setTextColor(Color.WHITE);
         chip.setCloseIconTint(ColorStateList.valueOf(Color.WHITE));
-
         chip.setOnCloseIconClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

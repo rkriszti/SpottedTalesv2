@@ -18,6 +18,8 @@
         android:layout_width="wrap_content"
         android:layout_height="88dp"
         android:minHeight="88dp"
+        android:paddingTop="12dp"
+        app:titleMarginTop="20dp"
         android:gravity="center_vertical"
         android:background="@drawable/background2"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,20 +84,29 @@
     </LinearLayout>
 
     <!-- Klub űrlap -->
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.cardview.widget.CardView
         android:id="@+id/form_club"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        android:visibility="gone"
+        app:cardElevation="6dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerLayout">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/form_club_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:background="#FFF"
         android:elevation="0dp"
-        android:padding="10dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/fab"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="visible"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
         app:layout_constraintVertical_bias="0.0">
 
         <ImageView
@@ -263,73 +274,84 @@
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
+    </androidx.cardview.widget.CardView>
     <!-- Könyv űrlap -->
-    <LinearLayout
+    <androidx.cardview.widget.CardView
         android:id="@+id/form_book"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="#FFF"
-        android:padding="20dp"
-        app:cardElevation="6dp"
-        android:elevation="0dp"
         android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
         android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        app:cardElevation="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/headerLayout">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="📖 Könyv létrehozása"
-            android:textColor="#C868A5"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:layout_marginBottom="8dp" />
 
-        <EditText
-            android:id="@+id/form_book_cim"
+
+        <LinearLayout
+            android:id="@+id/form_book_lazout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Cím"
-            android:backgroundTint="#BA68C8" />
+            android:layout_margin="16dp"
+            android:background="#FFF"
+            android:elevation="0dp"
+            android:orientation="vertical"
+            android:visibility="visible"
+            app:cardElevation="6dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerLayout">
 
-        <EditText
-            android:id="@+id/form_book_szerzo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Szerző"
-            android:backgroundTint="#BA68C8"
-            android:layout_marginTop="8dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:text="📖 Könyv létrehozása"
+                android:textColor="#C868A5"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/form_book_borito"
-            android:layout_width="120dp"
-            android:layout_height="140dp"
-            android:layout_gravity="center"
-            android:src="@android:drawable/ic_menu_gallery"
-            android:background="#F3E5F5"
-            android:padding="8dp"
-            android:layout_marginTop="12dp"
-            android:contentDescription="Borító" />
+            <EditText
+                android:id="@+id/form_book_cim"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#BA68C8"
+                android:hint="Cím" />
 
-        <Button
-            android:id="@+id/form_book_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Feltöltés"
-            android:textAllCaps="false"
-            android:backgroundTint="#741C60"
-            android:textColor="@android:color/white"
-            android:layout_marginTop="12dp" />
+            <EditText
+                android:id="@+id/form_book_szerzo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="#BA68C8"
+                android:hint="Szerző" />
+
+            <ImageView
+                android:id="@+id/form_book_borito"
+                android:layout_width="120dp"
+                android:layout_height="140dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="12dp"
+                android:background="#F3E5F5"
+                android:contentDescription="Borító"
+                android:padding="8dp"
+                android:src="@android:drawable/ic_menu_gallery" />
+
+            <Button
+                android:id="@+id/form_book_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:backgroundTint="#741C60"
+                android:text="Feltöltés"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white" />
 
 
-
-
-    </LinearLayout>
-
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

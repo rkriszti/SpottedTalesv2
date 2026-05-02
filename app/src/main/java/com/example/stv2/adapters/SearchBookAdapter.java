@@ -45,7 +45,7 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
                              ActivityResultLauncher<String> pickImageLauncher,
                              boolean ischoosing, SearchActivity.OnChooseBookListener list,
                              boolean isfavchoose, boolean moderator) {
-        this.usersbooks = usersbooks;
+        this.usersbooks = usersbooks; //only admins
         this.pickImageLauncher = pickImageLauncher;
         this.ischoosing = ischoosing;
         this.listener = list;
@@ -55,7 +55,7 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
 
     public void setBooks(List<Book> list, boolean moderator) {
         this.ismoderator = moderator;
-        this.books = list;
+        this.books = list; //all books
         notifyDataSetChanged();
     }
 
@@ -76,10 +76,27 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
         Book b = books.get(pos);
         String bookId = b.getId();
 
+        //alap adatok
         h.title.setText(b.getTitle());
         h.author.setText(b.getAuthor());
+        if (b.getCoverpic() != null && !b.getCoverpic().isEmpty()) {
+            Glide.with(h.itemView.getContext())
+                    .load(b.getCoverpic())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.default_book)
+                    .into(h.cover);
+        } else {
+            h.cover.setImageResource(R.drawable.default_book);
+        }
 
+        //edit
         boolean canEdit = (bookId != null && (usersbooks.contains(bookId) || ismoderator));
+        h.book_edit.setVisibility(canEdit ? View.VISIBLE : View.GONE);
+
+        h.book_edit.setOnClickListener(v -> {
+            b.setEditing(true);
+            notifyItemChanged(pos);
+        });
 
         if (b.isEditing()) {
             h.title.setVisibility(View.GONE);
@@ -101,8 +118,6 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
             h.authoredit.setVisibility(View.GONE);
             h.book_save.setVisibility(View.GONE);
 
-            h.book_edit.setVisibility(canEdit ? View.VISIBLE : View.GONE);
-
             h.book_chooseforclub.setVisibility(ischoosing ? View.VISIBLE : View.GONE);
             h.book_favchoose.setVisibility(isfavchoose ? View.VISIBLE : View.GONE);
 
@@ -116,10 +131,7 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
             h.book_delete.setVisibility(View.GONE);
         }
 
-        h.book_edit.setOnClickListener(v -> {
-            b.setEditing(true);
-            notifyItemChanged(pos);
-        });
+
 
         h.book_save.setOnClickListener(v -> saveEdit(b, h, pos));
 
@@ -138,15 +150,7 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
             }
         });
 
-        if (b.getCoverpic() != null && !b.getCoverpic().isEmpty()) {
-            Glide.with(h.itemView.getContext())
-                    .load(b.getCoverpic())
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.default_book)
-                    .into(h.cover);
-        } else {
-            h.cover.setImageResource(R.drawable.default_book);
-        }
+
     }
 
     private void saveEdit(Book b, VH h, int pos) {

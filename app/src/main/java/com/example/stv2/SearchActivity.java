@@ -1,7 +1,6 @@
 package com.example.stv2;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.RadioButton;
+import android.widget.ProgressBar;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -40,10 +39,11 @@ import java.util.Objects;
 
 public class SearchActivity extends MenuActivity {
 
-    private EditText etSearch;
+    private EditText searchedword;
     private RecyclerView recyclerSearch;
     private CheckBox sameinterest;
     private String targetUserId;
+    private ProgressBar loader;
     private Boolean ismoderator = false;
     private List<String> currentUserFavorites = new ArrayList<>();
 
@@ -105,7 +105,8 @@ public class SearchActivity extends MenuActivity {
         buttonBook = findViewById(R.id.buttonbook);
         buttonClub = findViewById(R.id.buttonclub);
         buttonUser = findViewById(R.id.buttonuser);
-        etSearch = findViewById(R.id.etSearch);
+        searchedword = findViewById(R.id.etSearch);
+        loader = findViewById(R.id.search_loader);
         sameinterest = findViewById(R.id.sameinterest);
         recyclerSearch = findViewById(R.id.recyclerSearch);
         recyclerSearch.setLayoutManager(new LinearLayoutManager(this));
@@ -194,7 +195,7 @@ public class SearchActivity extends MenuActivity {
                         email = doc.getString("email");
                         currentUserFavorites = (List<String>) doc.get("favorites");
                         if (currentUserFavorites == null) currentUserFavorites = new ArrayList<>();
-                        filter(etSearch.getText().toString());
+                        filter(searchedword.getText().toString());
                     }
                 });
 
@@ -213,7 +214,7 @@ public class SearchActivity extends MenuActivity {
         buttonClub.setOnClickListener(v -> { if (!optionClub) select(false,true,false); });
         buttonUser.setOnClickListener(v -> { if (!optionUser) select(false,false,true); });
 
-        etSearch.addTextChangedListener(new TextWatcher() {
+        searchedword.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void afterTextChanged(Editable s) {}
             @Override
@@ -222,7 +223,7 @@ public class SearchActivity extends MenuActivity {
             }
         });
 
-        sameinterest.setOnClickListener(v -> filter(etSearch.getText().toString()));
+        sameinterest.setOnClickListener(v -> filter(searchedword.getText().toString()));
     }
 
     private void select(boolean book, boolean club, boolean user) {
@@ -246,7 +247,7 @@ public class SearchActivity extends MenuActivity {
         if (user && userAdapter != null) recyclerSearch.setAdapter(userAdapter);
         if (!user) sameinterest.setChecked(false);
 
-        filter(etSearch.getText().toString());
+        filter(searchedword.getText().toString());
     }
 
     private void loadBooks() {
@@ -270,6 +271,7 @@ public class SearchActivity extends MenuActivity {
                 .collection("club")
                 .get()
                 .addOnSuccessListener(qs -> {
+                    loader.setVisibility(View.GONE);
                     allClubs = qs.toObjects(Club.class);
                     clubAdapter.setClubs(allClubs, email, ismoderator);
                 });
@@ -320,6 +322,7 @@ public class SearchActivity extends MenuActivity {
     }
 
     private void loadAdminBooks(String userid) {
+        loader.setVisibility(View.VISIBLE);
         adminBooks = new ArrayList<>();
         DatabaseReference ref = FirebaseDatabase.getInstance(
                         "https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
@@ -362,6 +365,7 @@ public class SearchActivity extends MenuActivity {
         return false;
     }
 
+    // az adapter hívásához a kiválasztott pozíció frissítése
     public void setSelectedPosition(int pos) { selectedPosition = pos; }
 
     private void setRecyclerMargin(int dp) {

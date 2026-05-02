@@ -26,6 +26,7 @@
             android:id="@+id/top_toolbar"
             android:layout_width="wrap_content"
             android:minHeight="88dp"
+            android:paddingTop="12dp"
             android:gravity="center_vertical"
             android:layout_height="88dp"
             android:background="@drawable/background2"

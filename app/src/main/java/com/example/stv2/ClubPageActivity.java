@@ -453,7 +453,9 @@ public class ClubPageActivity extends MenuActivity {
 
                         DataSnapshot booksSnap = snapshot.child("books");
                         for (DataSnapshot s : booksSnap.getChildren()) {
+
                             String title = s.getKey();
+                            if (title != null) {
                             voteTitles.add(title);
 
                             Long count = s.child("votes").getValue(Long.class);
@@ -462,7 +464,7 @@ public class ClubPageActivity extends MenuActivity {
                             if (s.child("voters").hasChild(safeEmail)) {
                                 userVotes.add(title);
                             }
-                        }
+                        }}
                         voteAdapter.updateData(voteTitles, voteCounts, userVotes);
                     }
                 } else {
