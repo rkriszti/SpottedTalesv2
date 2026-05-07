@@ -7,10 +7,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/clubpage_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/chat_theme_romance"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:background="#CEF4B9DA"
     android:layout_height="match_parent">
+
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/top_toolbar"
@@ -133,7 +143,7 @@
                     android:id="@+id/profile_save"
                     android:layout_width="37dp"
                     android:layout_height="39dp"
-                    android:background="@drawable/ic_save"
+                    android:background="@drawable/ic_yes"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

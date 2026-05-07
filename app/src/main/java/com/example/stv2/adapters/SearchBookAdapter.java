@@ -91,12 +91,15 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
 
         //edit
         boolean canEdit = (bookId != null && (usersbooks.contains(bookId) || ismoderator));
-        h.book_edit.setVisibility(canEdit ? View.VISIBLE : View.GONE);
+        if (!ischoosing && !isfavchoose){
+            h.book_edit.setVisibility(canEdit ? View.VISIBLE : View.GONE);
 
-        h.book_edit.setOnClickListener(v -> {
-            b.setEditing(true);
-            notifyItemChanged(pos);
-        });
+            h.book_edit.setOnClickListener(v -> {
+                b.setEditing(true);
+                notifyItemChanged(pos);
+            });
+        }
+
 
         if (b.isEditing()) {
             h.title.setVisibility(View.GONE);

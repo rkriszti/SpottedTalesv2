@@ -15,6 +15,7 @@
         android:layout_height="49dp"
         android:layout_marginTop="266dp"
         android:layout_marginBottom="8dp"
+
         android:backgroundTint="@color/lightbordo"
 
         android:hint="Email cím"
@@ -35,6 +36,7 @@
         android:layout_marginBottom="20dp"
         android:backgroundTint="@color/lightbordo"
         android:hint="Jelszó"
+        android:textColor="@color/white"
         android:inputType="textPassword"
 
         android:textColorHint="@color/white"

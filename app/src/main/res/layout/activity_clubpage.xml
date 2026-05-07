@@ -7,10 +7,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/clubpage_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#F5F3F7">
+>
 
 
 
@@ -51,16 +60,15 @@
 
                 <ImageView
                     android:id="@+id/club_backbutton"
-                    android:layout_width="44dp"
+                    android:layout_width="34dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/ic_back_purple"
-/>
+                    android:src="@drawable/ic_back_purple" />
                 <TextView
                     android:id="@+id/club_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textColor="#6A1B9A"
+                    android:textColor="#FFFFFF"
                     android:textSize="26sp"
                     android:visibility="visible"
                     android:textStyle="bold" />
@@ -71,15 +79,15 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:inputType="text"
-                    android:textColor="#6A1B9A"
+                    android:textColor="#FFFFFF"
                     android:textSize="26sp"
                     android:visibility="gone"
                     android:textStyle="bold" />
 
                 <ImageView
                     android:id="@+id/club_name_edit"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:src="@drawable/ic_edit"
                     android:contentDescription="Edit club name"
                     android:visibility="gone"
@@ -87,12 +95,13 @@
 
                 <ImageView
                     android:id="@+id/clubsettingon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_setting"
+                    android:layout_width="32dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="8dp"
+                    android:background="@android:color/transparent"
                     android:contentDescription="Edit club on"
-                    android:visibility="gone"
-                    android:layout_marginStart="8dp"/>
+                    android:src="@drawable/ic_setting_light"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -124,7 +133,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="Publikusság módosítása:"
-                    android:textColor="#6A1B9A"
+                    android:textColor="#DFBDE6"
                     android:visibility="gone"
                     android:textStyle="bold"
                     android:textSize="16sp"
@@ -133,13 +142,13 @@
 
                 <ToggleButton
                     android:id="@+id/club_status_change"
-                    android:layout_width="50dp"
+                    android:layout_width="36dp"
                     android:layout_height="match_parent"
                     android:clickable="true"
                     android:focusable="true"
-                    android:visibility="gone"
                     android:textOff=""
-                    android:textOn="" />
+                    android:textOn=""
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/club_members"
@@ -155,17 +164,22 @@
                     android:layout_height="match_parent"
                     android:backgroundTint="#6E1A5D"
                     android:text="Előzmények" />
-
+                <Button
+                    android:id="@+id/club_active"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:backgroundTint="#2D8507"
+                    android:text="Aktív"
+                    android:padding="0dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:minHeight="0dp"
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <!-- KÖNYV -->
-            <Button
-                android:id="@+id/club_active"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:backgroundTint="#2D8507"
-                android:text="Aktív"
-                android:textSize="12sp" />
+
+
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -188,7 +202,7 @@
                         android:scaleType="centerCrop"
                         android:src="@drawable/default_book" />
 
-                    <!-- Szövegek konténerben -->
+
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -249,7 +263,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Fejezetek"
-                            android:textColor="#6A1B9A"
+                            android:textColor="#6D1A5D"
                             android:textStyle="bold"
                             android:textSize="16sp" />
 
@@ -303,7 +317,7 @@
                             android:layout_width="167dp"
                             android:layout_height="wrap_content"
                             android:text="Egyedi szobák"
-                            android:textColor="#6A1B9A"
+                            android:textColor="#6D1A5D"
                             android:textSize="16sp"
                             android:textStyle="bold" />
 
@@ -357,8 +371,9 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_marginTop="16dp"
-                android:backgroundTint="#FBE0FF"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@android:color/transparent"
+                app:cardElevation="0dp">
 
                 <Button
                     android:id="@+id/votestart"

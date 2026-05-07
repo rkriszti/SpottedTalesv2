@@ -205,7 +205,12 @@ public class ChatActivity extends MenuActivity {
                                     chat_background.setImageResource(R.drawable.chat_theme_romance);
                                     break;
                             }
+                        } else {
+                            //def = null
+                            chat_background.setImageResource(R.drawable.chat_theme_romance);
                         }
+                    } else {
+                        chat_background.setImageResource(R.drawable.chat_theme_romance);
                     }
                 })
                 .addOnFailureListener(e -> Log.e("ChatTheme", "Hiba a téma lekérésekor", e));

@@ -162,12 +162,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         });
 
         holder.cover.setOnClickListener( v ->{
-            Log.d("HISTORY", "2. kiválasztott könyv: " + b.getTitle());
-            Log.d("HISTORY", "2. ehhez nagy club" + clubId);
             Intent intent = new Intent(v.getContext(), ClubPageActivity.class);
             intent.putExtra("clubId", clubId); //nagy club id
             intent.putExtra( "oldbook", b.getId());
-           // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             v.getContext().startActivity(intent);
         });

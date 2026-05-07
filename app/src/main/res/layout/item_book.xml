@@ -15,7 +15,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="403dp"
         android:layout_height="match_parent"
-        android:padding="8dp"
+        android:padding="5dp"
         app:cardCornerRadius="16dp"
         app:cardElevation="6dp"
         app:strokeColor="#E0E0E0"
@@ -23,8 +23,8 @@
 
         <ImageView
             android:id="@+id/book_cover"
-            android:layout_width="63dp"
-            android:layout_height="96dp"
+            android:layout_width="64dp"
+            android:layout_height="101dp"
             android:layout_marginStart="12dp"
             android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -34,7 +34,7 @@
 
         <TextView
             android:id="@+id/book_title"
-            android:layout_width="241dp"
+            android:layout_width="213dp"
             android:layout_height="28dp"
             android:layout_marginStart="12dp"
             android:text="Könyv címe:"
@@ -42,7 +42,7 @@
             android:textStyle="bold"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@id/book_cover"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/book_save"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/book_cover"
             app:layout_constraintTop_toTopOf="@id/book_cover"
@@ -68,8 +68,8 @@
 
         <TextView
             android:id="@+id/book_author"
-            android:layout_width="239dp"
-            android:layout_height="29dp"
+            android:layout_width="217dp"
+            android:layout_height="28dp"
             android:layout_marginStart="12dp"
             android:text="Szerző: "
             android:textSize="16sp"
@@ -104,7 +104,7 @@
             android:layout_width="50dp"
             android:layout_height="53dp"
             android:background="@drawable/ic_edit"
-            android:visibility="visible"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -119,55 +119,54 @@
             android:background="@drawable/ic_yes"
             android:visibility="gone"
 
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/book_delete"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.8"
             app:layout_constraintStart_toEndOf="@+id/book_author"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0"></ImageView>
+            app:layout_constraintVertical_bias="0.568"></ImageView>
 
         <ImageView
             android:id="@+id/book_delete"
             android:layout_width="34dp"
             android:layout_height="28dp"
-            android:layout_marginStart="85dp"
-            android:layout_marginBottom="7dp"
             android:background="@drawable/ic_delete"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/club_active"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/book_title"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.0"></ImageView>
-
-        <ImageView
-            android:id="@+id/book_chooseforclub"
-            android:layout_width="48dp"
-            android:layout_height="68dp"
-            android:background="@drawable/ic_choose"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.148"
+            app:layout_constraintStart_toEndOf="@+id/book_author"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.849"></ImageView>
+
+        <ImageView
+            android:id="@+id/book_chooseforclub"
+            android:layout_width="43dp"
+            android:layout_height="41dp"
+            android:background="@drawable/ic_yes"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.142"
             app:layout_constraintStart_toEndOf="@+id/book_title"
             app:layout_constraintTop_toTopOf="parent"></ImageView>
 
         <ImageView
             android:id="@+id/book_favchoose"
-            android:layout_width="48dp"
-            android:layout_height="68dp"
-            android:background="@drawable/ic_choose"
+            android:layout_width="50dp"
+            android:layout_height="47dp"
+            android:background="@drawable/ic_yes"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.095"
             app:layout_constraintStart_toEndOf="@+id/book_title"
             app:layout_constraintTop_toTopOf="parent"></ImageView>
 
         <Button
             android:id="@+id/club_active"
-            android:layout_width="81dp"
-            android:layout_height="34dp"
-            android:layout_marginStart="9dp"
+            android:layout_width="88dp"
+            android:layout_height="35dp"
             android:layout_marginEnd="8dp"
             android:backgroundTint="#2D8507"
             android:text="Aktív"
@@ -175,10 +174,10 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@+id/book_author"
+            app:layout_constraintHorizontal_bias="0.846"
+            app:layout_constraintStart_toEndOf="@+id/book_cover"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.695" />
+            app:layout_constraintVertical_bias="0.0" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

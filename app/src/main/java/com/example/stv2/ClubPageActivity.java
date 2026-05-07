@@ -3,6 +3,7 @@ package com.example.stv2;
 import android.app.AlertDialog;
 import android.content.Intent;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -85,7 +86,7 @@ public class ClubPageActivity extends MenuActivity {
     //xml részek
     private TextView clubName, clubBookTitle, statusText, clubBookAuthor;
     private EditText clubNameEdit, chaptersEdit,addcustomEdit ;
-    private ImageView clubBookCover, clubAdminPic, clubStatusIcon, Settingbutton, club_book_edit, chat_backbutton;
+    private ImageView clubBookCover,clubpage_background, clubAdminPic, clubStatusIcon, Settingbutton, club_book_edit, chat_backbutton;
     private ToggleButton statusChange;
     private FirebaseFirestore db;
 
@@ -239,6 +240,7 @@ public class ClubPageActivity extends MenuActivity {
         club_delete = findViewById(R.id.club_delete);
         club_history = findViewById(R.id.club_history);
         club_active = findViewById(R.id.club_active);
+        clubpage_background = findViewById(R.id.clubpage_background);
 
         //edittext
         clubNameEdit = findViewById(R.id.club_name_edittext);
@@ -331,6 +333,8 @@ public class ClubPageActivity extends MenuActivity {
         //tagok gomb
         members.setOnClickListener(v -> {
             setContentView(R.layout.activity_clubpage_members);
+            clubpage_background = findViewById(R.id.clubpage_background);
+            setBackgroundTheme(club.getId(), true);
 
             getWindow().getDecorView().post(() -> {
                 RecyclerView membersRecycler = findViewById(R.id.members_recycler);
@@ -371,7 +375,7 @@ public class ClubPageActivity extends MenuActivity {
 
 
 
-    // Adjunk hozzá egy osztályszintű változót a user szavazatainak tárolására
+
     private Set<String> userVotes = new HashSet<>();
 
     private void initVotingSystem() {
@@ -681,6 +685,7 @@ public class ClubPageActivity extends MenuActivity {
 
                     loadVotingState();
 */                  initVotingSystem();
+                    setBackgroundTheme(club.getId(), true);
 
                     if (choosingHappened) {
                         if (bookid.equals(club.getBookId())) {
@@ -735,7 +740,7 @@ public class ClubPageActivity extends MenuActivity {
 
                     //státusz beállítás
                     if (club.getIspublic()){
-                        statusChange.setBackgroundResource(R.drawable.ic_lock_open);
+                        statusChange.setBackgroundResource(R.drawable.ic_lock_open_light);
                     } else {
                         statusChange.setBackgroundResource(R.drawable.ic_lock);
                     }
@@ -776,7 +781,7 @@ public class ClubPageActivity extends MenuActivity {
                     }
 
                     // Status icon
-                    clubStatusIcon.setImageResource(club.getIspublic() ? R.drawable.ic_lock_open : R.drawable.ic_lock);
+                    clubStatusIcon.setImageResource(club.getIspublic() ? R.drawable.ic_lock_open_light : R.drawable.ic_lock);
 
 
                     if(oldhappened){
@@ -940,7 +945,7 @@ public class ClubPageActivity extends MenuActivity {
                             club.setIspublic(true);
                             //kinézetben
                             statusChange.setBackgroundResource(R.drawable.ic_lock_open);
-                            clubStatusIcon.setImageResource(R.drawable.ic_lock_open);
+                            clubStatusIcon.setImageResource(R.drawable.ic_lock_open_light);
                         }
 
                         FirebaseFirestore dba = FirebaseFirestore.getInstance();
@@ -1079,7 +1084,7 @@ public class ClubPageActivity extends MenuActivity {
                     });
 
                     //mentés gomb lesz
-                    Settingbutton.setImageResource(R.drawable.ic_save);
+                    Settingbutton.setImageResource(R.drawable.ic_yes);
                     settingIsOn = true;
 
                     //egyből frissítés
@@ -1095,6 +1100,8 @@ public class ClubPageActivity extends MenuActivity {
                 } else {
                     //MENTENEK
                     String selectedTheme = clubThemeDropdown.getText().toString();
+                    Log.d("RTDB", "Új téma mentve: " + selectedTheme);
+                    Log.d("DEBUG", "Selected: " + selectedTheme + " | Saved: " + currentSavedTheme);
 
                     if (!selectedTheme.isEmpty() &&
                             !selectedTheme.equals("Válassz egy témát...") &&
@@ -1104,6 +1111,7 @@ public class ClubPageActivity extends MenuActivity {
                                 .setValue(selectedTheme)
                                 .addOnSuccessListener(aVoid -> {
                                     currentSavedTheme = selectedTheme;
+                                    setBackgroundTheme(currentSavedTheme, false);
                                     Log.d("RTDB", "Új téma mentve: " + selectedTheme);
                                 });
                     }
@@ -1252,7 +1260,7 @@ public class ClubPageActivity extends MenuActivity {
                     club_delete.setVisibility(View.GONE);
 
                     //újra setting gomb lesz
-                    Settingbutton.setImageResource(R.drawable.ic_setting);
+                    Settingbutton.setImageResource(R.drawable.ic_setting_light);
                     settingIsOn = false;
 
                     //publikusság
@@ -1307,6 +1315,89 @@ public class ClubPageActivity extends MenuActivity {
         } catch (NumberFormatException e) {
             return 0;
         }
+    }
+
+    private void setBackgroundTheme(String theme, boolean clubid){
+        String t = theme;
+        String c = theme;
+        if(!clubid){
+            //theme = theme
+            c = club.getId();
+
+            if (currentSavedTheme != null) {
+                chat_backbutton.setImageDrawable(null);
+                chat_backbutton.setImageResource(R.drawable.ic_back_purple);
+                String themee = currentSavedTheme.trim();
+                switch (themee) {
+                    case "Romantikus":
+                        clubpage_background.setImageResource(R.drawable.chat_theme_romance);
+                        clubName.setTextColor(Color.parseColor("#ffffff"));
+
+                        break;
+                    case "Romantasy":
+                        clubpage_background.setImageResource(R.drawable.chat_theme_romantasy);
+                        chat_backbutton.setImageResource(R.drawable.ic_back);
+                        break;
+                    default:
+                        clubpage_background.setImageResource(R.drawable.chat_theme_romance);
+                        chat_backbutton.setImageResource(R.drawable.ic_back_purple);
+                        break;
+                }
+            } else {
+                //és ha null?
+                clubpage_background.setImageResource(R.drawable.chat_theme_romance);
+                chat_backbutton.setImageResource(R.drawable.ic_back_purple);
+            }
+        } else {
+            //ha le kell kérni
+            rtdb.child("club_settings").child(c).child("theme")
+                    .get()
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            String savedTheme = task.getResult().getValue(String.class);
+
+                            if (savedTheme != null) {
+                                currentSavedTheme = savedTheme;
+                            } else {
+                                // currentSavedTheme = "";
+                            }
+
+                            if (currentSavedTheme != null) {
+                                String themee = currentSavedTheme.trim();
+                                chat_backbutton.setImageResource(R.drawable.ic_back_purple);
+                                chat_backbutton.setImageDrawable(null);
+                                switch (themee) {
+                                    case "Romantikus":
+                                        clubpage_background.setImageResource(R.drawable.chat_theme_romance);
+                                        chat_backbutton.setImageResource(R.drawable.ic_back_purple);
+
+                                        break;
+                                    case "Romantasy":
+                                        clubpage_background.setImageResource(R.drawable.chat_theme_romantasy);
+                                        chat_backbutton.setImageResource(R.drawable.ic_back);
+
+                                        break;
+                                    default:
+                                        clubpage_background.setImageResource(R.drawable.chat_theme_romance);
+                                        chat_backbutton.setImageResource(R.drawable.ic_back_purple);
+
+                                        break;
+                                }
+                            } else {
+                                //és ha null?
+                                clubpage_background.setImageResource(R.drawable.chat_theme_romance);
+                                chat_backbutton.setImageResource(R.drawable.ic_back_purple);
+
+                            }
+
+
+                        } else {
+                            Log.e("RTDB", "Hiba a lekérés során", task.getException());
+                        }
+                    });
+        }
+
+
     }
 
     @Override
@@ -1429,7 +1520,6 @@ public class ClubPageActivity extends MenuActivity {
                             })
                             .addOnFailureListener(e -> Log.e("history", "Hiba az üzenetek frissítésekor", e));
 
-                    //3. új könyv megkezdése, chat ürítése
                     updateBook(bookid);
                 })
                     .addOnFailureListener(e -> {
@@ -1449,9 +1539,9 @@ public class ClubPageActivity extends MenuActivity {
                     public void onDataChange(@androidx.annotation.NonNull com.google.firebase.database.DataSnapshot snapshot) {
                         pendingUserIds.clear();
                         for (com.google.firebase.database.DataSnapshot ds : snapshot.getChildren()) {
-                            pendingUserIds.add(ds.getKey()); // Csak a User ID-kat gyűjtjük ki
+                            pendingUserIds.add(ds.getKey());
                         }
-                        // Ha az adapter már létezik, frissítjük a nézetet
+
                         if (adapter != null) {
                             adapter.notifyDataSetChanged();
                         }

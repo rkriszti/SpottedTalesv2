@@ -63,6 +63,14 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
         holder.name.setText(c.getName());
         holder.members.setText((c.getMembers().size()) + " tag");
 
+        holder.menu_public.setImageDrawable(null);
+        holder.menu_public.setBackground(null);
+        if(c.getIspublic()){
+            holder.menu_public.setImageResource(R.drawable.ic_lock_open);
+        } else {
+            holder.menu_public.setImageResource(R.drawable.ic_lock);
+        }
+
         holder.pic.setImageResource(R.drawable.default_book);
 
         String bookId = c.getBookId();
@@ -101,7 +109,7 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
 
     static class ClubViewHolder extends RecyclerView.ViewHolder {
         TextView name, members;
-        ImageView pic;
+        ImageView pic, menu_public;
         Button button;
 
         ClubViewHolder(View v) {
@@ -110,7 +118,7 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
             members = v.findViewById(R.id.menu_clubtags); // tagok TextView
             pic = v.findViewById(R.id.menu_clubpic);      // club kép
             button = v.findViewById(R.id.clubs_button);
-
+            menu_public = v.findViewById(R.id.menu_public);
         }
     }
 

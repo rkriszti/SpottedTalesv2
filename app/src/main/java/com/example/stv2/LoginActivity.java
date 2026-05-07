@@ -20,9 +20,11 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth auth;
+    private static boolean isPersistenceSet = false;
 
     @Override
     protected void onStart() {
@@ -37,6 +39,14 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (!isPersistenceSet) {
+            try {
+                FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+                isPersistenceSet = true;
+            } catch (Exception e) {
+            }
+        }
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         FirebaseApp.initializeApp(this);

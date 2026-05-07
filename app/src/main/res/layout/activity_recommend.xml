@@ -6,130 +6,127 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#CEF4B9DA"
-    tools:context=".RecommendActivity">
-
-    <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/top_toolbar"
-        android:layout_width="wrap_content"
-        android:layout_height="88dp"
-        android:paddingTop="12dp"
-        android:minHeight="88dp"
-        android:gravity="center_vertical"
-        android:background="@drawable/background2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/top_nav_menu"
-        app:title="Spotted Tales"
-        app:titleTextColor="@color/white" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:gravity="center"
-        android:text="Sorsoljuk ki a következő olvasmányodat!"
-        android:textColor="#4b003e"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/listSpinner"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/top_toolbar"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Spinner
-        android:id="@+id/listSpinner"
-        android:layout_width="411dp"
-        android:layout_height="58dp"
-        android:layout_marginTop="96dp"
-        android:padding="12dp"
-        android:textColor="#4b003e"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- ===== BOTTOM NAV ===== -->
-
-    <ImageView
-        android:layout_width="308dp"
-        android:layout_height="417dp"
-        android:background="@drawable/book_outline"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.592"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chooseButton"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <Button
-        android:id="@+id/chooseButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="#751D61"
-        android:padding="12dp"
-        android:text="Ajánlás"
-        android:textAllCaps="false"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/listSpinner" />
-
-    <TextView
-        android:id="@+id/resultText"
-        android:layout_width="205dp"
-        android:layout_height="64dp"
-        android:layout_marginTop="172dp"
-        android:gravity="center"
-        android:text="..."
-        android:textColor="#4b003e"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/fab"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.611"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/chooseButton"
-        app:layout_constraintVertical_bias="0.0" />
-
-    <!-- ===== FAB ===== -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/background_nav"
-        app:itemIconTint="#FFC2DC"
-        app:itemTextColor="#B3FFFFFF"
-        app:labelVisibilityMode="unlabeled"
-        app:itemActiveIndicatorStyle="@null"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_nav_menu"
-        tools:layout_editor_absoluteX="16dp" />
+        android:layout_height="match_parent"
+        android:background="#CEF4B9DA"
+        tools:context=".RecommendActivity">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="TODO"
-        android:src="@drawable/ic_add_emoji"
-        app:backgroundTint="#3c0c3e"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="-28dp"/>
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/top_toolbar"
+            android:layout_width="wrap_content"
+            android:layout_height="88dp"
+            android:background="@drawable/background2"
+            android:gravity="center_vertical"
+            android:minHeight="88dp"
+            android:paddingTop="12dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:menu="@menu/top_nav_menu"
+            app:title="Spotted Tales"
+            app:titleTextColor="@color/white" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Sorsoljuk ki a következő olvasmányodat!"
+            android:textColor="#4b003e"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/top_toolbar" />
+
+        <!-- ===== BOTTOM NAV ===== -->
+
+        <Spinner
+            android:id="@+id/listSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="58dp"
+            android:padding="12dp"
+            android:textColor="#4b003e"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/chooseButton"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <ImageView
+            android:layout_width="355dp"
+            android:layout_height="482dp"
+            android:background="@drawable/book_outline"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chooseButton"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <Button
+            android:id="@+id/chooseButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="#751D61"
+            android:padding="12dp"
+            android:text="Ajánlás"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/listSpinner" />
+
+        <!-- ===== FAB ===== -->
+
+        <TextView
+            android:id="@+id/resultText"
+            android:layout_width="205dp"
+            android:layout_height="64dp"
+            android:layout_marginTop="172dp"
+            android:gravity="center"
+            android:text="..."
+            android:textColor="#4b003e"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/fab"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.621"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chooseButton"
+            app:layout_constraintVertical_bias="0.126" />
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_nav"
+            app:itemActiveIndicatorStyle="@null"
+            app:itemIconTint="#FFC2DC"
+            app:itemTextColor="#B3FFFFFF"
+            app:labelVisibilityMode="unlabeled"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:menu="@menu/bottom_nav_menu"
+            tools:layout_editor_absoluteX="16dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-28dp"
+            android:contentDescription="TODO"
+            android:src="@drawable/ic_add_emoji"
+            app:backgroundTint="#3c0c3e"
+            app:tint="@android:color/white"
+            app:itemIconTint="@color/white"
+            app:itemTextColor="@color/white"
+            app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"

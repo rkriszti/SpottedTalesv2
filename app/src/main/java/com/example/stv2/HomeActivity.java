@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -36,6 +37,7 @@ public class HomeActivity extends MenuActivity {
         setContentView(R.layout.activity_open);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         Log.d("HOME", "oncreate elindul");
+        // Realtime Database
 
         firestore = FirebaseFirestore.getInstance();
         String dbUrl = "https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/";
@@ -44,7 +46,7 @@ public class HomeActivity extends MenuActivity {
 
         String currentUid = FirebaseAuth.getInstance().getUid();
 
-        ismoderator(currentUid);
+        isModerator(currentUid);
 
         bookTitleTv = findViewById(R.id.bookOfTheDayTitle);
         dayCoverIv = findViewById(R.id.daycover);
@@ -126,7 +128,7 @@ public class HomeActivity extends MenuActivity {
         });
     }
 
-    private void ismoderator(String uid){
+    private void isModerator(String uid){
         Log.d("HOME", "is moderator");
         if (uid != null) {
             FirebaseFirestore.getInstance()
@@ -156,7 +158,7 @@ public class HomeActivity extends MenuActivity {
     protected void onResume() {
         super.onResume();
         String currentUid = FirebaseAuth.getInstance().getUid();
-        ismoderator(currentUid);
+        isModerator(currentUid);
         checkDailyBook();
         Log.d("HOME", "onResume: Adatok frissítése...");
     }

@@ -115,7 +115,7 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
 
                             String picUrl = doc.getString("profilepicurl");
                             if (picUrl != null && !picUrl.isEmpty()) {
-                                Glide.with(holder.itemView.getContext()).load(picUrl).circleCrop().into(holder.userPic);
+                                Glide.with(holder.itemView.getContext()).load(picUrl).into(holder.userPic);
                             }
 
                             holder.userButton.setOnClickListener(v -> listener.onChoose(id));
