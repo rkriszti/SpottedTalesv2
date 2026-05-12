@@ -73,7 +73,7 @@ public class ProfileActivity extends MenuActivity {
     private ImageView  book1, book2, book3, profile_edit, profile_save, delete_first, delete_second, delete_third;
     private TextView profileusername, book1title, book2title, book3title;
     private EditText username_edittext;
-    private ToggleButton helpButton;
+    private ImageView helpButton;
 
     private User user;
 
@@ -193,11 +193,9 @@ public class ProfileActivity extends MenuActivity {
             startActivity(intent);
         });
 
-        helpButton.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked) {
-                showHelpDialog();
-                helpButton.setChecked(false);
-            }
+
+        helpButton.setOnClickListener(v -> {
+            showHelpDialog();
         });
 
         deleteprofile.setOnClickListener(v -> {
