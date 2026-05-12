@@ -378,13 +378,10 @@ public class ClubPageActivity extends MenuActivity {
 
     private Set<String> userVotes = new HashSet<>();
 
-    private void initVotingSystem() {
-        // A pontot (.) le kell cserélni, mert az RTDB kulcs nem tartalmazhatja
+    private void votingSystem() {
         String safeEmail = userEmail != null ? userEmail.replace(".", ",") : "anonymous";
 
-        // 1. Adapter inicializálása
         voteAdapter = new VoteAdapter(voteTitles, voteCounts, userVotes, title -> {
-            // Szavazás/Visszavonás logika Transaction-nel
             DatabaseReference bookRef = voteRef.child("books").child(title);
 
             bookRef.runTransaction(new Transaction.Handler() {
@@ -397,11 +394,9 @@ public class ClubPageActivity extends MenuActivity {
                     if (currentVotes == null) currentVotes = 0L;
 
                     if (voters.containsKey(safeEmail)) {
-                        // Már szavazott -> Visszavonás
                         voters.remove(safeEmail);
                         currentData.child("votes").setValue(Math.max(0, currentVotes - 1));
                     } else {
-                        // Még nem szavazott -> Szavazás
                         voters.put(safeEmail, true);
                         currentData.child("votes").setValue(currentVotes + 1);
                     }
@@ -420,7 +415,7 @@ public class ClubPageActivity extends MenuActivity {
         voteRecycler.setLayoutManager(new LinearLayoutManager(this));
         voteRecycler.setAdapter(voteAdapter);
 
-        // 2. Realtime Database Figyelő (Élő frissítés)
+
         voteRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -428,11 +423,11 @@ public class ClubPageActivity extends MenuActivity {
                     voteCard.setVisibility(View.VISIBLE);
                     voteStart.setVisibility(View.GONE);
 
-                    // Megnézzük, van-e már elmentett győztes
+
                     String savedWinner = snapshot.child("winner").getValue(String.class);
 
                     if (savedWinner != null) {
-                        // --- SZAVAZÁS LEZÁRVA ---
+
                         voteCountdown.setText("GYŐZTES: " + savedWinner);
                         voteCountdown.setTextColor(android.graphics.Color.parseColor("#6E1A5D"));
                         voteRecycler.setVisibility(View.GONE);
@@ -440,17 +435,14 @@ public class ClubPageActivity extends MenuActivity {
                         adminVoteButtons.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
                         setBookButton.setVisibility(View.GONE); // Már van eredmény, nem kell a lezáró gomb
                     } else {
-                        // --- SZAVAZÁS FOLYAMATBAN ---
                         voteRecycler.setVisibility(View.VISIBLE);
                         addBookButton.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
                         adminVoteButtons.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
                         setBookButton.setVisibility(View.VISIBLE);
 
-                        // Időzítő kezelése
                         Long startTime = snapshot.child("startTime").getValue(Long.class);
                         if (startTime != null) startVoteCountdown(startTime);
 
-                        // Listák ürítése és újratöltése a snapshotból
                         voteTitles.clear();
                         voteCounts.clear();
                         userVotes.clear();
@@ -472,7 +464,7 @@ public class ClubPageActivity extends MenuActivity {
                         voteAdapter.updateData(voteTitles, voteCounts, userVotes);
                     }
                 } else {
-                    // --- NINCS SZAVAZÁS ---
+
                     voteCard.setVisibility(View.GONE);
                     voteStart.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
                 }
@@ -481,9 +473,7 @@ public class ClubPageActivity extends MenuActivity {
             public void onCancelled(@NonNull DatabaseError error) {}
         });
 
-        // 3. Gombok eseménykezelői
 
-        // Szavazás indítása
         voteStart.setOnClickListener(v -> {
             Map<String, Object> startData = new HashMap<>();
             startData.put("active", true);
@@ -491,14 +481,14 @@ public class ClubPageActivity extends MenuActivity {
             voteRef.setValue(startData);
         });
 
-        // Szavazás manuális lezárása (Győztes hirdetés)
+
         setBookButton.setOnClickListener(v -> {
             if (voteTitles.isEmpty() || voteCounts.isEmpty()) {
                 Toast.makeText(this, "Nincs könyv a listában!", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Győztes kiszámítása
+
             long maxVotes = -1;
             List<String> winners = new ArrayList<>();
             for (Map.Entry<String, Long> entry : voteCounts.entrySet()) {
@@ -515,7 +505,7 @@ public class ClubPageActivity extends MenuActivity {
             if (winners.size() > 1) Collections.shuffle(winners);
             String finalWinner = winners.get(0);
 
-            // Lezárás mentése: idő eltolása + winner beírása
+
             long twentyFourHoursMillis = 24 * 60 * 60 * 1000;
             Map<String, Object> updates = new HashMap<>();
             updates.put("startTime", System.currentTimeMillis() - twentyFourHoursMillis);
@@ -526,13 +516,13 @@ public class ClubPageActivity extends MenuActivity {
             });
         });
 
-        // Új könyv hozzáadása (input mező megjelenítése)
+
         addBookButton.setOnClickListener(v -> {
             bookTitleEdit.setVisibility(View.VISIBLE);
             newBookSave.setVisibility(View.VISIBLE);
         });
 
-        // Új könyv mentése
+
         newBookSave.setOnClickListener(v -> {
             String title = bookTitleEdit.getText().toString().trim().replace(".", ",");
             if (!title.isEmpty()) {
@@ -546,7 +536,7 @@ public class ClubPageActivity extends MenuActivity {
             }
         });
 
-        // Teljes törlés (Reset)
+
         deleteVoteButton.setOnClickListener(v -> {
             new AlertDialog.Builder(this)
                     .setTitle("Szavazás törlése")
@@ -684,7 +674,7 @@ public class ClubPageActivity extends MenuActivity {
 
 
                     loadVotingState();
-*/                  initVotingSystem();
+*/                  votingSystem();
                     setBackgroundTheme(club.getId(), true);
 
                     if (choosingHappened) {

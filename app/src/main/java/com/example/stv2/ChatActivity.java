@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -162,6 +163,7 @@ public class ChatActivity extends MenuActivity {
     }
 
     private void sendMessage(String text) {
+        Toast.makeText(this, "Üzenet mentése folyamatban...", Toast.LENGTH_SHORT).show();
         String msgId = db.collection("messages").document().getId();
         long timestamp = System.currentTimeMillis();
         String roomPath = clubId + "_" + roomName;
@@ -232,41 +234,9 @@ public class ChatActivity extends MenuActivity {
             chat_image_button.setColorFilter(Color.parseColor("#4CAF50"));
         }
     }
-    /*
-    private void uploadImageToStorage(Uri uri) {
-        String fileName = "messages/" + System.currentTimeMillis() + ".gif";
-        StorageReference ref = FirebaseStorage.getInstance().getReference().child(fileName);
 
-        ref.putFile(uri).addOnSuccessListener(taskSnapshot -> {
-            ref.getDownloadUrl().addOnSuccessListener(downloadUri -> {
-                sendImageMessage(downloadUri.toString());
-            });
-        }).addOnFailureListener(e -> Log.e("Storage", "Feltöltési hiba", e));
-    }
-
-
-    private void sendImageMessage(String imageUrl) {
-        String msgId = db.collection("messages").document().getId();
-        long timestamp = System.currentTimeMillis();
-        String roomPath = clubId + "_" + roomName;
-
-
-        Message msg = new Message(msgId, "[Kép]", currentUserEmail, timestamp, roomPath);
-        msg.setImageUrl(imageUrl);
-
-        db.collection("messages").document(msgId).set(msg)
-                .addOnSuccessListener(aVoid -> {
-                    String collectionPath = oldhappened ? "oldclub" : "club";
-                    db.collection(collectionPath).document(clubId)
-                            .update(FieldPath.of("chapters", roomName), FieldValue.arrayUnion(msgId))
-                            .addOnFailureListener(e -> {
-                                db.collection(collectionPath).document(clubId)
-                                        .update(FieldPath.of("customs", roomName), FieldValue.arrayUnion(msgId));
-                            });
-                });
-    }
-*/
     private void uploadImageAndSendMessage(Uri uri, String text) {
+        Toast.makeText(this, "Üzenet mentése folyamatban...", Toast.LENGTH_SHORT).show();
         String fileName = "messages/" + System.currentTimeMillis() + ".gif";
         StorageReference ref = FirebaseStorage.getInstance().getReference().child(fileName);
 

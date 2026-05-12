@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/chat_profilpic"
         android:layout_marginStart="8dp"
-        android:text="user@email.com"
+        android:text="Username"
         android:textColor="#888888"
         android:textSize="12sp" />
 
@@ -41,20 +41,20 @@
 
     <ImageView
         android:id="@+id/chat_message_image"
-        android:layout_width="172dp"
-        android:layout_height="219dp"
+        android:layout_width="278dp"
+        android:layout_height="254dp"
         android:layout_below="@+id/text_message"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="72dp"
         android:layout_marginTop="9dp"
-        android:layout_marginEnd="159dp"
+        android:layout_marginEnd="53dp"
         android:adjustViewBounds="true"
 
         android:maxWidth="250dp"
         android:maxHeight="350dp"
         android:scaleType="fitCenter"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 
 
