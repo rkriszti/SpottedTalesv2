@@ -216,12 +216,10 @@ public class ProfileActivity extends MenuActivity {
                             FirebaseUser fUser = FirebaseAuth.getInstance().getCurrentUser();
 
                             if (fUser != null && !currentPassword.isEmpty()) {
-                                // Itt hívjuk meg az osztályt és a statikus metódusát
                                 AuthCredential credential = EmailAuthProvider.getCredential(fUser.getEmail(), currentPassword);
 
                                 fUser.reauthenticate(credential).addOnCompleteListener(reAuthTask -> {
                                     if (reAuthTask.isSuccessful()) {
-                                        // Ha sikerült, meghívjuk a saját metódusunkat
                                         startFullDeletionProcess(fUser);
                                     } else {
                                         Toast.makeText(this, "Hibás jelszó!", Toast.LENGTH_SHORT).show();
@@ -264,6 +262,11 @@ public class ProfileActivity extends MenuActivity {
                     user = doc.toObject(User.class);
                     if (user == null) return;
 
+                    if(user.getAdmin()){
+                        profile_moderator.setVisibility(View.VISIBLE);
+                    } else {
+                        profile_moderator.setVisibility(View.GONE);
+                    }
 
                     //adatok betöltése
                     Glide.with(this).load(user.getProfilepicurl())
@@ -282,6 +285,7 @@ public class ProfileActivity extends MenuActivity {
                     while(favs.size() <3){
                         favs.add("");
                     }
+
 
                     //kedvencek
                     if (!favs.get(0).isEmpty()) {
@@ -702,6 +706,7 @@ public class ProfileActivity extends MenuActivity {
                 .create()
                 .show();
     }
+
     private void startFullDeletionProcess(FirebaseUser fUser) {
         String uid = fUser.getUid();
         String userEmail = fUser.getEmail();
