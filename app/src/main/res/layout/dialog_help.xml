@@ -24,20 +24,32 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/holo_orange_light"
-            android:backgroundTint="#FFF3CD"
+            android:background="#FFF3CD"
             android:padding="12dp"
             android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="0dp">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_width="329dp"
+                android:layout_height="37dp"
+                android:layout_weight="1"
                 android:text="⚠️ Fontos: Csak böngészőben működik, a Goodreads appban nem!"
                 android:textColor="#856404"
                 android:textSize="14sp"
                 android:textStyle="italic" />
+
+
         </LinearLayout>
+
+
+        <ImageView
+            android:layout_width="333dp"
+            android:layout_height="86dp"
+            android:layout_marginStart="8dp"
+            android:src="@drawable/export_help"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center"/>
 
         <TextView
             android:layout_width="match_parent"
