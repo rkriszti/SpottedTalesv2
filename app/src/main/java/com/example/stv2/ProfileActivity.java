@@ -69,7 +69,7 @@ public class ProfileActivity extends MenuActivity {
 
     private ShapeableImageView profilepic;
     private Button deleteprofile, profile_moderator, makemoderator;
-    private CardView profile_delete_card;
+    private CardView profile_delete_card, goodreads;
     private ImageView  book1, book2, book3, profile_edit, profile_save, delete_first, delete_second, delete_third;
     private TextView profileusername, book1title, book2title, book3title;
     private EditText username_edittext;
@@ -109,6 +109,7 @@ public class ProfileActivity extends MenuActivity {
         if (currentUid == null || currentUid.equals(userid)) {
             ownprofile = true;
         }
+
 
         //moderator e
         if (uid != null) {
@@ -161,6 +162,7 @@ public class ProfileActivity extends MenuActivity {
         book2title = findViewById(R.id.bookSecondTitle);
         book3title = findViewById(R.id.bookThirdTitle);
         username_edittext = findViewById(R.id.profile_username_edittext);
+        goodreads = findViewById(R.id.goodreads);
 
         profile_edit = findViewById(R.id.profile_edit);
         profile_save = findViewById(R.id.profile_save);
@@ -177,16 +179,25 @@ public class ProfileActivity extends MenuActivity {
             profile_moderator.setVisibility(View.VISIBLE);
         }
 
+        if(!ownprofile){
+            goodreads.setVisibility(View.GONE);
+        } else {
+            goodreads.setVisibility(View.VISIBLE);
+        }
+
         Button importbutton = findViewById(R.id.buttonimport);
         Button buttonchoose = findViewById(R.id.buttonchoose);
          helpButton = findViewById(R.id.goodreadshelp);
 
         //csv fájl kiválasztása
-        importbutton.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.setType("text/csv");
-            startActivityForResult(Intent.createChooser(intent, "CSV kiválasztása"), 1001);
-        });
+        if(ownprofile){
+            importbutton.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.setType("text/csv");
+                startActivityForResult(Intent.createChooser(intent, "CSV kiválasztása"), 1001);
+            });
+        }
+
 
         buttonchoose.setOnClickListener(k ->{
             Intent intent = new Intent(ProfileActivity.this, RecommendActivity.class);
@@ -695,11 +706,10 @@ public class ProfileActivity extends MenuActivity {
     }
 
     private void showHelpDialog() {
-        // Layout felfújása (inflate)
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_help, null);
 
         new AlertDialog.Builder(this)
-                .setView(dialogView) // A saját XML-ünket használjuk
+                .setView(dialogView)
                 .setPositiveButton("Értem", (dialog, which) -> dialog.dismiss())
                 .create()
                 .show();

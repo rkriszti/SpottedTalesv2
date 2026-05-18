@@ -84,8 +84,8 @@
 
         <EditText
             android:id="@+id/book_author_edittext"
-            android:layout_width="242dp"
-            android:layout_height="37dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
             android:layout_marginTop="4dp"
             android:backgroundTint="@color/darkpurple"
@@ -117,27 +117,28 @@
             android:layout_width="33dp"
             android:layout_height="29dp"
             android:background="@drawable/ic_yes"
-            android:visibility="gone"
+            android:visibility="visible"
 
             app:layout_constraintBottom_toTopOf="@+id/book_delete"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.8"
-            app:layout_constraintStart_toEndOf="@+id/book_author"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/book_delete"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.568"></ImageView>
+            app:layout_constraintVertical_bias="0.64"></ImageView>
 
         <ImageView
             android:id="@+id/book_delete"
             android:layout_width="34dp"
             android:layout_height="28dp"
+            android:layout_marginStart="73dp"
             android:background="@drawable/ic_delete"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.148"
-            app:layout_constraintStart_toEndOf="@+id/book_author"
+            app:layout_constraintHorizontal_bias="0.514"
+            app:layout_constraintStart_toEndOf="@+id/book_author_edittext"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.849"></ImageView>
+            app:layout_constraintVertical_bias="0.739"></ImageView>
 
         <ImageView
             android:id="@+id/book_chooseforclub"

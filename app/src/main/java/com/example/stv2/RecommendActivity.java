@@ -52,7 +52,6 @@ public class RecommendActivity extends MenuActivity {
             return;
         }
 
-        // Spinner feltöltése a listákkal
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item,
                 new ArrayList<>(uniqueLists));

@@ -343,7 +343,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-            <!-- ===== GOODREADS ===== -->
+
             <androidx.cardview.widget.CardView
                 android:id="@+id/goodreads"
                 android:layout_width="0dp"
