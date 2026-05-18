@@ -85,16 +85,23 @@ public class MembersAdapter extends RecyclerView.Adapter<MembersAdapter.ViewHold
 
                                 FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
                                         .getReference("connections").child(userId).child("clubs").child(club.getId()).setValue(true);
-
+                                pendingUserIds.remove(userId);
                                 if (!memberEmails.contains(email)) {
                                     memberEmails.add(email);
                                     notifyDataSetChanged();
                                 }
+                                notifyDataSetChanged();
                             });
 
                             holder.refuse.setOnClickListener(v -> {
+
                                 FirebaseDatabase.getInstance("https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/")
-                                        .getReference("pending_requests").child(club.getId()).child(userId).removeValue();
+                                        .getReference("pending_requests").child(club.getId()).child(userId).removeValue()
+                                        .addOnSuccessListener(aVoid -> {
+                                            pendingUserIds.remove(userId);
+                                            notifyDataSetChanged();
+                                        })
+                                        .addOnFailureListener(e -> Log.e("MembersAdapter", "Nem sikerült elutasítani a kérelmet", e));
                             });
                         }
                     });
