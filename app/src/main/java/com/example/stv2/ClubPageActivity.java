@@ -1273,6 +1273,12 @@ public class ClubPageActivity extends MenuActivity {
 
     private void setupRecycler(RecyclerView recyclerView, Map<String, List<String>> data) {
         List<String> titles = new ArrayList<>(data.keySet());
+        Collections.sort(titles, (a, b) -> {
+            int numA = Integer.parseInt(a.replaceAll("\\D+", "").isEmpty() ? "0" : a.replaceAll("\\D+", ""));
+            int numB = Integer.parseInt(b.replaceAll("\\D+", "").isEmpty() ? "0" : b.replaceAll("\\D+", ""));
+            return Integer.compare(numA, numB);
+        });
+
         RecyclerView.Adapter adapter = new ClubRoomAdapter(titles, data, isAdmin, settingIsOn, false, deleteListener, club.getId());
         if(oldhappened){
              adapter = new ClubRoomAdapter(titles, data, isAdmin, settingIsOn, false, deleteListener, club.getId(), oldclubid);
