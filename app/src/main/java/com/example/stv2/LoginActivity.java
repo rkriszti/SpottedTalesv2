@@ -3,6 +3,8 @@ package com.example.stv2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import androidx.core.view.WindowInsetsAnimationCompat;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -47,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
 
+
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         FirebaseApp.initializeApp(this);
@@ -61,12 +64,25 @@ public class LoginActivity extends AppCompatActivity {
         Button loginButton = findViewById(R.id.loginbutton);
         TextView skipToRegist = findViewById(R.id.logintoregist);
 
+        View mainView = findViewById(R.id.main);
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+// rendszer sávok paddingja és billentyűzet figyelés egyben
+        ViewCompat.setOnApplyWindowInsetsListener(mainView, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0); // alulra nem kell padding
             return insets;
         });
+
+// ez mozgatja fel-le a képernyőt amikor kinyílik a billentyűzet
+        ViewCompat.setWindowInsetsAnimationCallback(mainView, new WindowInsetsAnimationCompat.Callback(WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_STOP) {
+            @Override
+            public WindowInsetsCompat onProgress(WindowInsetsCompat insets, java.util.List<WindowInsetsAnimationCompat> runningAnimations) {
+                int imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom;
+                mainView.setTranslationY(-imeHeight* 0.5f); // felrántja az egészet
+                return insets;
+            }
+        });
+
 
 
         skipToRegist.setOnClickListener(v -> {

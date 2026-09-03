@@ -4,6 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsAnimationCompat;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -18,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.WindowInsetsCompat;
 
 public class RegistActivity extends AppCompatActivity {
 
@@ -42,6 +47,25 @@ public class RegistActivity extends AppCompatActivity {
             Log.d(TAG, "Váltás LoginActivity-re");
             Intent intent = new Intent(RegistActivity.this, LoginActivity.class);
             startActivity(intent);
+        });
+
+        View registView = findViewById(R.id.regist);
+
+// felső status bar margó megtartása
+        ViewCompat.setOnApplyWindowInsetsListener(registView, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            return insets;
+        });
+
+// billentyűzet mozgás követése és felhúzás
+        ViewCompat.setWindowInsetsAnimationCallback(registView, new WindowInsetsAnimationCompat.Callback(WindowInsetsAnimationCompat.Callback.DISPATCH_MODE_STOP) {
+            @Override
+            public WindowInsetsCompat onProgress(WindowInsetsCompat insets, java.util.List<WindowInsetsAnimationCompat> runningAnimations) {
+                int imeHeight = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom;
+                registView.setTranslationY(-imeHeight * 0.5f); // felrántja a teljes regisztrációs felületet
+                return insets;
+            }
         });
 
         Button registbutton = findViewById(R.id.registbutton);

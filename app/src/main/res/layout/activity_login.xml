@@ -6,6 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background2"
+    android:windowSoftInputMode="adjustPan"
     tools:context=".LoginActivity">
 
 
@@ -15,7 +16,6 @@
         android:layout_height="49dp"
         android:layout_marginTop="266dp"
         android:layout_marginBottom="8dp"
-
         android:backgroundTint="@color/lightbordo"
 
         android:hint="Email cím"
@@ -36,7 +36,6 @@
         android:layout_marginBottom="20dp"
         android:backgroundTint="@color/lightbordo"
         android:hint="Jelszó"
-        android:textColor="@color/white"
         android:inputType="textPassword"
 
         android:textColorHint="@color/white"
