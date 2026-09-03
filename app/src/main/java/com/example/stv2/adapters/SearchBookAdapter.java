@@ -210,8 +210,10 @@ public class SearchBookAdapter extends RecyclerView.Adapter<SearchBookAdapter.VH
                         FirebaseStorage.getInstance().getReferenceFromUrl(b.getCoverpic()).delete();
                     }
 
-                    books.remove(pos);
-                    notifyItemRemoved(pos);
+                    books.remove(b);
+                    notifyDataSetChanged();
+                    //books.remove(pos);
+                   // notifyItemRemoved(pos);
                     Log.d("Search", "Könyv sikeresen törölve mindenhonnan.");
                 });
     }
