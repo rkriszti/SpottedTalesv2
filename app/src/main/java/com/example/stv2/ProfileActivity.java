@@ -559,10 +559,8 @@ public class ProfileActivity extends MenuActivity {
                     uri -> {
                         if (uri == null) return;
 
-                        // azonnali preview
                         Glide.with(this).load(uri).into(profilepic);
 
-                        // feltöltés Storage-be (az új szabály szerinti UID mappába)
                         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                         StorageReference imageRef = FirebaseStorage.getInstance()
                                 .getReference()
@@ -574,15 +572,22 @@ public class ProfileActivity extends MenuActivity {
                                             String picurl = downloadUri.toString();
                                             user.setProfilepicurl(picurl);
 
-                                            // Firestore frissítés
                                             FirebaseFirestore.getInstance()
                                                     .collection("users")
                                                     .document(uid)
-                                                    .update("profilepicurl", picurl);
+                                                    .update("profilepicurl", picurl)
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        //kép újratöltés
+                                                        Glide.with(this)
+                                                                .load(picurl)
+                                                                .skipMemoryCache(true)
+                                                                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                                                                .into(profilepic);
+                                                    });
                                         })
                                 )
                                 .addOnFailureListener(e ->
-                                        Log.e("FirebaseUpload", "Profilkép feltöltési hiba: " + e.getMessage()));
+                                        Log.e("FirebaseUpload", "Hiba: " + e.getMessage()));
                     }
             );
 
