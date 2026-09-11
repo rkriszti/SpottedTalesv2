@@ -552,6 +552,7 @@ public class ProfileActivity extends MenuActivity {
 
     }
 
+    //kép választó frissítése
     private ActivityResultLauncher<PickVisualMediaRequest> pickProfileImage =
             registerForActivityResult(
                     new ActivityResultContracts.PickVisualMedia(),
@@ -561,10 +562,11 @@ public class ProfileActivity extends MenuActivity {
                         // azonnali preview
                         Glide.with(this).load(uri).into(profilepic);
 
-                        // feltöltés Storage-be
+                        // feltöltés Storage-be (az új szabály szerinti UID mappába)
+                        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
                         StorageReference imageRef = FirebaseStorage.getInstance()
                                 .getReference()
-                                .child("profiles/" + userid + ".jpg");
+                                .child("profiles/" + uid + "/avatar.jpg");
 
                         imageRef.putFile(uri)
                                 .addOnSuccessListener(taskSnapshot ->
@@ -575,7 +577,7 @@ public class ProfileActivity extends MenuActivity {
                                             // Firestore frissítés
                                             FirebaseFirestore.getInstance()
                                                     .collection("users")
-                                                    .document(userid)
+                                                    .document(uid)
                                                     .update("profilepicurl", picurl);
                                         })
                                 )
