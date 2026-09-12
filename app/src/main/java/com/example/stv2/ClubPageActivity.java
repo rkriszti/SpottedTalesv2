@@ -1337,6 +1337,10 @@ public class ClubPageActivity extends MenuActivity {
                     case "Acotar":
                         clubpage_background.setImageResource(R.drawable.chat_theme_acotar1);
                         chat_backbutton.setImageResource(R.drawable.ic_back);
+                        members.setTextColor(Color.parseColor("#ffffff"));
+                        club_history.setTextColor(Color.parseColor("#ffffff"));
+                        club_active.setTextColor(Color.parseColor("#ffffff"));
+                        voteStart.setTextColor(Color.parseColor("#ffffff"));
                         break;
                     default:
                         clubpage_background.setImageResource(R.drawable.chat_theme_romance);
@@ -1380,7 +1384,11 @@ public class ClubPageActivity extends MenuActivity {
                                     case "Acotar":
                                         clubpage_background.setImageResource(R.drawable.chat_theme_acotar1);
                                         chat_backbutton.setImageResource(R.drawable.ic_back);
-                                        break;
+
+                                        members.setTextColor(Color.parseColor("#ffffff"));
+                                        club_history.setTextColor(Color.parseColor("#ffffff"));
+                                        club_active.setTextColor(Color.parseColor("#ffffff"));
+                                        voteStart.setTextColor(Color.parseColor("#ffffff"));break;
                                     default:
                                         clubpage_background.setImageResource(R.drawable.chat_theme_romance);
                                         chat_backbutton.setImageResource(R.drawable.ic_back_purple);
