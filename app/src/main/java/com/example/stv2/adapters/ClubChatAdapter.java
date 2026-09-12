@@ -87,7 +87,7 @@ public class ClubChatAdapter extends RecyclerView.Adapter<ClubChatAdapter.VH> {
         String themeColor = "#3c0c3e";
         if (currentTheme != null) {
             String theme = currentTheme.trim();
-            if (theme.equals("Romantasy")) themeColor = "#14366b";
+            if (theme.equals("Romantasy") || theme.equals("Acotar")) themeColor = "#14366b";
             else if (theme.equals("Romantikus")) themeColor = "#69216e";
         }
 

@@ -117,6 +117,10 @@ public class HistoryActivity extends MenuActivity{
                                         backButton.setImageResource(R.drawable.ic_back);
 
                                         break;
+                                    case "Acotar":
+                                        clubpage_background.setImageResource(R.drawable.chat_theme_acotar1);
+                                        backButton.setImageResource(R.drawable.ic_back);
+                                        break;
                                     default:
                                         clubpage_background.setImageResource(R.drawable.chat_theme_romance);
                                         backButton.setImageResource(R.drawable.ic_back_purple);

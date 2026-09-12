@@ -203,6 +203,9 @@ public class ChatActivity extends MenuActivity {
                                 case "Romantasy":
                                     chat_background.setImageResource(R.drawable.chat_theme_romantasy);
                                     break;
+                                case "Acotar":
+                                    chat_background.setImageResource(R.drawable.chat_theme_acotar1);
+                                    break;
                                 default:
                                     chat_background.setImageResource(R.drawable.chat_theme_romance);
                                     break;

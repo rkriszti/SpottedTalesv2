@@ -1334,6 +1334,10 @@ public class ClubPageActivity extends MenuActivity {
                         clubpage_background.setImageResource(R.drawable.chat_theme_romantasy);
                         chat_backbutton.setImageResource(R.drawable.ic_back);
                         break;
+                    case "Acotar":
+                        clubpage_background.setImageResource(R.drawable.chat_theme_acotar1);
+                        chat_backbutton.setImageResource(R.drawable.ic_back);
+                        break;
                     default:
                         clubpage_background.setImageResource(R.drawable.chat_theme_romance);
                         chat_backbutton.setImageResource(R.drawable.ic_back_purple);
@@ -1372,6 +1376,10 @@ public class ClubPageActivity extends MenuActivity {
                                         clubpage_background.setImageResource(R.drawable.chat_theme_romantasy);
                                         chat_backbutton.setImageResource(R.drawable.ic_back);
 
+                                        break;
+                                    case "Acotar":
+                                        clubpage_background.setImageResource(R.drawable.chat_theme_acotar1);
+                                        chat_backbutton.setImageResource(R.drawable.ic_back);
                                         break;
                                     default:
                                         clubpage_background.setImageResource(R.drawable.chat_theme_romance);
