@@ -2,4 +2,8 @@
     <item
         android:id="@+id/action_logout_actual"
         android:title="Kijelentkezés" />
+
+    <item
+        android:id="@+id/action_tutorial"
+        android:title="Tutorial" />
 </menu>
