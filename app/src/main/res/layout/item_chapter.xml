@@ -2,7 +2,7 @@
     android:id="@+id/chapter_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="8dp"
     android:background="?attr/selectableItemBackground">
 

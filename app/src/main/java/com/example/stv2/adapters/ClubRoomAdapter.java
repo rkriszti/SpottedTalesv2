@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -16,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.stv2.ChatActivity;
 import com.example.stv2.ClubPageActivity;
 import com.example.stv2.R;
+import com.google.android.material.chip.Chip;
 
 import java.util.List;
 import java.util.Map;
@@ -27,12 +27,16 @@ public class ClubRoomAdapter extends RecyclerView.Adapter<ClubRoomAdapter.ViewHo
     private Map<String, List<String>> data;
     private Boolean isAdmin, isSettingon, isUniqueChapters, oldhappened;
     private ClubPageActivity.OnDeleteCustomClickListener deletelistener;
+    public interface OnReadyListener {
+        void onReady();
+    }
+    private OnReadyListener readyListener;
 
     public interface OnItemClickListener { void onClick(String title); }
 
     public ClubRoomAdapter(List<String> titles, Map<String, List<String>> data,
                            Boolean admin, Boolean setting, Boolean isUniqueChapters,
-                           ClubPageActivity.OnDeleteCustomClickListener listenerr, String clubid) {
+                           ClubPageActivity.OnDeleteCustomClickListener listenerr, String clubid, OnReadyListener readyListener) {
         this.titles = titles;
         this.data = data;
         this.isAdmin = admin;
@@ -40,22 +44,31 @@ public class ClubRoomAdapter extends RecyclerView.Adapter<ClubRoomAdapter.ViewHo
         this.isUniqueChapters = isUniqueChapters;
         this.deletelistener = listenerr;
         this.clubid = clubid;
+        this.readyListener = readyListener;
         oldclubid = "";
         this.oldhappened = false;
     }
 
     public ClubRoomAdapter(List<String> titles, Map<String, List<String>> data,
                            Boolean admin, Boolean setting, Boolean isUniqueChapters,
-                           ClubPageActivity.OnDeleteCustomClickListener listenerr, String clubid, String oldclubid) {
+                           ClubPageActivity.OnDeleteCustomClickListener listenerr, String clubid, String oldclubid, OnReadyListener readyListener) {
         this.titles = titles;
         this.data = data;
         this.isAdmin = admin;
         this.isSettingon = setting;
         this.isUniqueChapters = isUniqueChapters;
         this.deletelistener = listenerr;
+        this.readyListener = readyListener;
         this.clubid = clubid;
         this.oldclubid = oldclubid;
         this.oldhappened = true;
+    }
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        if (readyListener != null) {
+            readyListener.onReady();
+        }
     }
 
     @NonNull
@@ -66,11 +79,22 @@ public class ClubRoomAdapter extends RecyclerView.Adapter<ClubRoomAdapter.ViewHo
         return new ViewHolder(v);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String title = titles.get(position);
-        holder.titleText.setText(title);
+        String titled = title;
+        if (titled.contains("fejezet")){
+            titled = titled.substring(0, titled.length()-9);
+        }
+        holder.titleText.setText(titled);
 
+        if (data.get(title).size() != 0){
+            holder.titleText.setChipBackgroundColorResource(R.color.bordo);
+        }
+
+
+        //szoba megnyitás
         View.OnClickListener openChat = k -> {
             Context context = k.getContext();
             Intent i = new Intent(context, ChatActivity.class);
@@ -87,6 +111,7 @@ public class ClubRoomAdapter extends RecyclerView.Adapter<ClubRoomAdapter.ViewHo
             context.startActivity(i);
         };
 
+        //ha fejezet címre vagy köré megy megnyitja a szobát
         holder.titleText.setOnClickListener(openChat);
         holder.container.setOnClickListener(openChat);
 
@@ -116,7 +141,7 @@ public class ClubRoomAdapter extends RecyclerView.Adapter<ClubRoomAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         LinearLayout container;
-        TextView titleText;
+        Chip titleText;
         EditText titleEdit;
         ImageView deleteChapter;
         LinearLayout contentLayout;
@@ -124,7 +149,7 @@ public class ClubRoomAdapter extends RecyclerView.Adapter<ClubRoomAdapter.ViewHo
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             container = itemView.findViewById(R.id.container);
-            titleText = itemView.findViewById(R.id.titleText);
+            titleText = itemView.findViewById(R.id.chapter_chip);
             contentLayout = itemView.findViewById(R.id.contentLayout);
             titleEdit = itemView.findViewById(R.id.titleText_edittext);
             deleteChapter = itemView.findViewById(R.id.expand_deletebutton);

@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="8dp"
     android:background="?android:attr/selectableItemBackground">
 
@@ -34,13 +34,13 @@
             app:layout_constraintVertical_bias="0.523" />
 
 
-        <TextView
-            android:id="@+id/titleText"
-            android:layout_width="244dp"
-            android:layout_height="41dp"
-            android:padding="8dp"
+        <com.google.android.material.chip.Chip
+            android:id="@+id/chapter_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="Szoba neve"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
+            app:chipBackgroundColor="@color/lightlighttbordo"
             android:textSize="16sp"
             android:textStyle="bold"
             android:visibility="visible"
@@ -62,7 +62,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.647"
-            app:layout_constraintStart_toEndOf="@+id/titleText"
+            app:layout_constraintStart_toEndOf="@+id/chapter_chip"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

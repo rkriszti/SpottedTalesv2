@@ -43,6 +43,8 @@ dependencies {
     implementation ("com.google.firebase:firebase-storage:21.3.0")
     implementation ("com.google.firebase:firebase-storage")
     implementation(libs.material)
+    // flexbox függőség
+    implementation ("com.google.android.flexbox:flexbox:3.0.0")
     implementation ("com.google.android.material:material:1.9.0")
     implementation(libs.activity)
     implementation(libs.constraintlayout)

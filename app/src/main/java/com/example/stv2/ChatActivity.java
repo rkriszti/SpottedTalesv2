@@ -170,14 +170,16 @@ public class ChatActivity extends MenuActivity {
 
         Message msg = new Message(msgId, text, currentUserEmail, timestamp, roomPath);
 
+        String hova = roomName.contains("fejezet") ? "chapters" : "customs";
+
         db.collection("messages").document(msgId).set(msg)
                 .addOnSuccessListener(aVoid -> {
                     String collectionPath = oldhappened ? "oldclub" : "club";
                     db.collection(collectionPath).document(clubId)
-                            .update(FieldPath.of("chapters", roomName), FieldValue.arrayUnion(msgId))
+                            .update(FieldPath.of(hova, roomName), FieldValue.arrayUnion(msgId))
                             .addOnSuccessListener(v -> messageInput.setText(""))
                             .addOnFailureListener(e -> {
-                                // Ha nem chapter, akkor biztos custom szoba
+                                // Ha nem chapter, akkor biztos custom szoba //HIBÁS GONDOLAT, szimplán létrehozza ott is
                                 db.collection(collectionPath).document(clubId)
                                         .update(FieldPath.of("customs", roomName), FieldValue.arrayUnion(msgId));
                             });

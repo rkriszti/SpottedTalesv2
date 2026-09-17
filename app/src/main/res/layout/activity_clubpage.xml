@@ -237,6 +237,7 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
+
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -268,6 +269,15 @@
                             android:textStyle="bold"
                             android:textSize="16sp" />
 
+                        <ProgressBar
+                            android:id="@+id/progressBar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone"
+                            android:layout_gravity="center" />
+
+
+
                         <EditText
                             android:id="@+id/chapters_edittext"
                             android:layout_width="0dp"
@@ -282,6 +292,7 @@
                             android:textSize="16sp" />
 
                     </LinearLayout>
+
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/chapters_recycler"

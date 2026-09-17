@@ -5,9 +5,10 @@ import android.content.Intent;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.ProgressBar;
+import android.view.View;
 import android.os.CountDownTimer;
 import android.util.Log;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -29,6 +30,9 @@ import com.example.stv2.adapters.MembersAdapter;
 import com.example.stv2.adapters.VoteAdapter;
 import com.example.stv2.model.Book;
 import com.example.stv2.model.Club;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -64,6 +68,7 @@ public class ClubPageActivity extends MenuActivity {
 
     ArrayList<String> bookList ;
     private VoteAdapter voteAdapter;
+    private ProgressBar progressBar;
     private EditText bookTitleEdit;
     private Button newBookSave;
     private Set<String> votedUsers;
@@ -241,7 +246,8 @@ public class ClubPageActivity extends MenuActivity {
         club_history = findViewById(R.id.club_history);
         club_active = findViewById(R.id.club_active);
         clubpage_background = findViewById(R.id.clubpage_background);
-
+        //töltés
+        progressBar = findViewById(R.id.progressBar);
         //edittext
         clubNameEdit = findViewById(R.id.club_name_edittext);
         statusText = findViewById(R.id.club_status_text);
@@ -290,7 +296,14 @@ public class ClubPageActivity extends MenuActivity {
         //recycler megjelenítés
         chaptersHeader.setOnClickListener(v -> {
             if (chaptersRecycler.getVisibility() == View.GONE) {
-                chaptersRecycler.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.VISIBLE);
+
+                //fél mp várakozás, hogy látszódjon a pörgés, aztán lista be
+                new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                    chaptersRecycler.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE); //töltés ki
+                }, 200);
+
             } else {
                 chaptersRecycler.setVisibility(View.GONE);
             }
@@ -1263,9 +1276,15 @@ public class ClubPageActivity extends MenuActivity {
                     int currentSize = oldhappened ? oldclub.getChaptersSize() : club.getChaptersSize();
                     chaptersEdit.setText(String.valueOf(currentSize));
 
-                    //frissítés
+
+
+
                     setupRecycler(chaptersRecycler, club.getChapters());
                     setupRecycleruniq(customsRecycler, club.getCustoms());
+
+
+
+
                 }
             }
         });
@@ -1279,24 +1298,34 @@ public class ClubPageActivity extends MenuActivity {
             return Integer.compare(numA, numB);
         });
 
-        RecyclerView.Adapter adapter = new ClubRoomAdapter(titles, data, isAdmin, settingIsOn, false, deleteListener, club.getId());
-        if(oldhappened){
-             adapter = new ClubRoomAdapter(titles, data, isAdmin, settingIsOn, false, deleteListener, club.getId(), oldclubid);
-        }
+        // chipek egymás mellett tördelve
+        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this);
+        layoutManager.setFlexDirection(FlexDirection.ROW);
+        layoutManager.setFlexWrap(FlexWrap.WRAP);
+        recyclerView.setLayoutManager(layoutManager);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ClubRoomAdapter.OnReadyListener hideLoading = () -> progressBar.setVisibility(View.GONE);
+        RecyclerView.Adapter adapter = new ClubRoomAdapter(titles, data, isAdmin, settingIsOn, false, deleteListener, club.getId(),hideLoading);
+        if(oldhappened){
+             adapter = new ClubRoomAdapter(titles, data, isAdmin, settingIsOn, false, deleteListener, club.getId(), oldclubid, hideLoading);
+        }
+       // progressBar.setVisibility(View.GONE);
         recyclerView.setAdapter(adapter);
+      // progressBar.setVisibility(View.GONE);
     }
 
     private void setupRecycleruniq(RecyclerView recyclerView, Map<String, List<String>> data) {
         List<String> titles = new ArrayList<>(data.keySet());
-        RecyclerView.Adapter adapter = new ClubRoomAdapter(titles, data, isAdmin, settingIsOn, true, deleteListener, club.getId());
+        ClubRoomAdapter.OnReadyListener hideLoading = () -> progressBar.setVisibility(View.GONE);
+
+        RecyclerView.Adapter adapter = new ClubRoomAdapter(titles, data, isAdmin, settingIsOn, true, deleteListener, club.getId(),hideLoading);
         if(oldhappened){
-             adapter = new ClubRoomAdapter(titles, data, isAdmin, settingIsOn, true, deleteListener, club.getId(), oldclubid);
+             adapter = new ClubRoomAdapter(titles, data, isAdmin, settingIsOn, true, deleteListener, club.getId(), oldclubid,hideLoading);
         }
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
     }
 
     public int getEditTextNumber(EditText editText) {
