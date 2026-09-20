@@ -116,6 +116,7 @@ public abstract class MenuActivity extends AppCompatActivity {
             navigationView.setNavigationItemSelectedListener(item -> {
                 int id = item.getItemId();
 
+                //kilépés
                 if (id == R.id.action_logout_actual) {
                     FirebaseAuth.getInstance().signOut();
                     Intent intent = new Intent(this, LoginActivity.class);
@@ -124,6 +125,7 @@ public abstract class MenuActivity extends AppCompatActivity {
                     finish();
                 }
 
+                //tutorial
                 if (id == R.id.action_tutorial) {
                     // tuti dialóg megnyitás
                     Dialog dialog = new Dialog(this);
@@ -163,6 +165,13 @@ public abstract class MenuActivity extends AppCompatActivity {
                             loadingtutorial();
                         }
                     });
+                }
+
+                //beállítás
+                if (id == R.id.action_settings) {
+                    Intent intent = new Intent(this, SettingActivity.class);
+                    startActivity(intent);
+                    finish();
                 }
 
                  drawer.closeDrawer(androidx.core.view.GravityCompat.END);

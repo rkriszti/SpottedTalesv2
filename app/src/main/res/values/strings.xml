@@ -8,5 +8,10 @@
         <item>Romantasy</item>
         <item>Acotar</item>
     </string-array>
+
+    <string-array name="app_themes">
+        <item>Purple</item>
+        <item>Blue</item>
+    </string-array>
 </resources>
 

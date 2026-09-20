@@ -38,7 +38,7 @@
         <activity android:name=".RecommendActivity" />
         <activity android:name=".ChatActivity" />
         <activity android:name=".HistoryActivity" />
-
+        <activity android:name=".SettingActivity" />
 
     </application>
 
