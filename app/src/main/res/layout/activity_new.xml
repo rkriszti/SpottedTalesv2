@@ -11,7 +11,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:menu="@menu/bottom_nav_menu"
-    android:background="@drawable/img_2"
+    android:background="@drawable/background_new"
     >
 
     <com.google.android.material.appbar.MaterialToolbar
@@ -22,7 +22,7 @@
         android:paddingTop="12dp"
         app:titleMarginTop="20dp"
         android:gravity="center_vertical"
-        android:background="@drawable/background2"
+        android:background="@drawable/background"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:menu="@menu/top_nav_menu"

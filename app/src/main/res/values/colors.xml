@@ -3,10 +3,22 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="grey">#A0979D</color>
+    <color name="clearlightpink">#FFC2DC</color>
     <color name="lightbordo">#B0FED5FF</color>
     <color name="darkpurple">#B0AD81B9</color>
     <color name="purple">#863BA9</color>
     <color name="bordo">#6e195c</color>
     <color name="lighttbordo">#8e226e</color>
+    <color name="darkbordo">#3c0c3e</color>
     <color name="lightlighttbordo">#B74993</color>
+
+
+    <color name="blue">#2d2f86</color>
+    <color name="lightblue">#4968a0</color>
+    <color name="darkblue">#26277a</color>
+    <color name="lightlightblue">#B1CAFA</color>
+
+
+
+    <color name="proba">#FFC2DC</color>
 </resources>

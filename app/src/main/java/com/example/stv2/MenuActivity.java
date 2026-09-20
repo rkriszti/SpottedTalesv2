@@ -2,6 +2,7 @@ package com.example.stv2;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -30,6 +32,19 @@ public abstract class MenuActivity extends AppCompatActivity {
     //ezt a settup függvényt fogjuk csak meghívni
     protected void setupBottomMenu(Integer selectedItemId) {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        FloatingActionButton fab = findViewById(R.id.fab);
+
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String mentettTema = prefs.getString("selected_theme", "Purple");
+        int navBg = mentettTema.equals("Blue") ? R.drawable.background_nav_blue : R.drawable.background_nav;
+        bottomNavigationView.setBackground(null);
+        bottomNavigationView.setBackgroundResource(navBg);
+
+        int navBgg = mentettTema.equals("Blue") ? R.color.lightlightblue : R.color.clearlightpink;
+        bottomNavigationView.setItemIconTintList(ContextCompat.getColorStateList(this, navBgg));
+
+         navBgg = mentettTema.equals("Blue") ? R.color.darkblue : R.color.darkbordo;
+        fab.setBackgroundTintList(ContextCompat.getColorStateList(this, navBgg));
 
         if (selectedItemId != null) {
             bottomNavigationView.setSelectedItemId(selectedItemId);
@@ -62,7 +77,7 @@ public abstract class MenuActivity extends AppCompatActivity {
             return false;
         });
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+
         fab.setOnClickListener(v ->
                 startActivity(new Intent(this, NewBookActivity.class))
         );
@@ -96,6 +111,14 @@ public abstract class MenuActivity extends AppCompatActivity {
     protected void setupTopMenu() {
         //felső menü
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.top_toolbar);
+
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String mentettTema = prefs.getString("selected_theme", "Purple");
+        int toolbarBg = mentettTema.equals("Blue") ? R.drawable.background_blue : R.drawable.background;
+        toolbar.setBackground(null);
+        toolbar.setBackgroundResource(toolbarBg);
+
+
         //kinyithatóság
         androidx.drawerlayout.widget.DrawerLayout drawer = findViewById(R.id.drawer_layout);
         //oldal menü elemei
@@ -127,6 +150,8 @@ public abstract class MenuActivity extends AppCompatActivity {
 
                 //tutorial
                 if (id == R.id.action_tutorial) {
+                    where = 1;
+
                     // tuti dialóg megnyitás
                     Dialog dialog = new Dialog(this);
                     dialog.setContentView(R.layout.dialog_tutorial);

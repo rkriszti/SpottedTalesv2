@@ -34,6 +34,8 @@ public class SettingActivity extends MenuActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        setupBottomMenu(null);
+        setupTopMenu();
 
         firestore = FirebaseFirestore.getInstance();
         String dbUrl = "https://stv2-84ad0-default-rtdb.europe-west1.firebasedatabase.app/";
@@ -81,10 +83,25 @@ public class SettingActivity extends MenuActivity{
             String selectedTheme = autocomplete_tema.getText().toString();
             autocomplete_tema.setText(selectedTheme, false);
 
+            /*lekérni
+            // Olvasás azonnal indításkor
+            SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+            String mentettTema = prefs.getString("selected_theme", "Alapértelmezett"); // alapértelmezett név
+
+            // Itt azonnal átállítod a színeket / képeket a mentettTema alapján:
+            alkalmazdATemat(mentettTema);
+
+             */
+
             if(!selectedTheme.isEmpty() && !selectedTheme.equals("Választás...")){
                 rtDb.child("settings").child(currentUid).child("theme")
                         .setValue(selectedTheme)
                         .addOnSuccessListener(aVoid -> {
+                            // SharedPreferences mentés
+                            getSharedPreferences("AppPrefs", MODE_PRIVATE)
+                                    .edit()
+                                    .putString("selected_theme", selectedTheme)
+                                    .apply();
                             Toast.makeText(this, "Téma módosítva erre: " + selectedTheme, Toast.LENGTH_SHORT).show();
                         });
 

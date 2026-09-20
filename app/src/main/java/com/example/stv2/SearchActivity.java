@@ -238,9 +238,9 @@ public class SearchActivity extends MenuActivity {
         }
 
         sameinterest.setVisibility(user ? View.VISIBLE : View.GONE);
-        buttonBook.setBackgroundResource(book ? R.drawable.background2 : R.drawable.grey_background);
-        buttonClub.setBackgroundResource(club ? R.drawable.background2 : R.drawable.grey_background);
-        buttonUser.setBackgroundResource(user ? R.drawable.background2 : R.drawable.grey_background);
+        buttonBook.setBackgroundResource(book ? R.drawable.background : R.drawable.grey_background);
+        buttonClub.setBackgroundResource(club ? R.drawable.background : R.drawable.grey_background);
+        buttonUser.setBackgroundResource(user ? R.drawable.background : R.drawable.grey_background);
 
         if (book && bookAdapter != null) recyclerSearch.setAdapter(bookAdapter);
         if (club && clubAdapter != null) recyclerSearch.setAdapter(clubAdapter);

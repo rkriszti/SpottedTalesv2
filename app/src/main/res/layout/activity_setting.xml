@@ -11,14 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:menu="@menu/bottom_nav_menu"
-        android:background="@drawable/img_2"
+        android:background="@drawable/background_new"
         >
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/top_toolbar"
             android:layout_width="wrap_content"
             android:layout_height="88dp"
-            android:background="@drawable/background2"
+            android:background="@drawable/background"
             android:gravity="center_vertical"
             android:minHeight="88dp"
             android:paddingTop="12dp"

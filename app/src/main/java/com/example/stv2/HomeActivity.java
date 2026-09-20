@@ -1,5 +1,6 @@
 package com.example.stv2;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -7,6 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.Firebase;
@@ -30,6 +33,7 @@ public class HomeActivity extends MenuActivity {
     private TextView bookTitleTv, textView;
     private ImageView dayCoverIv, outline;
     private String today;
+    private ConstraintLayout open_background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +49,7 @@ public class HomeActivity extends MenuActivity {
         today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
         String currentUid = FirebaseAuth.getInstance().getUid();
-
+        Theme();
         isModerator(currentUid);
 
         bookTitleTv = findViewById(R.id.bookOfTheDayTitle);
@@ -157,9 +161,21 @@ public class HomeActivity extends MenuActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Theme();
         String currentUid = FirebaseAuth.getInstance().getUid();
         isModerator(currentUid);
         checkDailyBook();
         Log.d("HOME", "onResume: Adatok frissítése...");
+    }
+
+    private void Theme(){
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String mentettTema = prefs.getString("selected_theme", "Purple");
+
+        ConstraintLayout open_background = findViewById(R.id.open_background);
+        open_background.setBackground(null);
+        int bgRes = mentettTema.equals("Blue") ? R.drawable.img_3_blue : R.drawable.img_3;
+
+        open_background.setBackgroundResource(bgRes);
     }
 }
