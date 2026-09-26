@@ -2,6 +2,7 @@ package com.example.stv2;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.widget.ProgressBar;
@@ -11,6 +12,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -62,7 +64,7 @@ public class ClubsActivity extends MenuActivity{
         setupTopMenu();
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-
+Theme();
 
         //1. példányok létrehozása
         recyclerView = findViewById(R.id.recyclerClubs);
@@ -151,5 +153,17 @@ public class ClubsActivity extends MenuActivity{
             clubAdapter.setClubs(clubs);
             progressBar.setVisibility(View.GONE);
         }
+    }
+
+    private void Theme(){
+
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String mentettTema = prefs.getString("selected_theme", "Purple");
+
+        DrawerLayout drawer_layout  = findViewById(R.id.drawer_layout);
+        int bgRes = mentettTema.equals("Blue") ? R.drawable.chat_theme_romantasy : R.drawable.chat_theme_romance;
+        drawer_layout.setBackgroundResource(bgRes);
+
+
     }
 }

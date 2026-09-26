@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +45,7 @@ public class RecommendActivity extends MenuActivity {
         listSpinner = findViewById(R.id.listSpinner);
         chooseButton = findViewById(R.id.chooseButton);
         resultText = findViewById(R.id.resultText);
-
+Theme();
         loadImportedBooks();
 
         if(importedBooks.isEmpty()){
@@ -108,5 +110,22 @@ public class RecommendActivity extends MenuActivity {
             String chosen = candidates.get(rand.nextInt(candidates.size()));
             resultText.setText(chosen);
         }
+    }
+
+    private void Theme(){
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String mentettTema = prefs.getString("selected_theme", "Purple");
+
+        ConstraintLayout layout = findViewById(R.id.layout);
+        layout.setBackgroundResource(mentettTema.equals("Blue") ? R.drawable.img_3_blue : R.drawable.background_new);
+
+        TextView textView3 = findViewById(R.id.textView3);
+        TextView resultText = findViewById(R.id.resultText);
+        int szinId = mentettTema.equals("Blue") ? R.color.blue : R.color.bordo;
+        textView3.setTextColor(ContextCompat.getColor(this, szinId));
+        resultText.setTextColor(ContextCompat.getColor(this, szinId));
+        Button chooseButton = findViewById(R.id.chooseButton);
+        chooseButton.setBackgroundTintList(ContextCompat.getColorStateList(this, szinId));
+
     }
 }

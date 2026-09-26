@@ -3,7 +3,9 @@ package com.example.stv2.adapters;
 import static androidx.core.content.ContextCompat.startActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -59,6 +62,16 @@ public class ClubAdapter extends RecyclerView.Adapter<ClubAdapter.ClubViewHolder
     @SuppressLint("RestrictedApi")
     @Override
     public void onBindViewHolder(@NonNull ClubViewHolder holder, int position) {
+
+        Context context = holder.itemView.getContext();
+
+        SharedPreferences prefs = context.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+        String mentettTema = prefs.getString("selected_theme", "Purple");
+
+        int szinId = mentettTema.equals("Blue") ? R.color.lightblue : R.color.bordo;
+        holder.button.setBackgroundTintList(ContextCompat.getColorStateList(context, szinId));
+
+
         Club c = aktualis_clubs.get(position);
         holder.name.setText(c.getName());
         holder.members.setText((c.getMembers().size()) + " tag");

@@ -9,7 +9,7 @@
     <color name="purple">#863BA9</color>
     <color name="bordo">#6e195c</color>
     <color name="lighttbordo">#8e226e</color>
-    <color name="darkbordo">#3c0c3e</color>
+    <color name="darkbordo">#3c0c3e</color>791D63
     <color name="lightlighttbordo">#B74993</color>
 
 
@@ -20,5 +20,5 @@
 
 
 
-    <color name="proba">#FFC2DC</color>
+    <color name="proba">#791D63</color>
 </resources>

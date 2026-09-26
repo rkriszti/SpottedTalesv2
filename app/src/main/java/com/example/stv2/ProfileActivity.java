@@ -29,6 +29,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -110,7 +113,7 @@ public class ProfileActivity extends MenuActivity {
             ownprofile = true;
         }
 
-
+Theme();
         //moderator e
         if (uid != null) {
             FirebaseFirestore.getInstance()
@@ -821,5 +824,21 @@ public class ProfileActivity extends MenuActivity {
                         finish(); // Csak bezárjuk az oldalt, nem léptetünk ki senkit
                     });
                 });
+    }
+
+    private void Theme(){
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String mentettTema = prefs.getString("selected_theme", "Purple");
+
+        ImageView drawer_layout= findViewById(R.id.clubpage_background);
+        int bgRes = mentettTema.equals("Blue") ? R.drawable.chat_theme_romantasy : R.drawable.chat_theme_romance;
+        drawer_layout.setImageResource(bgRes);
+
+        Button buttonimport = findViewById(R.id. buttonimport);
+        Button buttonchoose = findViewById(R.id. buttonchoose);
+
+        bgRes = mentettTema.equals("Blue") ? R.color.lightblue : R.color.lightlighttbordo;
+        buttonimport.setBackgroundTintList(ContextCompat.getColorStateList(this, bgRes));
+        buttonchoose.setBackgroundTintList(ContextCompat.getColorStateList(this, bgRes));
     }
 }

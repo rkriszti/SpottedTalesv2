@@ -19,6 +19,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -171,11 +173,16 @@ public class HomeActivity extends MenuActivity {
     private void Theme(){
         SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
         String mentettTema = prefs.getString("selected_theme", "Purple");
+        TextView bookOfTheDayTitle = findViewById(R.id.bookOfTheDayTitle);
 
         ConstraintLayout open_background = findViewById(R.id.open_background);
         open_background.setBackground(null);
         int bgRes = mentettTema.equals("Blue") ? R.drawable.img_3_blue : R.drawable.img_3;
-
         open_background.setBackgroundResource(bgRes);
+
+         bgRes = mentettTema.equals("Blue") ? R.color.blue : R.color.bordo;
+         textView = findViewById(R.id.textView);
+        textView.setTextColor(getResources().getColor(bgRes));
+        bookOfTheDayTitle.setTextColor(getResources().getColor(bgRes));
     }
 }

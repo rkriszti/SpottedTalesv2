@@ -1,7 +1,9 @@
 package com.example.stv2.adapters;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -50,6 +53,14 @@ public class SearchClubAdapter extends RecyclerView.Adapter<SearchClubAdapter.VH
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int pos) {
+        Context context = h.itemView.getContext();
+
+        SharedPreferences prefs = context.getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+        String mentettTema = prefs.getString("selected_theme", "Purple");
+
+        int szinId = mentettTema.equals("Blue") ? R.color.lightblue : R.color.bordo;
+        h.button.setBackgroundTintList(ContextCompat.getColorStateList(context, szinId));
+
         String currentUserId = com.google.firebase.auth.FirebaseAuth.getInstance().getUid();
 
         if (currentUserId == null) return;

@@ -1,6 +1,7 @@
 package com.example.stv2;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -10,12 +11,15 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -134,6 +138,8 @@ public class SearchActivity extends MenuActivity {
             targetUserId = getIntent().getStringExtra("userid");
         }
 
+        Theme();
+
         //moderator e
         if (uid != null) {
             FirebaseFirestore.getInstance()
@@ -236,11 +242,16 @@ public class SearchActivity extends MenuActivity {
         } else {
             setRecyclerMargin(15);
         }
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String mentettTema = prefs.getString("selected_theme", "Purple");
+
+        int color = mentettTema.equals("Blue") ? R.drawable.background_blue : R.drawable.background;
+
 
         sameinterest.setVisibility(user ? View.VISIBLE : View.GONE);
-        buttonBook.setBackgroundResource(book ? R.drawable.background : R.drawable.grey_background);
-        buttonClub.setBackgroundResource(club ? R.drawable.background : R.drawable.grey_background);
-        buttonUser.setBackgroundResource(user ? R.drawable.background : R.drawable.grey_background);
+        buttonBook.setBackgroundResource(book ? color : R.drawable.grey_background);
+        buttonClub.setBackgroundResource(club ? color : R.drawable.grey_background);
+        buttonUser.setBackgroundResource(user ? color : R.drawable.grey_background);
 
         if (book && bookAdapter != null) recyclerSearch.setAdapter(bookAdapter);
         if (club && clubAdapter != null) recyclerSearch.setAdapter(clubAdapter);
@@ -375,4 +386,12 @@ public class SearchActivity extends MenuActivity {
             recyclerSearch.setLayoutParams(params);
         }
     }
+    private void Theme(){
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String mentettTema = prefs.getString("selected_theme", "Purple");
+
+        DrawerLayout drawer_layout = findViewById(R.id.drawer_layout);
+        drawer_layout.setBackgroundResource(mentettTema.equals("Blue") ? R.drawable.chat_theme_romantasy : R.drawable.chat_theme_romance);
+
+      }
 }
