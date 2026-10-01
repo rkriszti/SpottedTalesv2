@@ -288,13 +288,13 @@ public class ChatActivity extends MenuActivity {
 
     private void updateClubChapters(String msgId) {
         String collectionPath = oldhappened ? "oldclub" : "club";
+        String hova = roomName.contains("fejezet") ? "chapters" : "customs";
+
         db.collection(collectionPath).document(clubId)
-                .update(FieldPath.of("chapters", roomName), FieldValue.arrayUnion(msgId))
+                .update(FieldPath.of(hova , roomName), FieldValue.arrayUnion(msgId))
                 .addOnFailureListener(e -> {
 
-                    db.collection(collectionPath).document(clubId)
-                            .update(FieldPath.of("customs", roomName), FieldValue.arrayUnion(msgId));
-                });
+                   });
     }
 
 }

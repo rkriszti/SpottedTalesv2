@@ -1,6 +1,7 @@
 package com.example.stv2;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 
 import com.google.firebase.database.DatabaseReference;
@@ -18,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.RadioButton;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -27,6 +29,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.TooltipCompat;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import com.example.stv2.model.Book;
 import com.example.stv2.model.Club;
@@ -65,11 +68,15 @@ public class NewBookActivity extends MenuActivity {
         Switch kapcsolo = findViewById(R.id.switchForm);
         CardView form_book = findViewById(R.id.form_book);
         CardView form_club = findViewById(R.id.form_club);
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String mentettTema = prefs.getString("selected_theme", "Purple");
+        String szinta  = mentettTema.equals("Blue") ? "#4968a0" : "#C868A5";
+        String szinb  = mentettTema.equals("Blue") ? "#B1CAFA" : "#FFC2DC";
 
-        kapcsolo.getThumbDrawable().setTint(Color.parseColor("#BE499E"));
-        kapcsolo.getTrackDrawable().setTint(Color.parseColor("#7b486d"));
+        kapcsolo.getThumbDrawable().setTint(Color.parseColor(szinta));
+        kapcsolo.getTrackDrawable().setTint(Color.parseColor(szinb));
 
-
+        Theme();
         //book elemek--------------------------------------
         ImageView form_book_borito = findViewById(R.id.form_book_borito);
         Button form_book_button = findViewById(R.id.form_book_button);
@@ -96,14 +103,14 @@ public class NewBookActivity extends MenuActivity {
         kapcsolo.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 //klub nézet
-                kapcsolo.getThumbDrawable().setTint(Color.parseColor("#6E4AAC"));
-                kapcsolo.getTrackDrawable().setTint(Color.parseColor("#7b486d"));
+                kapcsolo.getThumbDrawable().setTint(Color.parseColor("#9162AE"));
+                kapcsolo.getTrackDrawable().setTint(Color.parseColor("#DFBCF8"));
                 form_book.setVisibility(View.GONE);
                 form_club.setVisibility(View.VISIBLE);
             } else {
                 //könyv nézet
-                kapcsolo.getThumbDrawable().setTint(Color.parseColor("#BE499E"));
-                kapcsolo.getTrackDrawable().setTint(Color.parseColor("#7b486d"));
+                kapcsolo.getThumbDrawable().setTint(Color.parseColor(szinta));
+                kapcsolo.getTrackDrawable().setTint(Color.parseColor(szinb));
                 form_book.setVisibility(View.VISIBLE);
                 form_club.setVisibility(View.GONE);
             }
@@ -383,6 +390,37 @@ public class NewBookActivity extends MenuActivity {
                 });
     }
 
+    private void Theme(){
+        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+        String mentettTema = prefs.getString("selected_theme", "Purple");
+
+        ConstraintLayout layout = findViewById(R.id.layout);
+        layout.setBackgroundResource(mentettTema.equals("Blue") ? R.drawable.img_3_blue : R.drawable.background_new);
+//DFBCF8
+
+
+        TextView text1 = findViewById(R.id.text1);
+        TextView text2 = findViewById(R.id.text2);
+        TextView text4 = findViewById(R.id.text4);
+        int szinId = mentettTema.equals("Blue") ? R.color.lightblue : R.color.lightlighttbordo;
+        text1.setTextColor(ContextCompat.getColor(this, szinId));
+        text2.setTextColor(ContextCompat.getColor(this, szinId));
+
+        Button form_book_button=findViewById(R.id.form_book_button);
+        Button form_club_button=findViewById(R.id.form_club_button);
+        Button button_customs=findViewById(R.id.button_customs);
+        button_customs.setBackgroundColor(ContextCompat.getColor(this, szinId));
+
+
+        szinId = mentettTema.equals("Blue") ? R.color.lightlila : R.color.lila;
+        text4.setTextColor(ContextCompat.getColor(this, szinId));
+
+         szinId = mentettTema.equals("Blue") ? R.color.blue : R.color.bordo;
+        form_book_button.setBackgroundColor(ContextCompat.getColor(this, szinId));
+        form_club_button.setBackgroundColor(ContextCompat.getColor(this, szinId));
+
+
+    }
 
 
 }//activity vége

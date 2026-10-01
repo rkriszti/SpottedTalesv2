@@ -10,8 +10,9 @@
     <color name="bordo">#6e195c</color>
     <color name="lighttbordo">#8e226e</color>
     <color name="darkbordo">#3c0c3e</color>791D63
-    <color name="lightlighttbordo">#B74993</color>
-
+    <color name="lightlighttbordo">#C868A5</color>
+    <color name="lila">#CD9062BE</color>
+    <color name="lightlila">#CDE9D4FF</color>
 
     <color name="blue">#2d2f86</color>
     <color name="lightblue">#4968a0</color>
@@ -20,5 +21,5 @@
 
 
 
-    <color name="proba">#791D63</color>
+    <color name="proba">#CD9062BE</color>
 </resources>

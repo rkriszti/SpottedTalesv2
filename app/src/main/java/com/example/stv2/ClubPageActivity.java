@@ -1622,24 +1622,6 @@ public class ClubPageActivity extends MenuActivity {
 
     }
 
-    private void Theme(){
-        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
-        String mentettTema = prefs.getString("selected_theme", "Purple");
 
-        Button club_members = findViewById(R.id.club_members);
-        Button club_historyButton= findViewById(R.id.club_history);
-
-
-        ConstraintLayout layout = findViewById(R.id.layout);
-        layout.setBackgroundResource(mentettTema.equals("Blue") ? R.drawable.img_3_blue : R.drawable.background_new);
-
-        TextView textView4 = findViewById(R.id.textView4);
-        TextView textView6  = findViewById(R.id.textView6);
-
-        int szinId = mentettTema.equals("Blue") ? R.color.lightblue : R.color.lightlighttbordo;
-        textView4.setTextColor(ContextCompat.getColor(this, szinId));
-        textView6.setTextColor(ContextCompat.getColor(this, szinId));
-
-    }
 
     }
