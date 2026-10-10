@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.view.View;
 import android.os.CountDownTimer;
@@ -1314,6 +1315,7 @@ public class ClubPageActivity extends MenuActivity {
         }
        // progressBar.setVisibility(View.GONE);
         recyclerView.setAdapter(adapter);
+        updateRecyclerHeight(recyclerView, titles.size());
       // progressBar.setVisibility(View.GONE);
     }
 
@@ -1623,5 +1625,24 @@ public class ClubPageActivity extends MenuActivity {
     }
 
 
+    private void updateRecyclerHeight(RecyclerView recyclerView, int itemCount) {
+        if (itemCount == 0) {
+            ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
+            params.height = 0;
+            recyclerView.setLayoutParams(params);
+            return;
+        }
 
+        float density = getResources().getDisplayMetrics().density;
+        int estimatedColumns = 3; // Átlagos chipek száma egy sorban
+        int rowCount = (int) Math.ceil((double) itemCount / estimatedColumns);
+
+        // Növeltük a sor magasságot 48-ról 56dp-re, plusz adtunk egy fix extra 24dp biztonsági margót az aljára!
+        int rowHeightPx = (int) (56 * density);
+        int totalHeight = (rowCount * rowHeightPx) + (int) (24 * density);
+
+        ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
+        params.height = totalHeight;
+        recyclerView.setLayoutParams(params);
+    }
     }

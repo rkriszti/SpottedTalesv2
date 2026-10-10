@@ -33,6 +33,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:title="Chatszoba"
+            app:menu="@menu/top_chat_menu"
             app:titleTextColor="@color/white" />
 
         <ImageView

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.stv2.adapters.ClubChatAdapter;
 import com.example.stv2.model.Message;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -27,6 +28,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,7 +101,61 @@ public class ChatActivity extends MenuActivity {
                     .addOnFailureListener(e -> Log.e("AdminCheck", "Hiba a lekéréskor", e));
         }
 
+        MaterialToolbar felso = findViewById(R.id.top_toolbar);
+        felso.setTitle(roomName.isEmpty() ? "Chatszoba" : roomName);
 
+        felso.setOnMenuItemClickListener(item -> {
+
+            if (item.getItemId() == R.id.next_menu) {
+                db.collection(oldhappened ? "oldclub" : "club").document(clubId)
+                        .get() // <-- addSnapshotListener helyett .get()
+                        .addOnSuccessListener(snapshot -> {
+                            if ( snapshot == null || !snapshot.exists()) return;
+
+                            String hova = roomName.contains("fejezet") ? "chapters" : "customs";
+                            Map<String, List<String>> chaptersMap = new HashMap<>();
+                            Object rawChapters = snapshot.get(hova);
+                            if (rawChapters instanceof Map) {
+                                Map<?, ?> map = (Map<?, ?>) rawChapters;
+                                for (Map.Entry<?, ?> entry : map.entrySet()) {
+                                    if (entry.getKey() instanceof String && entry.getValue() instanceof List) {
+                                        chaptersMap.put((String) entry.getKey(), (List<String>) entry.getValue());
+                                    }
+                                }
+                            }
+                            List<String> titles = new ArrayList<>(chaptersMap.keySet());
+                            if (roomName.contains("fejezet")) {
+                                Collections.sort(titles, (a, b) -> {
+                                    String cleanA = a.replaceAll("\\D+", "");
+                                    String cleanB = b.replaceAll("\\D+", "");
+                                    int numA = cleanA.isEmpty() ? 9999 : Integer.parseInt(cleanA);
+                                    int numB = cleanB.isEmpty() ? 9999 : Integer.parseInt(cleanB);
+                                    return Integer.compare(numA, numB);
+                                });
+                            }
+
+                            if (titles.isEmpty()) return;
+
+                            int currentIndex = titles.indexOf(roomName);
+                            String kovi;
+                            if (currentIndex != -1 && currentIndex + 1 < titles.size()) {
+                                kovi = titles.get(currentIndex + 1);
+                            } else {
+                                kovi = titles.get(0);
+                            }
+                            Intent intent = new Intent(this, ChatActivity.class);
+                            intent.putExtra("clubId", clubId);
+                            intent.putExtra("isOldChat", String.valueOf(oldhappened));
+                            intent.putExtra("roomName", kovi);
+                            startActivity(intent);
+                            finish();
+                        });
+
+
+                return true;
+            }
+            return false;
+        });
 
         loadMessages();
 
